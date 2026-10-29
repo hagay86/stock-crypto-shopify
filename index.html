@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InvestFlow — Apps for Smarter Investing</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',-apple-system,sans-serif;background:#0a0e17;color:#e0e0e0;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+.shell{display:flex;height:100vh}
+
+/* SIDEBAR */
+.side{width:240px;background:#0d1220;border-right:1px solid #1a2440;display:flex;flex-direction:column;flex-shrink:0}
+.side-hd{padding:20px;border-bottom:1px solid #1a2440;display:flex;align-items:center;gap:10px}
+.side-logo{width:34px;height:34px;background:linear-gradient(135deg,#ffd700,#ff9800);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#0a0e17;font-size:14px;font-weight:900}
+.side-title{font-size:16px;font-weight:800;color:#fff}
+.side-nav{padding:14px 10px;flex:1}
+.side-label{font-size:10px;font-weight:700;color:#556;text-transform:uppercase;letter-spacing:1px;padding:8px 12px 6px}
+.nav-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;font-size:13px;font-weight:600;color:#8899aa;border-radius:8px;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .15s}
+.nav-btn:hover{background:#131d30;color:#ccc}
+.nav-btn.active{background:linear-gradient(135deg,#1a2a50,#162040);color:#ffd700;border:1px solid #2a3a60}
+.nav-btn .icon{width:20px;text-align:center;font-size:16px}
+.side-bottom{padding:14px;border-top:1px solid #1a2440}
+.side-user{display:flex;align-items:center;gap:10px;padding:8px}
+.avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#ffd700,#ff6b00);display:flex;align-items:center;justify-content:center;color:#0a0e17;font-size:11px;font-weight:800}
+.uname{font-size:13px;font-weight:600;color:#ccc}
+.uplan{font-size:11px;color:#556}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:#0d1220;border-bottom:1px solid #1a2440;flex-shrink:0}
+.topbar h1{font-size:20px;font-weight:800;color:#fff}
+.topbar p{font-size:12px;color:#667;margin-top:2px}
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+
+/* APP CARDS */
+.apps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;margin-top:16px}
+.app-card{background:#111b30;border:1px solid #1e2d4a;border-radius:14px;padding:22px;cursor:default;transition:all .2s;position:relative;overflow:hidden}
+.app-card:hover{border-color:#ffd700;box-shadow:0 4px 24px rgba(255,215,0,0.08)}
+.app-card.live{border-color:#2a3a60}
+.app-card.live::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#ffd700,#00e676)}
+.app-top{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.app-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.app-icon.blue{background:linear-gradient(135deg,#4F6EF7,#536dfe)}
+.app-icon.gold{background:linear-gradient(135deg,#ffd700,#ff9800)}
+.app-icon.green{background:linear-gradient(135deg,#00e676,#00bfa5)}
+.app-icon.purple{background:linear-gradient(135deg,#8B5CF6,#7c4dff)}
+.app-icon.red{background:linear-gradient(135deg,#ff5252,#ff1744)}
+.app-icon.teal{background:linear-gradient(135deg,#26c6da,#0097a7)}
+.app-nm{font-size:16px;font-weight:700;color:#fff}
+.app-dev{font-size:11px;color:#556;margin-top:2px}
+.live-badge{display:inline-block;padding:2px 8px;background:linear-gradient(135deg,#00e676,#00c853);color:#0a0e17;font-size:9px;font-weight:800;border-radius:20px;letter-spacing:.5px;margin-left:8px}
+.app-desc{font-size:13px;color:#8899aa;line-height:1.6;margin-bottom:16px;min-height:42px}
+.app-btns{display:flex;gap:8px}
+.btn{padding:8px 18px;font-size:12px;font-weight:700;border-radius:8px;cursor:pointer;transition:all .15s;border:none}
+.btn-open{background:linear-gradient(135deg,#ffd700,#ff9800);color:#0a0e17}
+.btn-open:hover{box-shadow:0 4px 16px rgba(255,215,0,0.3);transform:translateY(-1px)}
+.btn-chat{background:#1a2a50;color:#ffd700;border:1px solid #2a3a60}
+.btn-chat:hover{background:#223060;border-color:#ffd700}
+.btn-get{background:#1a2a50;color:#00e676;border:1px solid #1e3a30}
+.btn-get:hover{background:#00e676;color:#0a0e17}
+.btn-got{background:#0a2020;color:#00e676;border:1px solid #1e3a30;cursor:default}
+
+/* SEARCH */
+.search-bar{display:flex;gap:10px;align-items:center}
+.search-input{background:#111b30;border:1px solid #1e2d4a;color:#e0e0e0;padding:10px 16px;border-radius:10px;font-size:13px;font-family:inherit;width:280px;outline:none;transition:border .15s}
+.search-input:focus{border-color:#ffd700}
+.search-input::placeholder{color:#445}
+.cat-pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:6px 14px;font-size:12px;font-weight:600;border-radius:20px;border:1px solid #1e2d4a;background:transparent;color:#667;cursor:pointer;transition:all .15s}
+.pill:hover{border-color:#ffd700;color:#ffd700}
+.pill.on{background:#ffd700;color:#0a0e17;border-color:#ffd700}
+
+/* CHAT PANEL */
+.chat{width:360px;background:#0d1220;border-left:1px solid #1a2440;display:flex;flex-direction:column;flex-shrink:0}
+.chat-hd{padding:16px 20px;border-bottom:1px solid #1a2440;display:flex;align-items:center;gap:10px}
+.chat-dot{width:8px;height:8px;border-radius:50%;background:#00e676;box-shadow:0 0 6px #00e676;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.chat-hd h3{font-size:14px;font-weight:700;flex:1;color:#fff}
+.chat-online{font-size:10px;font-weight:700;color:#00e676;background:#0a2020;padding:3px 8px;border-radius:20px}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:88%;padding:12px 16px;border-radius:14px;font-size:13px;line-height:1.6;white-space:pre-line}
+.msg-ai{background:#111b30;color:#ccc;align-self:flex-start;border-bottom-left-radius:4px;border:1px solid #1e2d4a}
+.msg-ai .label{font-size:10px;font-weight:700;color:#ffd700;margin-bottom:5px}
+.msg-user{background:linear-gradient(135deg,#1a3a6a,#1e2d5a);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;border:1px solid #2a4a7a}
+.chat-sugs{padding:0 16px 10px;display:flex;flex-wrap:wrap;gap:6px}
+.sug{padding:6px 12px;font-size:11px;font-weight:600;border:1px solid #1e2d4a;border-radius:20px;background:transparent;color:#667;cursor:pointer;transition:all .12s}
+.sug:hover{border-color:#ffd700;color:#ffd700}
+.chat-bar{padding:12px 16px;border-top:1px solid #1a2440;display:flex;gap:8px}
+.chat-in{flex:1;padding:10px 14px;font-size:13px;font-family:inherit;background:#111b30;border:1px solid #1e2d4a;border-radius:10px;outline:none;color:#e0e0e0;transition:border .15s}
+.chat-in:focus{border-color:#ffd700}
+.chat-in::placeholder{color:#445}
+.chat-send{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#ffd700,#ff9800);border:none;color:#0a0e17;cursor:pointer;font-size:16px;font-weight:800;flex-shrink:0;transition:all .12s}
+.chat-send:hover{box-shadow:0 4px 12px rgba(255,215,0,0.3)}
+
+/* STATS ROW */
+.stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.stat{background:#111b30;border:1px solid #1e2d4a;border-radius:10px;padding:14px 20px;min-width:120px}
+.stat .s-label{font-size:10px;font-weight:600;color:#556;text-transform:uppercase;letter-spacing:.5px}
+.stat .s-val{font-size:20px;font-weight:800;margin-top:4px}
+.stat .s-val.gold{color:#ffd700}
+.stat .s-val.green{color:#00e676}
+.stat .s-val.blue{color:#536dfe}
+
+@media(max-width:1000px){.chat{display:none}}
+@media(max-width:700px){.side{display:none}.apps-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="side-hd">
+      <div class="side-logo">IF</div>
+      <span class="side-title">InvestFlow</span>
+    </div>
+    <div class="side-nav">
+      <div class="side-label">Main</div>
+      <button class="nav-btn active" onclick="showPage('myapps')" id="nav-myapps"><span class="icon">📦</span>My Apps</button>
+      <button class="nav-btn" onclick="showPage('market')" id="nav-market"><span class="icon">🛒</span>Marketplace</button>
+      <div class="side-label" style="margin-top:12px">Apps</div>
+      <button class="nav-btn" onclick="openApp('TrendScore_V6_Dashboard.html')"><span class="icon">📈</span>TrendScore V6</button>
+      <button class="nav-btn" onclick="openApp('TrendScore_V5_Dashboard.html')"><span class="icon">📊</span>TrendScore V5</button>
+      <button class="nav-btn" onclick="openApp('auto-trader-pro.html')"><span class="icon">⚡</span>Auto Trader Pro</button>
+      <button class="nav-btn" onclick="openApp('TrendScore_ETF_Dashboard.html')"><span class="icon">🌍</span>ETF Dashboard</button>
+    </div>
+    <div class="side-bottom">
+      <div class="side-user">
+        <div class="avatar">HD</div>
+        <div><div class="uname">Hagay D.</div><div class="uplan">Pro Plan</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="page-title">My Apps</h1>
+        <p id="page-sub">Your installed investment apps</p>
+      </div>
+    </div>
+    <div class="content" id="content">
+      <!-- Filled by JS -->
+    </div>
+  </div>
+
+  <!-- AI CHAT -->
+  <div class="chat">
+    <div class="chat-hd">
+      <div class="chat-dot"></div>
+      <h3>InvestFlow AI</h3>
+      <span class="chat-online">Online</span>
+    </div>
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="msg msg-ai"><div class="label">InvestFlow AI</div>Hey! V6 scores stocks by % UPSIDE potential, not company quality. NVIDIA is B-grade because the market already priced it in. Ask me about any ticker, top picks, or why a great company can score low.</div>
+    </div>
+    <div class="chat-sugs" id="chat-sugs">
+      <button class="sug" onclick="askSug(this)">Top 5 stocks?</button>
+      <button class="sug" onclick="askSug(this)">Tell me about NVDA</button>
+      <button class="sug" onclick="askSug(this)">Best in tech?</button>
+      <button class="sug" onclick="askSug(this)">How does V6 work?</button>
+      <button class="sug" onclick="askSug(this)">Why is VZ scored low?</button>
+    </div>
+    <div class="chat-bar">
+      <input class="chat-in" id="chat-input" placeholder="Ask about any stock..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">↑</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// V6 ALGORITHM DATA — "How Much Will It Rise?"
+// Scores % UPSIDE, not company quality. Great company ≠ great score.
+// 6 Pillars: UpsideGap(30%) + Dig(20%) + MoneyFlow(15%) + DebtIQ(10%) + Growth(15%) + Discovery(10%)
+// Priced-In Factor (0.5-1.5x) + Risk (0.5-1.0x)
+// ============================================================
+const V6 = [
+  // S-GRADE: Massive % upside the market hasn't priced in
+  {t:"PLTR",s:928,g:"S",gap:92,dig:78,flow:88,debt:82,grow:90,disc:85,pxin:1.35,risk:0.91,p:137.48,ytd:12.5,sec:"IT"},
+  {t:"AVGO",s:916,g:"S",gap:85,dig:90,flow:90,debt:82,grow:88,disc:72,pxin:1.28,risk:0.93,p:186.50,ytd:8.1,sec:"IT"},
+  {t:"NXPI",s:910,g:"S",gap:88,dig:78,flow:82,debt:80,grow:85,disc:80,pxin:1.32,risk:0.92,p:215.40,ytd:3.2,sec:"IT"},
+  {t:"DELL",s:901,g:"S",gap:86,dig:68,flow:88,debt:72,grow:84,disc:82,pxin:1.38,risk:0.90,p:95.20,ytd:6.8,sec:"IT"},
+  {t:"SMCI",s:891,g:"S",gap:90,dig:62,flow:85,debt:68,grow:92,disc:88,pxin:1.42,risk:0.85,p:42.30,ytd:-15.0,sec:"IT"},
+  {t:"MRVL",s:857,g:"S",gap:88,dig:75,flow:82,debt:78,grow:85,disc:80,pxin:1.30,risk:0.90,p:68.50,ytd:-8.2,sec:"IT"},
+  {t:"AMD",s:862,g:"S",gap:82,dig:80,flow:84,debt:85,grow:82,disc:72,pxin:1.25,risk:0.92,p:112.30,ytd:-8.5,sec:"IT"},
+  {t:"CRM",s:817,g:"S",gap:78,dig:76,flow:72,debt:82,grow:78,disc:68,pxin:1.28,risk:0.92,p:265.40,ytd:-5.2,sec:"IT"},
+
+  // A-GRADE: Strong % upside, catalysts visible
+  {t:"CRWD",s:773,g:"A",gap:78,dig:72,flow:70,debt:80,grow:82,disc:75,pxin:1.18,risk:0.88,p:345.20,ytd:-12.0,sec:"IT"},
+  {t:"ANET",s:769,g:"A",gap:75,dig:78,flow:82,debt:80,grow:78,disc:65,pxin:1.20,risk:0.90,p:78.50,ytd:5.5,sec:"IT"},
+  {t:"PYPL",s:771,g:"A",gap:80,dig:68,flow:72,debt:78,grow:76,disc:72,pxin:1.25,risk:0.88,p:72.40,ytd:8.2,sec:"FIN"},
+
+  // B-GRADE: Moderate upside — mega-caps land here (great companies, limited % gain)
+  {t:"MSFT",s:576,g:"B",gap:48,dig:92,flow:72,debt:95,grow:62,disc:35,pxin:0.72,risk:0.95,p:358.83,ytd:-3.2,sec:"IT"},
+  {t:"NVDA",s:552,g:"B",gap:42,dig:95,flow:85,debt:90,grow:55,disc:30,pxin:0.65,risk:0.94,p:164.81,ytd:5.3,sec:"IT"},
+  {t:"TSLA",s:568,g:"B",gap:58,dig:65,flow:62,debt:78,grow:55,disc:48,pxin:0.95,risk:0.82,p:353.59,ytd:-25.0,sec:"CD"},
+  {t:"NFLX",s:555,g:"B",gap:50,dig:68,flow:55,debt:80,grow:65,disc:42,pxin:0.88,risk:0.90,p:892.82,ytd:-12.0,sec:"CS"},
+
+  // C-GRADE: Limited upside — market already priced in
+  {t:"AMZN",s:543,g:"C",gap:45,dig:85,flow:72,debt:58,grow:65,disc:32,pxin:0.70,risk:0.88,p:200.54,ytd:-13.5,sec:"CD"},
+  {t:"META",s:538,g:"C",gap:42,dig:80,flow:68,debt:65,grow:62,disc:35,pxin:0.72,risk:0.87,p:535.02,ytd:-15.0,sec:"CS"},
+  {t:"GOOGL",s:475,g:"C",gap:38,dig:82,flow:60,debt:62,grow:52,disc:30,pxin:0.68,risk:0.86,p:272.97,ytd:-24.5,sec:"CS"},
+  {t:"JPM",s:460,g:"C",gap:35,dig:75,flow:48,debt:72,grow:45,disc:30,pxin:0.82,risk:0.94,p:215.60,ytd:2.1,sec:"FIN"},
+  {t:"V",s:445,g:"C",gap:32,dig:80,flow:42,debt:88,grow:42,disc:28,pxin:0.78,risk:0.95,p:310.20,ytd:1.5,sec:"FIN"},
+  {t:"BRK.B",s:420,g:"C",gap:28,dig:72,flow:35,debt:95,grow:30,disc:22,pxin:0.75,risk:0.97,p:472.30,ytd:5.5,sec:"FIN"},
+  {t:"AAPL",s:427,g:"C",gap:30,dig:88,flow:42,debt:90,grow:35,disc:25,pxin:0.62,risk:0.96,p:246.23,ytd:-8.0,sec:"IT"},
+  {t:"KO",s:385,g:"D",gap:22,dig:72,flow:30,debt:75,grow:25,disc:20,pxin:0.78,risk:0.95,p:76.31,ytd:3.2,sec:"STAP"},
+  {t:"PG",s:375,g:"D",gap:20,dig:70,flow:28,debt:72,grow:22,disc:18,pxin:0.78,risk:0.95,p:145.14,ytd:2.6,sec:"STAP"},
+
+  // D-GRADE: Minimal upside, priced in or capped by debt
+  {t:"VZ",s:145,g:"F",gap:10,dig:42,flow:15,debt:22,grow:12,disc:10,pxin:0.65,risk:0.78,p:50.41,ytd:23.5,sec:"CS"},
+  {t:"T",s:140,g:"F",gap:12,dig:40,flow:18,debt:25,grow:15,disc:12,pxin:0.62,risk:0.80,p:28.93,ytd:16.3,sec:"CS"}
+];
+
+const SEC = {IT:"Technology",CD:"Consumer Disc.",CS:"Communication",FIN:"Financials",STAP:"Consumer Staples",HC:"Healthcare",EN:"Energy",IND:"Industrials",MAT:"Materials",UTIL:"Utilities",RE:"Real Estate"};
+
+// ============================================================
+// APPS DATA
+// ============================================================
+const LIVE_APPS = [
+  {id:'v6',name:'TrendScore V6 Dashboard',dev:'InvestFlow Labs',icon:'📈',color:'gold',file:'TrendScore_V6_Dashboard.html',
+   desc:'440 S&P 500 stocks scored by % UPSIDE potential, not company quality. 6 pillars: Upside Gap, Dig, Money Flow, Debt IQ, Growth, Discovery. NVIDIA scores B because the market already priced it in. Undervalued mid-caps with real catalysts score S. Finds the stocks that will RISE the most in %.',cat:'Analytics'},
+  {id:'v5',name:'TrendScore V5 (Legacy)',dev:'InvestFlow Labs',icon:'📊',color:'purple',file:'TrendScore_V5_Dashboard.html',
+   desc:'Previous V5 algorithm with 8 dimensions and Moat at 45% weight. Kept for historical comparison. Superseded by V6.',cat:'Analytics'},
+  {id:'trader',name:'Auto Trader Pro',dev:'InvestFlow Labs',icon:'⚡',color:'blue',file:'auto-trader-pro.html',
+   desc:'Set auto-trading rules on any stock — stop loss, take profit, buy the dip, swing trade, trailing stop, auto invest. Rules execute automatically based on live prices.',cat:'Trading'},
+  {id:'etf',name:'ETF Dashboard',dev:'InvestFlow Labs',icon:'🌍',color:'green',file:'TrendScore_ETF_Dashboard.html',
+   desc:'Track ETF performance, allocations, and holdings. See how your ETF positions compare to the market and each other.',cat:'Analytics'}
+];
+
+const MARKET_APPS = [
+  {id:'crypto',name:'Crypto Tracker',dev:'InvestFlow Labs',icon:'🌐',color:'purple',desc:'Track all crypto across exchanges and wallets in one dashboard. Real-time prices and profit/loss per coin.',cat:'Crypto',placeholder:true},
+  {id:'alerts',name:'Smart Alerts',dev:'InvestFlow Labs',icon:'🔔',color:'red',desc:'Get notified when stocks hit prices or move by percentages you set. Push, email, or SMS alerts.',cat:'Alerts',placeholder:true},
+  {id:'portfolio',name:'Portfolio View',dev:'InvestFlow Labs',icon:'📊',color:'purple',desc:'See all investments in one view with charts, breakdowns, and performance vs S&P 500.',cat:'Analytics',placeholder:true},
+  {id:'dca',name:'Auto Invest',dev:'InvestFlow Labs',icon:'🔄',color:'teal',desc:'Automatically invest fixed amounts daily, weekly, or monthly. Dollar cost averaging made simple.',cat:'Trading',placeholder:true}
+];
+
+let installed = [...MARKET_APPS.map(a=>a.id)]; // marketplace apps that user has "gotten"
+let currentPage = 'myapps';
+
+// ============================================================
+// PAGES
+// ============================================================
+function showPage(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav-'+page)?.classList.add('active');
+
+  const c = document.getElementById('content');
+  const t = document.getElementById('page-title');
+  const s = document.getElementById('page-sub');
+
+  if (page === 'myapps') {
+    t.textContent = 'My Apps';
+    s.textContent = '4 live apps powered by V6 Algorithm — Nothing Gets Rewarded Free';
+    renderMyApps(c);
+  } else if (page === 'market') {
+    t.textContent = 'App Marketplace';
+    s.textContent = 'Simple tools to help you invest smarter — browse and install';
+    renderMarketplace(c);
+  }
+}
+
+function renderMyApps(c) {
+  let html = `<div class="stats">
+    <div class="stat"><div class="s-label">V6 Stocks</div><div class="s-val gold">440</div></div>
+    <div class="stat"><div class="s-label">S-Grade</div><div class="s-val gold">12</div></div>
+    <div class="stat"><div class="s-label">Live Apps</div><div class="s-val green">4</div></div>
+    <div class="stat"><div class="s-label">Installed</div><div class="s-val blue">${4 + installed.length}</div></div>
+  </div>`;
+
+  html += '<div style="font-size:11px;font-weight:700;color:#ffd700;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Live Apps — Powered by V6 Algorithm</div>';
+  html += '<div class="apps-grid">';
+  LIVE_APPS.forEach(a => {
+    html += `<div class="app-card live">
+      <div class="app-top">
+        <div class="app-icon ${a.color}">${a.icon}</div>
+        <div><div class="app-nm">${a.name}<span class="live-badge">LIVE</span></div><div class="app-dev">${a.dev}</div></div>
+      </div>
+      <div class="app-desc">${a.desc}</div>
+      <div class="app-btns">
+        <button class="btn btn-open" onclick="openApp('${a.file}')">Open App</button>
+        <button class="btn btn-chat" onclick="chatAbout('${a.name}')">Ask AI</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // Installed marketplace apps
+  const gotApps = MARKET_APPS.filter(a => installed.includes(a.id));
+  if (gotApps.length > 0) {
+    html += '<div style="font-size:11px;font-weight:700;color:#00e676;text-transform:uppercase;letter-spacing:1px;margin:24px 0 12px">Marketplace Apps — Installed</div>';
+    html += '<div class="apps-grid">';
+    gotApps.forEach(a => {
+      html += `<div class="app-card">
+        <div class="app-top">
+          <div class="app-icon ${a.color}">${a.icon}</div>
+          <div><div class="app-nm">${a.name}</div><div class="app-dev">${a.dev}</div></div>
+        </div>
+        <div class="app-desc">${a.desc}</div>
+        <div class="app-btns">
+          <button class="btn btn-got">Installed</button>
+          <button class="btn btn-chat" onclick="chatAbout('${a.name}')">Ask AI</button>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  c.innerHTML = html;
+}
+
+function renderMarketplace(c) {
+  let html = '<div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">';
+  html += '<input class="search-input" placeholder="Search apps..." oninput="filterMarket(this.value)">';
+  html += '<div class="cat-pills">';
+  ['All','Analytics','Trading','Crypto','Alerts'].forEach(cat => {
+    html += `<button class="pill ${cat==='All'?'on':''}" onclick="filterCat(this,'${cat}')">${cat}</button>`;
+  });
+  html += '</div></div>';
+
+  html += '<div class="apps-grid" id="market-grid">';
+  const all = [...LIVE_APPS, ...MARKET_APPS];
+  all.forEach(a => {
+    const isInstalled = a.file || installed.includes(a.id);
+    html += `<div class="app-card ${a.file?'live':''}" data-name="${a.name.toLowerCase()}" data-cat="${a.cat}">
+      <div class="app-top">
+        <div class="app-icon ${a.color}">${a.icon}</div>
+        <div><div class="app-nm">${a.name}${a.file?'<span class="live-badge">LIVE</span>':''}</div><div class="app-dev">${a.dev}</div></div>
+      </div>
+      <div class="app-desc">${a.desc}</div>
+      <div class="app-btns">
+        ${a.file ? `<button class="btn btn-open" onclick="openApp('${a.file}')">Open</button>` :
+          isInstalled ? '<button class="btn btn-got">Installed</button>' :
+          `<button class="btn btn-get" onclick="installApp('${a.id}',this)">Get — Free</button>`}
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  c.innerHTML = html;
+}
+
+function openApp(file) {
+  window.open(file, '_blank');
+}
+
+function installApp(id, btn) {
+  if (!installed.includes(id)) {
+    installed.push(id);
+    btn.textContent = 'Installed';
+    btn.className = 'btn btn-got';
+    const app = MARKET_APPS.find(a => a.id === id);
+    addMsg('ai', `${app.name} installed! You can find it in My Apps now.`);
+  }
+}
+
+function filterMarket(q) {
+  const cards = document.querySelectorAll('#market-grid .app-card');
+  cards.forEach(c => {
+    c.style.display = c.dataset.name.includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function filterCat(btn, cat) {
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  const cards = document.querySelectorAll('#market-grid .app-card');
+  cards.forEach(c => {
+    c.style.display = (cat === 'All' || c.dataset.cat === cat) ? '' : 'none';
+  });
+}
+
+// ============================================================
+// AI CHAT
+// ============================================================
+function addMsg(role, text) {
+  const box = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'msg msg-' + role;
+  if (role === 'ai') div.innerHTML = '<div class="label">InvestFlow AI</div>' + text.replace(/\n/g, '<br>');
+  else div.textContent = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  // Hide suggestions after first interaction
+  const sugs = document.getElementById('chat-sugs');
+  if (sugs && box.children.length > 3) sugs.style.display = 'none';
+}
+
+function sendChat() {
+  const inp = document.getElementById('chat-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  addMsg('user', text);
+  setTimeout(() => addMsg('ai', getReply(text)), 300 + Math.random() * 400);
+}
+
+function askSug(btn) {
+  const text = btn.textContent;
+  addMsg('user', text);
+  setTimeout(() => addMsg('ai', getReply(text)), 300 + Math.random() * 400);
+}
+
+function chatAbout(name) {
+  addMsg('user', 'Tell me about ' + name);
+  setTimeout(() => addMsg('ai', getReply('Tell me about ' + name)), 300);
+}
+
+function getReply(input) {
+  const q = input.toLowerCase();
+
+  // Look for specific ticker mentions
+  const tickers = input.match(/\b([A-Z]{2,5})\b/g) || [];
+
+  // Verizon / why low question
+  if (q.includes('vz') || q.includes('verizon')) {
+    const vz = V6.find(s => s.t === 'VZ');
+    if (vz) {
+      return `VZ (Verizon) — ${vz.g}-Grade (Score: ${vz.s}/1000)\n\n` +
+        `Why so low? V6 measures % UPSIDE — Verizon has almost none:\n` +
+        `  Upside Gap: ${vz.gap}/100 — Nothing unpriced, market knows the story\n` +
+        `  Debt IQ: ${vz.debt}/100 — $150B+ debt, FCF barely covers interest\n` +
+        `  Growth: ${vz.grow}/100 — Zero acceleration, flat revenue\n` +
+        `  Discovery: ${vz.disc}/100 — Everyone already knows Verizon\n` +
+        `  Priced-In: ${vz.pxin}x — Almost fully priced in\n\n` +
+        `A stock that won't rise in % gets a low score, even if the company is "stable."`;
+    }
+  }
+
+  // Why NVDA / big companies scored lower
+  if (q.includes('nvda') || q.includes('nvidia') || (q.includes('why') && (q.includes('low') || q.includes('b ')))) {
+    const nv = V6.find(s => s.t === 'NVDA');
+    if (nv) {
+      return `NVDA — ${nv.g}-Grade (Score: ${nv.s}/1000)\n\n` +
+        `NVIDIA is the BEST chip company on earth. But V6 doesn't score company quality — it scores % UPSIDE.\n\n` +
+        `  Dig/Moat: ${nv.dig}/100 — Unmatched (86% AI GPU share)\n` +
+        `  But Upside Gap: ${nv.gap}/100 — Market ALREADY priced this in at $2.8T\n` +
+        `  Priced-In Factor: ${nv.pxin}x — Everyone from your grandma to BlackRock owns NVDA\n` +
+        `  Discovery: ${nv.disc}/100 — Nothing left to discover\n\n` +
+        `Result: Maybe 30-50% upside from here. Meanwhile a $15B company with incoming catalysts the market missed could 3x-5x.\n\n` +
+        `Great company ≠ Great stock to buy NOW for maximum % return.`;
+    }
+  }
+
+  // Compare two stocks
+  if (q.includes('compare') || q.includes(' vs ') || q.includes(' or ')) {
+    if (tickers.length >= 2) {
+      const s1 = V6.find(s => s.t === tickers[0]);
+      const s2 = V6.find(s => s.t === tickers[1]);
+      if (s1 && s2) {
+        const winner = s1.s > s2.s ? s1 : s2;
+        const loser = s1.s > s2.s ? s2 : s1;
+        return `${s1.t} vs ${s2.t} — % Upside Analysis\n\n` +
+          `${s1.t}: Score ${s1.s}/1000 (${s1.g}-Grade)\n  Gap: ${s1.gap} | Dig: ${s1.dig} | Flow: ${s1.flow} | Grow: ${s1.grow} | PxIn: ${s1.pxin}x\n\n` +
+          `${s2.t}: Score ${s2.s}/1000 (${s2.g}-Grade)\n  Gap: ${s2.gap} | Dig: ${s2.dig} | Flow: ${s2.flow} | Grow: ${s2.grow} | PxIn: ${s2.pxin}x\n\n` +
+          `Winner for % upside: ${winner.t} (+${Math.abs(s1.s-s2.s)} pts)\n` +
+          `Key: ${winner.gap > loser.gap ? 'More upside NOT yet priced in' : winner.pxin > loser.pxin ? 'Less priced in by the market' : 'Stronger growth acceleration'}.`;
+      }
+    }
+  }
+
+  // Single stock lookup
+  if (tickers.length > 0) {
+    const stock = V6.find(s => s.t === tickers[0]);
+    if (stock) {
+      return `${stock.t} — ${stock.g}-Grade (Score: ${stock.s}/1000)\nPrice: $${stock.p} | YTD: ${stock.ytd>0?'+':''}${stock.ytd}% | Sector: ${SEC[stock.sec]||stock.sec}\n\n` +
+        `V6 % Upside Breakdown:\n` +
+        `  Upside Gap (30%): ${stock.gap}/100\n` +
+        `  Dig/Moat (20%): ${stock.dig}/100\n` +
+        `  Money Flow (15%): ${stock.flow}/100\n` +
+        `  Debt IQ (10%): ${stock.debt}/100\n` +
+        `  Growth (15%): ${stock.grow}/100\n` +
+        `  Discovery (10%): ${stock.disc}/100\n` +
+        `  Priced-In Factor: ${stock.pxin}x\n` +
+        `  Risk: ${stock.risk}x\n\n` +
+        (stock.g === 'S' ? 'S-Grade — massive % upside potential. Market hasn\'t priced this in yet. 2x-5x possible.' :
+         stock.g === 'A' ? 'A-Grade — strong % upside with visible catalysts coming.' :
+         stock.g === 'B' ? 'B-Grade — good company but market already knows. Moderate % upside.' :
+         stock.g === 'C' ? 'C-Grade — limited % upside. The market has priced most of the story in.' :
+         stock.g === 'D' ? 'D-Grade — minimal upside or capped by debt/risks.' :
+         'F-Grade — no upside detected. Avoid.');
+    }
+  }
+
+  // Top stocks
+  if (q.match(/top|best stock|highest|number.?1|#1/)) {
+    const top = V6.filter(s => s.g === 'S').slice(0,5);
+    return `Top 5 Highest % Upside (V6):\n\n` + top.map((s,i) => `${i+1}. ${s.t} — ${s.s}/1000 ($${s.p})\n   Gap:${s.gap} Grow:${s.grow} PxIn:${s.pxin}x`).join('\n') +
+      `\n\nThese have the biggest GAP between current price and future value.\nNOTE: NVDA/MSFT are B-grade — great companies, but market already priced them in.`;
+  }
+
+  // Sector queries
+  if (q.includes('tech')) {
+    const tech = V6.filter(s => s.sec === 'IT').sort((a,b) => b.s - a.s).slice(0,6);
+    return `Top Tech by % Upside (V6):\n\n` + tech.map(s => `${s.t} — ${s.s}/1000 (${s.g}) Gap:${s.gap} PxIn:${s.pxin}x`).join('\n') +
+      `\n\nNotice: NVDA and MSFT are lower because the market already priced their greatness in.`;
+  }
+  if (q.includes('financ') || q.includes('bank')) {
+    const fin = V6.filter(s => s.sec === 'FIN').sort((a,b) => b.s - a.s).slice(0,4);
+    return `Top Financial by % Upside (V6):\n\n` + fin.map(s => `${s.t} — ${s.s}/1000 (${s.g}) Gap:${s.gap} PxIn:${s.pxin}x`).join('\n');
+  }
+  if (q.includes('health') || q.includes('pharma')) {
+    return `Check the V6 Dashboard for full Healthcare % upside rankings.\nOpen it from My Apps to see all stocks with pillar breakdowns.`;
+  }
+
+  // Algorithm explanation
+  if (q.match(/algorithm|how does|v6|score|how.*work/)) {
+    return `V6 Algorithm — "How Much Will It Rise?"\n\nScores % UPSIDE, not company quality.\n\n6 Pillars:\n` +
+      `  Upside Gap (30%) — How much growth is NOT priced in yet?\n` +
+      `  Dig/Moat (20%) — Irreplaceable? But only if not already priced in\n` +
+      `  Money Flow (15%) — Where is big money going NEXT?\n` +
+      `  Debt IQ (10%) — Does debt cap the % upside?\n` +
+      `  Growth (15%) — Is growth ACCELERATING?\n` +
+      `  Discovery (10%) — Is the market ABOUT TO notice?\n\n` +
+      `Priced-In Factor: x0.5 (everyone knows) to x1.5 (undervalued)\n` +
+      `Risk Penalty: x0.5 to x1.0\n\n` +
+      `KEY INSIGHT: A $20 stock going to $200 ALWAYS beats a $500 stock going to $700.\n` +
+      `NVDA is B-grade because it's already priced at $2.8T.\n` +
+      `12 S-Grade | 20 A-Grade | 66 B-Grade | 173 C-Grade`;
+  }
+
+  // App questions
+  if (q.includes('trendscore') || q.includes('dashboard') || q.includes('v6 dashboard')) {
+    return `TrendScore V6 Dashboard — 440 S&P 500 stocks ranked by % UPSIDE potential. The score predicts how much the stock will RISE, not how good the company is. NVIDIA is B-grade because the market already priced it in. Open it from My Apps.`;
+  }
+  if (q.includes('auto trader') || q.includes('trading rules') || q.includes('auto trade')) {
+    return `Auto Trader Pro lets you set smart rules like "sell 50% of NVDA if it drops 3%" or "buy more AMZN every week." 6 rule types: Stop Loss, Take Profit, Buy the Dip, Swing Trade, Auto Invest, Trailing Stop. All automated.`;
+  }
+  if (q.includes('etf')) {
+    return `ETF Dashboard tracks your ETF positions with performance charts, allocation breakdowns, and market comparisons.`;
+  }
+
+  // Buy recommendation
+  if (q.includes('buy') || q.includes('invest') || q.includes('recommend')) {
+    const picks = V6.filter(s => s.g === 'S').slice(0,3);
+    return `Top 3 by % Upside Potential:\n\n` +
+      picks.map(s => `${s.t} ($${s.p}) Score:${s.s} — Gap:${s.gap} Grow:${s.grow} PxIn:${s.pxin}x`).join('\n') +
+      `\n\nThese have the biggest gap between current price and where they're heading.\nNot financial advice — based on algorithm scoring only.`;
+  }
+
+  // Default
+  return `V6 scores % UPSIDE potential, not company quality.\n\nI can help with:\n\nStock analysis — any ticker (NVDA, PLTR, VZ...)\nTop picks — "best stocks" or "top 5"\nWhy scores changed — "why is NVDA B-grade?"\nSectors — "best in tech"\nComparisons — "compare AMZN vs PLTR"\nAlgorithm — "how does V6 work?"\n\nWhat would you like to know?`;
+}
+
+// Initialize
+showPage('myapps');
+</script>
+</body>
+</html>

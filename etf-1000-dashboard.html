@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrendScore-1000 ETF | $100B Live Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0B0E14;--bg2:#111520;--card:#161B26;--card2:#1A2030;
+      --border:#1E2536;--border-l:#252D40;
+      --blue:#4F8EF7;--blue-l:rgba(79,142,247,.12);--blue-d:#3A6ED8;
+      --green:#00D68F;--green-l:rgba(0,214,143,.1);
+      --red:#FF4D6A;--red-l:rgba(255,77,106,.1);
+      --amber:#FFB547;--amber-l:rgba(255,181,71,.1);
+      --purple:#A78BFA;--purple-l:rgba(167,139,250,.1);
+      --cyan:#22D3EE;
+      --t0:#F1F5F9;--t1:#CBD5E1;--t2:#8892A4;--t3:#4A5568;
+      --radius:10px;--radius-lg:14px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t0);-webkit-font-smoothing:antialiased;height:100vh;overflow:hidden}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#333;border-radius:3px}
+
+    .shell{display:flex;height:100vh}
+
+    /* SIDEBAR */
+    .side{width:280px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+    .side-hd{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+    .side-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:9px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:900}
+    .side-title{font-size:15px;font-weight:800}
+    .side-sub{font-size:10px;color:var(--t3);font-weight:600;letter-spacing:.05em}
+    .side-nav{padding:10px;overflow-y:auto;flex:1}
+    .side-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;padding:10px 10px 6px}
+    .side-item{display:flex;align-items:center;gap:10px;padding:8px 12px;font-size:12px;font-weight:500;color:var(--t1);border-radius:8px;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .12s}
+    .side-item:hover{background:var(--card)}
+    .side-item.on{background:var(--blue-l);color:var(--blue);font-weight:600}
+    .side-stat{margin-left:auto;font-size:11px;font-weight:700}
+    .side-bottom{padding:12px;border-top:1px solid var(--border)}
+    .side-user{display:flex;align-items:center;gap:10px;padding:8px 10px}
+    .side-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700}
+    .side-uname{font-size:13px;font-weight:600}
+    .side-uplan{font-size:11px;color:var(--t3)}
+
+    /* MAIN */
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--bg2);border-bottom:1px solid var(--border);flex-shrink:0}
+    .topbar h1{font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
+    .topbar p{font-size:12px;color:var(--t2);margin-top:2px}
+    .live-badge{font-size:9px;font-weight:700;background:var(--green);color:#000;padding:2px 8px;border-radius:20px;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+    .top-actions{display:flex;gap:8px}
+    .tbtn{padding:7px 16px;font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .12s;border:1px solid var(--border);background:var(--card);color:var(--t1);display:flex;align-items:center;gap:5px}
+    .tbtn:hover{border-color:var(--blue);color:var(--blue)}
+    .tbtn.primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:white;border:none}
+    .tbtn.primary:hover{opacity:.9}
+    .content{flex:1;overflow-y:auto;padding:20px 24px}
+
+    /* MEGA STATS */
+    .mega-stats{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+    .mega{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden}
+    .mega.hero{border-color:var(--blue);background:linear-gradient(135deg,rgba(79,142,247,.08),rgba(167,139,250,.05))}
+    .mega.hero::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple))}
+    .mega-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+    .mega-val{font-size:22px;font-weight:900;line-height:1}
+    .mega.hero .mega-val{font-size:28px;background:linear-gradient(135deg,var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .mega-delta{font-size:11px;font-weight:700;margin-top:5px;display:flex;align-items:center;gap:3px}
+    .up{color:var(--green)}.down{color:var(--red)}
+
+    /* ETF CHART AREA */
+    .etf-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:14px;position:relative;overflow:hidden}
+    .etf-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--purple),var(--cyan))}
+    .chart-wrap{height:180px;border-radius:var(--radius);overflow:hidden}
+    .chart-wrap canvas{width:100%!important;height:100%!important}
+
+    /* GRID */
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px}
+    .grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:14px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+    .card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px}
+    .card-hd h3{font-size:13px;font-weight:700}
+    .card-hd .badge{font-size:10px;font-weight:700;color:var(--blue);padding:2px 8px;background:var(--blue-l);border-radius:20px}
+    .card-body{padding:0 16px 14px;max-height:400px;overflow-y:auto}
+
+    /* HOLDINGS TABLE */
+    .h-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;cursor:pointer;transition:background .1s}
+    .h-row:hover{background:var(--card2);margin:0 -16px;padding:7px 16px}
+    .h-row:last-child{border:none}
+    .h-rank{font-size:10px;font-weight:700;color:var(--t3);width:24px;text-align:center;flex-shrink:0}
+    .h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .h-info{flex:1;min-width:0}
+    .h-sym{font-size:12px;font-weight:700;color:var(--t0)}
+    .h-name{font-size:10px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+    .h-score{text-align:right;min-width:42px}
+    .h-score-val{font-size:11px;font-weight:700;color:var(--blue)}
+    .h-bar{height:3px;border-radius:2px;background:var(--border);margin-top:3px;overflow:hidden;width:42px}
+    .h-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--purple))}
+    .h-val{text-align:right;min-width:70px}
+    .h-price{font-size:11px;font-weight:600}
+    .h-chg{font-size:10px;font-weight:600}
+    .h-weight{text-align:right;min-width:50px;font-size:11px;font-weight:700;color:var(--t2)}
+
+    /* SECTOR BARS */
+    .sector-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)}
+    .sector-row:last-child{border:none}
+    .sector-name{font-size:11px;font-weight:600;width:120px;flex-shrink:0;color:var(--t1)}
+    .sector-bar{flex:1;height:20px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+    .sector-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:6px}
+    .sector-pct{font-size:10px;font-weight:700;color:white;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+    .sector-val{font-size:10px;font-weight:600;color:var(--t3);width:85px;text-align:right;flex-shrink:0}
+
+    /* TRADES LOG */
+    .trade-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px}
+    .trade-row:last-child{border:none}
+    .trade-badge{padding:2px 8px;border-radius:20px;font-size:9px;font-weight:800;flex-shrink:0}
+    .trade-buy{background:var(--green-l);color:var(--green)}
+    .trade-sell{background:var(--red-l);color:var(--red)}
+    .trade-init{background:var(--blue-l);color:var(--blue)}
+    .trade-ticker{font-weight:700;width:50px;flex-shrink:0}
+    .trade-detail{flex:1;color:var(--t2)}
+    .trade-val{font-weight:700;text-align:right;min-width:80px}
+
+    /* 3% RULE INDICATOR */
+    .rule-panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;border-left:3px solid var(--green)}
+    .rule-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .rule-title{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+    .rule-active{font-size:10px;font-weight:700;background:var(--green-l);color:var(--green);padding:3px 10px;border-radius:20px}
+    .rule-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .rule-stat{text-align:center;padding:8px;background:var(--bg);border-radius:8px}
+    .rule-stat-val{font-size:16px;font-weight:800}
+    .rule-stat-label{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;margin-top:2px}
+
+    /* SEARCH */
+    .search-box{padding:6px 14px;font-size:12px;border:1px solid var(--border);background:var(--bg);color:var(--t0);border-radius:8px;outline:none;width:220px;font-family:inherit;transition:border .12s}
+    .search-box:focus{border-color:var(--blue)}
+    .search-box::placeholder{color:var(--t3)}
+
+    /* TABS */
+    .tabs{display:flex;gap:2px;margin-bottom:12px}
+    .tab{padding:6px 16px;font-size:12px;font-weight:600;border-radius:8px;border:none;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s}
+    .tab:hover{color:var(--t1)}.tab.on{background:var(--blue);color:white}
+
+    @media(max-width:1200px){.mega-stats{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:900px){.side{display:none}.mega-stats{grid-template-columns:repeat(2,1fr)}.grid-2,.grid-3{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const {useState, useEffect, useRef, useCallback, useMemo} = React;
+
+/* ================================================================
+   ETF STATE — Generated by etf_1000.py engine
+   In production, this loads from etf_state.json via API
+   For demo, we embed generated data inline
+   ================================================================ */
+
+// Generate realistic 1000-stock ETF data
+function generateETFData() {
+  const TOTAL_CAPITAL = 100000000000; // $100B
+  const sectors = [
+    {id:'TECH',name:'Technology',color:'#4F8EF7',pct:21.6},
+    {id:'HEALTH',name:'Healthcare',color:'#A78BFA',pct:15.1},
+    {id:'FIN',name:'Financials',color:'#FFB547',pct:13.8},
+    {id:'CONS_D',name:'Consumer Discretionary',color:'#FF4D6A',pct:11.3},
+    {id:'INDUST',name:'Industrials',color:'#22D3EE',pct:9.2},
+    {id:'ENERGY',name:'Energy',color:'#F97316',pct:7.5},
+    {id:'MATER',name:'Materials',color:'#84CC16',pct:4.9},
+    {id:'COMM',name:'Communication Services',color:'#EC4899',pct:4.6},
+    {id:'CONS_S',name:'Consumer Staples',color:'#8B5CF6',pct:4.5},
+    {id:'REAL',name:'Real Estate',color:'#06B6D4',pct:4.0},
+    {id:'UTIL',name:'Utilities',color:'#10B981',pct:3.5},
+  ];
+
+  const topStocks = [
+    {sym:'NVDA',name:'NVIDIA Corp.',sector:'TECH',price:892.50,score:82.3,chg:3.2,shares:2450000,tier:'mega'},
+    {sym:'TSLA',name:'Tesla Inc.',sector:'CONS_D',price:268.40,score:78.1,chg:-1.4,shares:6800000,tier:'mega'},
+    {sym:'PLTR',name:'Palantir Technologies',sector:'TECH',price:82.50,score:76.5,chg:5.1,shares:18000000,tier:'large'},
+    {sym:'SMCI',name:'Super Micro Computer',sector:'TECH',price:845.20,score:75.8,chg:4.8,shares:1600000,tier:'mid'},
+    {sym:'META',name:'Meta Platforms',sector:'COMM',price:592.30,score:74.2,chg:1.7,shares:2200000,tier:'mega'},
+    {sym:'AVGO',name:'Broadcom Inc.',sector:'TECH',price:1420.80,score:73.5,chg:2.3,shares:850000,tier:'mega'},
+    {sym:'ARM',name:'Arm Holdings plc',sector:'TECH',price:168.90,score:72.9,chg:3.8,shares:7200000,tier:'large'},
+    {sym:'AAPL',name:'Apple Inc.',sector:'TECH',price:228.60,score:72.1,chg:0.8,shares:5300000,tier:'mega'},
+    {sym:'MSFT',name:'Microsoft Corp.',sector:'TECH',price:435.20,score:71.8,chg:1.1,shares:2700000,tier:'mega'},
+    {sym:'COIN',name:'Coinbase Global',sector:'FIN',price:265.40,score:71.2,chg:-2.1,shares:4200000,tier:'large'},
+    {sym:'CRWD',name:'CrowdStrike Holdings',sector:'TECH',price:342.80,score:70.8,chg:2.9,shares:3100000,tier:'large'},
+    {sym:'MSTR',name:'MicroStrategy',sector:'TECH',price:1780.50,score:70.3,chg:4.5,shares:580000,tier:'mid'},
+    {sym:'AMD',name:'Advanced Micro Devices',sector:'TECH',price:178.90,score:69.7,chg:1.9,shares:5900000,tier:'large'},
+    {sym:'AMZN',name:'Amazon.com Inc.',sector:'CONS_D',price:198.40,score:69.2,chg:0.6,shares:5100000,tier:'mega'},
+    {sym:'GOOGL',name:'Alphabet Inc.',sector:'COMM',price:178.50,score:68.8,chg:0.3,shares:5600000,tier:'mega'},
+    {sym:'APP',name:'AppLovin Corp.',sector:'TECH',price:315.20,score:68.4,chg:6.2,shares:3000000,tier:'large'},
+    {sym:'LLY',name:'Eli Lilly',sector:'HEALTH',price:825.60,score:68.1,chg:1.5,shares:1300000,tier:'mega'},
+    {sym:'IONQ',name:'IonQ Inc.',sector:'TECH',price:42.80,score:67.9,chg:-3.2,shares:22000000,tier:'growth'},
+    {sym:'NFLX',name:'Netflix Inc.',sector:'COMM',price:895.20,score:67.5,chg:2.1,shares:1100000,tier:'mega'},
+    {sym:'JPM',name:'JPMorgan Chase',sector:'FIN',price:245.80,score:67.2,chg:0.9,shares:3800000,tier:'mega'},
+    {sym:'SNOW',name:'Snowflake Inc.',sector:'TECH',price:172.40,score:66.8,chg:-1.8,shares:5000000,tier:'large'},
+    {sym:'MARA',name:'Marathon Digital',sector:'TECH',price:28.90,score:66.5,chg:7.1,shares:28000000,tier:'growth'},
+    {sym:'DDOG',name:'Datadog Inc.',sector:'TECH',price:135.60,score:66.1,chg:2.4,shares:5800000,tier:'large'},
+    {sym:'SHOP',name:'Shopify Inc.',sector:'TECH',price:98.50,score:65.8,chg:1.2,shares:8200000,tier:'large'},
+    {sym:'V',name:'Visa Inc.',sector:'FIN',price:298.90,score:65.4,chg:0.5,shares:2800000,tier:'mega'},
+    {sym:'UBER',name:'Uber Technologies',sector:'TECH',price:78.20,score:65.1,chg:1.8,shares:9500000,tier:'large'},
+    {sym:'GE',name:'GE Aerospace',sector:'INDUST',price:198.40,score:64.7,chg:1.3,shares:3700000,tier:'mega'},
+    {sym:'PANW',name:'Palo Alto Networks',sector:'TECH',price:365.80,score:64.3,chg:0.7,shares:2000000,tier:'large'},
+    {sym:'SPOT',name:'Spotify Technology',sector:'COMM',price:562.40,score:63.9,chg:3.4,shares:1200000,tier:'large'},
+    {sym:'UNH',name:'UnitedHealth Group',sector:'HEALTH',price:545.20,score:63.5,chg:-0.3,shares:1500000,tier:'mega'},
+  ];
+
+  // Generate the remaining ~970 stocks
+  const allTickers = [
+    // Already in top 30 above, plus hundreds more
+    'ORCL','CRM','ADBE','INTC','CSCO','ACN','IBM','TXN','QCOM','INTU',
+    'AMAT','ISRG','NOW','LRCX','MU','ADI','KLAC','SNPS','CDNS','MRVL',
+    'FTNT','WDAY','NXPI','MCHP','ON','TEAM','ZS','NET','HUBS','DELL',
+    'HPQ','HPE','DASH','ABNB','SQ','RBLX','TWLO','MDB','OKTA','TTD',
+    'BAC','WFC','GS','MS','SPGI','BLK','C','SCHW','AXP','CB',
+    'PGR','MMC','ICE','CME','AON','USB','PNC','COF','DFS','PYPL',
+    'HOOD','SOFI','AFRM','BX','KKR','APO','MCO','MSCI','NDAQ',
+    'UNH','JNJ','ABBV','MRK','PFE','TMO','ABT','DHR','AMGN','BMY',
+    'GILD','MDT','SYK','ELV','CI','CVS','HCA','REGN','VRTX','BSX',
+    'ZTS','DXCM','MRNA','BIIB','GEHC','MCK','COR','CRSP','HIMS',
+    'HD','MCD','NKE','SBUX','LOW','TJX','BKNG','CMG','MAR','HLT',
+    'ORLY','AZO','ROST','GM','F','RCL','LULU','ABNB','DKNG','RIVN',
+    'PG','KO','PEP','COST','WMT','PM','MDLZ','CL','KMB','STZ',
+    'DIS','CMCSA','T','VZ','TMUS','EA','TTWO','SNAP','PINS','RDDT',
+    'CAT','RTX','UNP','HON','BA','LMT','UPS','DE','ADP','GD',
+    'NOC','ITW','ETN','EMR','FDX','CSX','WM','TT','AXON','URI',
+    'XOM','CVX','COP','SLB','OXY','DVN','FANG','KMI','WMB','CEG',
+    'LIN','APD','SHW','FCX','NEM','ECL','DOW','NUE','GOLD',
+    'PLD','AMT','CCI','EQIX','PSA','DLR','SPG','O','CBRE',
+    'NEE','DUK','SO','AEP','VST','PCG','AES','NRG',
+    'TSM','ASML','SAP','NVO','MELI','BABA','PDD','SE',
+    'AI','SOUN','UPST','PATH','MNDY','DUOL','TOST',
+    'RIOT','CLSK','BITF','HUT','ENPH','FSLR','RKLB','JOBY',
+    'ANET','FICO','PLTR','DELL','SMCI',
+  ].filter(t => !topStocks.find(s => s.sym === t));
+
+  const sectorList = ['TECH','HEALTH','FIN','CONS_D','INDUST','ENERGY','MATER','COMM','CONS_S','REAL','UTIL'];
+  const tiers = ['mega','large','mid','growth'];
+
+  // Build full holdings
+  let fullHoldings = [...topStocks];
+  const totalToGenerate = 1000 - topStocks.length;
+
+  for(let i = 0; i < totalToGenerate; i++) {
+    const ticker = allTickers[i % allTickers.length] || `STK${String(i).padStart(3,'0')}`;
+    const seed = ticker.split('').reduce((a,c) => a + c.charCodeAt(0), 0);
+    const sIdx = seed % sectorList.length;
+    const tIdx = Math.min(3, Math.floor((i / totalToGenerate) * 4));
+    const basePrice = [200,150,80,25][tIdx] * (0.5 + (seed % 100)/50);
+    const score = Math.max(10, 65 - (i * 0.055) + (Math.sin(seed) * 8));
+    const chg = (Math.sin(seed * 0.7) * 4);
+
+    fullHoldings.push({
+      sym: ticker,
+      name: ticker + ' Corp.',
+      sector: sectorList[sIdx],
+      price: Math.round(basePrice * 100) / 100,
+      score: Math.round(score * 10) / 10,
+      chg: Math.round(chg * 100) / 100,
+      shares: Math.round(TOTAL_CAPITAL * (score / 60000) / basePrice),
+      tier: tiers[tIdx],
+    });
+  }
+
+  // Sort by score
+  fullHoldings.sort((a,b) => b.score - a.score);
+
+  // Calculate weights
+  const totalScore = fullHoldings.reduce((s,h) => s + Math.pow(h.score, 1.5), 0);
+  fullHoldings = fullHoldings.map((h, i) => ({
+    ...h,
+    rank: i + 1,
+    weight: Math.round((Math.pow(h.score, 1.5) / totalScore) * 10000) / 100,
+    value: Math.round(h.shares * h.price),
+    pnl: Math.round(h.chg * h.shares * h.price / 100),
+  }));
+
+  const totalValue = fullHoldings.reduce((s,h) => s + h.value, 0);
+  const totalPnl = fullHoldings.reduce((s,h) => s + h.pnl, 0);
+
+  return {
+    holdings: fullHoldings,
+    sectors,
+    totalValue,
+    totalPnl,
+    totalPnlPct: (totalPnl / TOTAL_CAPITAL) * 100,
+    totalPositions: fullHoldings.length,
+    totalTrades: 4150,
+    totalBuys: 2903,
+    totalSells: 1247,
+    cash: 75007,
+  };
+}
+
+/* ====== PRICE ENGINE ====== */
+function useLiveETF() {
+  const [data, setData] = useState(() => generateETFData());
+  const [etfHistory, setEtfHistory] = useState(() =>
+    Array.from({length: 100}, (_, i) => {
+      const base = 100;
+      return Math.round((base + Math.sin(i * 0.12) * 2 + (i * 0.02) + (Math.random() - 0.48) * 0.5) * 100) / 100;
+    })
+  );
+  const [tradeLog, setTradeLog] = useState([]);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setTick(t => t + 1);
+      setData(prev => {
+        let newTrades = [];
+        const newHoldings = prev.holdings.map(h => {
+          const vol = 0.0003 + Math.random() * 0.0006;
+          const drift = (Math.random() - 0.497) * vol * h.price;
+          const newPrice = Math.round((h.price + drift) * 100) / 100;
+          const newChg = Math.round((((newPrice - h.price * (100 / (100 + h.chg))) / (h.price * (100 / (100 + h.chg)))) * 100) * 100) / 100 || h.chg + (drift / h.price * 100);
+
+          // 3% rule check
+          let newShares = h.shares;
+          if (Math.abs(newChg) >= 3 && Math.random() < 0.02) {
+            if (newChg <= -3) {
+              const sellShares = Math.max(1, Math.floor(h.shares * 0.5));
+              newShares = h.shares - sellShares;
+              newTrades.push({
+                action: 'SELL',
+                ticker: h.sym,
+                shares: sellShares,
+                price: newPrice,
+                value: sellShares * newPrice,
+                reason: `3% DROP RULE — ${h.sym} down ${newChg.toFixed(1)}%`,
+                time: new Date().toLocaleTimeString(),
+              });
+            } else if (newChg >= 3) {
+              const buyShares = Math.max(1, Math.floor(h.shares * 0.5));
+              newShares = h.shares + buyShares;
+              newTrades.push({
+                action: 'BUY',
+                ticker: h.sym,
+                shares: buyShares,
+                price: newPrice,
+                value: buyShares * newPrice,
+                reason: `3% RISE RULE — ${h.sym} up +${newChg.toFixed(1)}%`,
+                time: new Date().toLocaleTimeString(),
+              });
+            }
+          }
+
+          return {
+            ...h,
+            price: newPrice,
+            chg: Math.round(newChg * 100) / 100,
+            shares: newShares,
+            value: Math.round(newShares * newPrice),
+            pnl: Math.round(newChg * newShares * newPrice / 100),
+            score: Math.max(5, Math.min(95, h.score + (Math.random() - 0.5) * 0.15)),
+          };
+        });
+
+        if (newTrades.length > 0) {
+          setTradeLog(prev => [...newTrades, ...prev].slice(0, 100));
+        }
+
+        const totalValue = newHoldings.reduce((s,h) => s + h.value, 0);
+        const totalPnl = newHoldings.reduce((s,h) => s + h.pnl, 0);
+
+        return {
+          ...prev,
+          holdings: newHoldings,
+          totalValue,
+          totalPnl,
+          totalPnlPct: (totalPnl / 100000000000) * 100,
+          totalTrades: prev.totalTrades + newTrades.length,
+          totalBuys: prev.totalBuys + newTrades.filter(t => t.action === 'BUY').length,
+          totalSells: prev.totalSells + newTrades.filter(t => t.action === 'SELL').length,
+        };
+      });
+
+      setEtfHistory(prev => {
+        const last = prev[prev.length - 1];
+        const next = Math.round((last + (Math.random() - 0.498) * 0.15) * 100) / 100;
+        return [...prev.slice(1), next];
+      });
+    }, 2000);
+    return () => clearInterval(iv);
+  }, []);
+
+  return { data, etfHistory, tradeLog, tick };
+}
+
+/* ====== CHART ====== */
+function Chart({history, height = 180}) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const c = ref.current; if (!c || !history.length) return;
+    const ctx = c.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const r = c.getBoundingClientRect();
+    c.width = r.width * dpr; c.height = r.height * dpr;
+    ctx.scale(dpr, dpr);
+    const W = r.width, H = r.height;
+    const min = Math.min(...history) * .9985, max = Math.max(...history) * 1.0015, rng = max - min || 1;
+    const toX = i => (i / (history.length - 1)) * W, toY = v => H - ((v - min) / rng) * (H - 12) - 6;
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,.04)'; ctx.lineWidth = 1;
+    for (let i = 0; i < 4; i++) { const y = 6 + (i / 3) * (H - 12); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    const isUp = history[history.length - 1] >= history[0];
+    const lc = isUp ? '#00D68F' : '#FF4D6A';
+
+    // Fill
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, isUp ? 'rgba(0,214,143,.15)' : 'rgba(255,77,106,.1)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.beginPath(); ctx.moveTo(toX(0), toY(history[0]));
+    for (let i = 1; i < history.length; i++) ctx.lineTo(toX(i), toY(history[i]));
+    ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+
+    // Line
+    ctx.beginPath(); ctx.moveTo(toX(0), toY(history[0]));
+    for (let i = 1; i < history.length; i++) ctx.lineTo(toX(i), toY(history[i]));
+    ctx.strokeStyle = lc; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+
+    // Dot
+    const lx = toX(history.length - 1), ly = toY(history[history.length - 1]);
+    ctx.beginPath(); ctx.arc(lx, ly, 4, 0, Math.PI * 2); ctx.fillStyle = lc; ctx.fill();
+    ctx.beginPath(); ctx.arc(lx, ly, 8, 0, Math.PI * 2); ctx.fillStyle = isUp ? 'rgba(0,214,143,.2)' : 'rgba(255,77,106,.15)'; ctx.fill();
+  }, [history]);
+  return <canvas ref={ref} style={{width: '100%', height: '100%'}}/>;
+}
+
+/* ====== FORMATTING ====== */
+function fmt(n) {
+  if (Math.abs(n) >= 1e12) return '$' + (n/1e12).toFixed(2) + 'T';
+  if (Math.abs(n) >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+  if (Math.abs(n) >= 1e6) return '$' + (n/1e6).toFixed(1) + 'M';
+  if (Math.abs(n) >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+  return '$' + n.toFixed(0);
+}
+
+function fmtFull(n) {
+  return '$' + n.toLocaleString(undefined, {maximumFractionDigits: 0});
+}
+
+/* ====== SECTOR COLORS ====== */
+const SECTOR_COLORS = {
+  TECH:'#4F8EF7', HEALTH:'#A78BFA', FIN:'#FFB547', CONS_D:'#FF4D6A',
+  INDUST:'#22D3EE', ENERGY:'#F97316', MATER:'#84CC16', COMM:'#EC4899',
+  CONS_S:'#8B5CF6', REAL:'#06B6D4', UTIL:'#10B981',
+};
+
+/* ====== MAIN APP ====== */
+function App() {
+  const {data, etfHistory, tradeLog, tick} = useLiveETF();
+  const [page, setPage] = useState('overview');
+  const [search, setSearch] = useState('');
+  const [viewCount, setViewCount] = useState(50);
+
+  const etfPrice = useMemo(() => {
+    const base = data.holdings.slice(0, 30).reduce((s, h) => s + h.price * (h.score / 100), 0) / 3;
+    return Math.round(base * 100) / 100;
+  }, [tick]);
+
+  const filtered = useMemo(() => {
+    if (!search) return data.holdings;
+    const q = search.toUpperCase();
+    return data.holdings.filter(h => h.sym.includes(q) || h.name.toUpperCase().includes(q));
+  }, [data.holdings, search]);
+
+  return (
+    <div className="shell">
+      {/* SIDEBAR */}
+      <aside className="side">
+        <div className="side-hd">
+          <div className="side-logo">TS</div>
+          <div>
+            <div className="side-title">TrendScore ETF</div>
+            <div className="side-sub">1000 STOCKS · $100B AUM</div>
+          </div>
+        </div>
+        <div className="side-nav">
+          <div className="side-label">Dashboard</div>
+          <button className={`side-item ${page==='overview'?'on':''}`} onClick={() => setPage('overview')}>
+            <span>Overview</span>
+            <span className="side-stat up">{data.totalPnlPct >= 0 ? '+' : ''}{data.totalPnlPct.toFixed(2)}%</span>
+          </button>
+          <button className={`side-item ${page==='holdings'?'on':''}`} onClick={() => setPage('holdings')}>
+            <span>All Holdings</span>
+            <span className="side-stat" style={{color:'var(--t3)'}}>{data.totalPositions}</span>
+          </button>
+          <button className={`side-item ${page==='trades'?'on':''}`} onClick={() => setPage('trades')}>
+            <span>Trade Log</span>
+            <span className="side-stat" style={{color:'var(--amber)'}}>{data.totalTrades}</span>
+          </button>
+
+          <div className="side-label" style={{marginTop:12}}>Top 20 by Score</div>
+          {data.holdings.slice(0, 20).map(h => (
+            <button key={h.sym} className="side-item" onClick={() => {setPage('holdings'); setSearch(h.sym)}}>
+              <span style={{width:30,fontWeight:700,fontSize:10,color:SECTOR_COLORS[h.sector]||'var(--t2)'}}>{h.sym.slice(0,4)}</span>
+              <span style={{flex:1,fontSize:11}}>{h.sym}</span>
+              <span className={`side-stat ${h.chg>=0?'up':'down'}`}>{h.chg>=0?'+':''}{h.chg.toFixed(1)}%</span>
+            </button>
+          ))}
+        </div>
+        <div className="side-bottom">
+          <div className="side-user">
+            <div className="side-avatar">HD</div>
+            <div><div className="side-uname">Hagay D.</div><div className="side-uplan">Institutional</div></div>
+          </div>
+        </div>
+      </aside>
+
+      {/* MAIN CONTENT */}
+      <div className="main">
+        <div className="topbar">
+          <div>
+            <h1>TrendScore-1000 ETF <span className="live-badge">LIVE</span></h1>
+            <p>$100B auto-weighted across 1,000 trending stocks · 3% Rule active on all positions</p>
+          </div>
+          <div className="top-actions">
+            <input className="search-box" placeholder="Search 1000 stocks..." value={search} onChange={e => setSearch(e.target.value)} />
+            <button className="tbtn">Export CSV</button>
+            <button className="tbtn primary">Invest in ETF</button>
+          </div>
+        </div>
+
+        <div className="content">
+          {/* MEGA STATS */}
+          <div className="mega-stats">
+            <div className="mega hero">
+              <div className="mega-label">Total Portfolio Value</div>
+              <div className="mega-val">{fmt(data.totalValue)}</div>
+              <div className={`mega-delta ${data.totalPnlPct>=0?'up':'down'}`}>
+                {data.totalPnlPct>=0?'':''}
+                {fmt(data.totalPnl)} ({data.totalPnlPct>=0?'+':''}{data.totalPnlPct.toFixed(3)}%)
+              </div>
+            </div>
+            <div className="mega">
+              <div className="mega-label">Positions</div>
+              <div className="mega-val">{data.totalPositions.toLocaleString()}</div>
+              <div className="mega-delta" style={{color:'var(--t3)'}}>Across 11 sectors</div>
+            </div>
+            <div className="mega">
+              <div className="mega-label">Total Trades</div>
+              <div className="mega-val">{data.totalTrades.toLocaleString()}</div>
+              <div className="mega-delta" style={{color:'var(--amber)'}}>
+                {data.totalBuys} buys · {data.totalSells} sells
+              </div>
+            </div>
+            <div className="mega">
+              <div className="mega-label">Top Trending</div>
+              <div className="mega-val" style={{color:'var(--cyan)'}}>{data.holdings[0]?.sym}</div>
+              <div className="mega-delta" style={{color:'var(--blue)'}}>Score: {data.holdings[0]?.score.toFixed(1)}/100</div>
+            </div>
+            <div className="mega">
+              <div className="mega-label">ETF Unit Price</div>
+              <div className="mega-val">${etfPrice.toFixed(2)}</div>
+              <div className={`mega-delta ${data.totalPnlPct>=0?'up':'down'}`}>
+                {data.totalPnlPct>=0?'+':''}{data.totalPnlPct.toFixed(2)}% today
+              </div>
+            </div>
+          </div>
+
+          {/* 3% RULE PANEL */}
+          <div className="rule-panel">
+            <div className="rule-header">
+              <div className="rule-title">
+                3% Auto-Trade Rule
+                <span className="rule-active">ACTIVE ON ALL 1000</span>
+              </div>
+            </div>
+            <div className="rule-stats">
+              <div className="rule-stat">
+                <div className="rule-stat-val" style={{color:'var(--red)'}}>-3%</div>
+                <div className="rule-stat-label">Sell Threshold</div>
+              </div>
+              <div className="rule-stat">
+                <div className="rule-stat-val" style={{color:'var(--green)'}}>+3%</div>
+                <div className="rule-stat-label">Buy Threshold</div>
+              </div>
+              <div className="rule-stat">
+                <div className="rule-stat-val">50%</div>
+                <div className="rule-stat-label">Position Action</div>
+              </div>
+              <div className="rule-stat">
+                <div className="rule-stat-val">5/day</div>
+                <div className="rule-stat-label">Max Cycles/Stock</div>
+              </div>
+            </div>
+          </div>
+
+          {/* CHART + SECTORS */}
+          <div className="grid-2">
+            <div className="etf-card">
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+                <div>
+                  <div style={{fontSize:14,fontWeight:800}}>ETF Performance</div>
+                  <div style={{fontSize:11,color:'var(--t3)'}}>Composite of all 1000 holdings</div>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  <div style={{fontSize:22,fontWeight:900}}>${etfPrice.toFixed(2)}</div>
+                  <div className={`${data.totalPnlPct>=0?'up':'down'}`} style={{fontSize:12,fontWeight:700}}>
+                    {data.totalPnlPct>=0?'+':''}{data.totalPnlPct.toFixed(3)}%
+                  </div>
+                </div>
+              </div>
+              <div className="chart-wrap">
+                <Chart history={etfHistory}/>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-hd"><h3>Sector Allocation</h3><div className="badge">11 sectors</div></div>
+              <div className="card-body">
+                {data.sectors.map(s => (
+                  <div className="sector-row" key={s.id}>
+                    <div className="sector-name">{s.name}</div>
+                    <div className="sector-bar">
+                      <div className="sector-fill" style={{width: s.pct * 2.5 + '%', background: s.color}}>
+                        {s.pct > 5 && <span className="sector-pct">{s.pct}%</span>}
+                      </div>
+                    </div>
+                    <div className="sector-val">{fmt(data.totalValue * s.pct / 100)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* HOLDINGS + TRADES */}
+          <div className="grid-2">
+            <div className="card">
+              <div className="card-hd">
+                <h3>Top Holdings by TrendScore</h3>
+                <div className="badge">{filtered.length} stocks</div>
+              </div>
+              <div className="card-body">
+                {/* Header */}
+                <div style={{display:'flex',alignItems:'center',gap:8,padding:'6px 0',borderBottom:'1px solid var(--border)',fontSize:10,fontWeight:700,color:'var(--t3)'}}>
+                  <div style={{width:24,textAlign:'center'}}>#</div>
+                  <div style={{width:8}}></div>
+                  <div style={{flex:1}}>Stock</div>
+                  <div style={{width:42,textAlign:'right'}}>Score</div>
+                  <div style={{width:50,textAlign:'right'}}>Weight</div>
+                  <div style={{width:70,textAlign:'right'}}>Value</div>
+                  <div style={{width:55,textAlign:'right'}}>Change</div>
+                </div>
+                {filtered.slice(0, viewCount).map((h, i) => (
+                  <div className="h-row" key={h.sym + i}>
+                    <div className="h-rank">{h.rank || i+1}</div>
+                    <div className="h-dot" style={{background: SECTOR_COLORS[h.sector] || '#666'}}></div>
+                    <div className="h-info">
+                      <div className="h-sym">{h.sym}</div>
+                      <div className="h-name">{h.name}</div>
+                    </div>
+                    <div className="h-score">
+                      <div className="h-score-val">{h.score.toFixed(1)}</div>
+                      <div className="h-bar"><div className="h-bar-fill" style={{width: h.score + '%'}}/></div>
+                    </div>
+                    <div className="h-weight">{h.weight?.toFixed(2) || '0.10'}%</div>
+                    <div className="h-val">
+                      <div className="h-price">{fmt(h.value)}</div>
+                    </div>
+                    <div style={{width:55,textAlign:'right'}}>
+                      <div className={`h-chg ${h.chg>=0?'up':'down'}`} style={{fontSize:11,fontWeight:700}}>
+                        {h.chg>=0?'+':''}{h.chg.toFixed(1)}%
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {filtered.length > viewCount && (
+                  <div style={{textAlign:'center',padding:12}}>
+                    <button onClick={() => setViewCount(v => v + 50)} style={{
+                      background:'var(--blue-l)',color:'var(--blue)',border:'none',
+                      padding:'8px 24px',borderRadius:8,fontSize:12,fontWeight:700,cursor:'pointer'
+                    }}>
+                      Show more ({filtered.length - viewCount} remaining)
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-hd">
+                <h3>Live Trade Activity</h3>
+                <div className="badge" style={{background:'var(--amber-l)',color:'var(--amber)'}}>3% Rule</div>
+              </div>
+              <div className="card-body">
+                {tradeLog.length === 0 ? (
+                  <div style={{textAlign:'center',padding:30,color:'var(--t3)'}}>
+                    <div style={{fontSize:28,marginBottom:8}}>Waiting for 3% triggers...</div>
+                    <div style={{fontSize:12}}>Trades execute when any stock moves 3% from daily open</div>
+                  </div>
+                ) : (
+                  tradeLog.slice(0, 30).map((t, i) => (
+                    <div className="trade-row" key={i}>
+                      <div className={`trade-badge ${t.action === 'BUY' ? 'trade-buy' : 'trade-sell'}`}>
+                        {t.action}
+                      </div>
+                      <div className="trade-ticker">{t.ticker}</div>
+                      <div className="trade-detail">
+                        {t.shares.toLocaleString()} shares @ ${t.price.toFixed(2)}
+                      </div>
+                      <div className={`trade-val ${t.action === 'BUY' ? 'up' : 'down'}`}>
+                        {fmt(t.value)}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* TrendScore Breakdown for #1 */}
+          <div className="grid-3">
+            <div className="card">
+              <div className="card-hd"><h3>TrendScore Formula</h3></div>
+              <div className="card-body">
+                {[
+                  {label:'Price Momentum (5d)',pct:20,color:'var(--blue)',val:data.holdings[0]?.score * 0.95},
+                  {label:'Price Momentum (20d)',pct:15,color:'var(--cyan)',val:data.holdings[0]?.score * 0.88},
+                  {label:'Volume Spike',pct:20,color:'var(--purple)',val:data.holdings[0]?.score * 1.05},
+                  {label:'Volatility',pct:10,color:'var(--amber)',val:data.holdings[0]?.score * 0.72},
+                  {label:'Market Cap Tier',pct:10,color:'var(--green)',val:90},
+                  {label:'Sector Momentum',pct:10,color:'var(--red)',val:data.holdings[0]?.score * 0.8},
+                  {label:'Relative Strength',pct:15,color:'#EC4899',val:data.holdings[0]?.score * 0.9},
+                ].map((b,i) => (
+                  <div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'5px 0',borderBottom:'1px solid var(--border)'}}>
+                    <div style={{fontSize:11,fontWeight:600,width:120,color:'var(--t1)'}}>{b.label}</div>
+                    <div style={{fontSize:9,fontWeight:700,color:'var(--t3)',width:25}}>{b.pct}%</div>
+                    <div style={{flex:1,height:6,background:'var(--border)',borderRadius:3,overflow:'hidden'}}>
+                      <div style={{height:'100%',width: Math.min(100, b.val || 50) + '%',background:b.color,borderRadius:3}}></div>
+                    </div>
+                    <div style={{fontSize:11,fontWeight:700,color:b.color,width:30,textAlign:'right'}}>{Math.round(b.val || 50)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-hd"><h3>Portfolio Tier Breakdown</h3></div>
+              <div className="card-body">
+                {[
+                  {name:'Mega Cap (>$200B)',pct:35,count:36,color:'var(--blue)'},
+                  {name:'Large Cap ($50-200B)',pct:30,count:252,color:'var(--cyan)'},
+                  {name:'Mid Cap ($10-50B)',pct:25,count:511,color:'var(--purple)'},
+                  {name:'Growth (<$10B)',pct:10,count:205,color:'var(--amber)'},
+                ].map((t,i) => (
+                  <div key={i} style={{padding:'10px 0',borderBottom:'1px solid var(--border)'}}>
+                    <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                      <span style={{fontSize:12,fontWeight:600}}>{t.name}</span>
+                      <span style={{fontSize:11,fontWeight:700,color:t.color}}>{t.pct}%</span>
+                    </div>
+                    <div style={{height:8,background:'var(--border)',borderRadius:4,overflow:'hidden'}}>
+                      <div style={{height:'100%',width:t.pct*2.5+'%',background:t.color,borderRadius:4}}></div>
+                    </div>
+                    <div style={{fontSize:10,color:'var(--t3)',marginTop:3}}>{t.count} stocks · {fmt(data.totalValue * t.pct / 100)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-hd"><h3>How It Works</h3></div>
+              <div className="card-body">
+                <div style={{fontSize:12,color:'var(--t1)',lineHeight:1.8}}>
+                  <div style={{padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+                    <strong style={{color:'var(--blue)'}}>1. Stock Universe</strong><br/>
+                    1,000 stocks from S&P 500, Russell 1000, NASDAQ-100, and trending growth names
+                  </div>
+                  <div style={{padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+                    <strong style={{color:'var(--cyan)'}}>2. TrendScore</strong><br/>
+                    Each stock scored 0-100 based on price momentum, volume spikes, volatility, and relative strength
+                  </div>
+                  <div style={{padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+                    <strong style={{color:'var(--purple)'}}>3. Weighted Allocation</strong><br/>
+                    $100B distributed proportionally — higher score = bigger position (score^1.5 weighting)
+                  </div>
+                  <div style={{padding:'8px 0',borderBottom:'1px solid var(--border)'}}>
+                    <strong style={{color:'var(--green)'}}>4. 3% Rule</strong><br/>
+                    Every position monitored: drop 3% = sell 50%, rise 3% = buy 50% more. Max 5 cycles/day.
+                  </div>
+                  <div style={{padding:'8px 0'}}>
+                    <strong style={{color:'var(--amber)'}}>5. Auto-Rebalance</strong><br/>
+                    TrendScores recalculated every 5 min. Portfolio rebalances to match new weights automatically.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

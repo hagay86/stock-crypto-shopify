@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auto Trader Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#F7F8FA;--white:#FFF;--card:#FFF;
+      --border:#ECEEF2;--border-l:#F3F4F6;
+      --blue:#4F6EF7;--blue-l:#EEF2FF;--blue-d:#3B5AE5;
+      --green:#10B981;--green-l:#ECFDF5;
+      --red:#EF4444;--red-l:#FEF2F2;
+      --amber:#F59E0B;--amber-l:#FFFBEB;
+      --purple:#8B5CF6;--purple-l:#F5F3FF;
+      --t0:#1A1D26;--t1:#3D4352;--t2:#6B7280;--t3:#9CA3AF;
+      --radius:10px;--radius-lg:14px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',-apple-system,sans-serif;background:var(--bg);color:var(--t0);-webkit-font-smoothing:antialiased;height:100vh;overflow:hidden}
+    ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#DDD;border-radius:3px}
+
+    .shell{display:flex;height:100vh}
+
+    /* SIDEBAR */
+    .side{width:260px;background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+    .side-hd{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+    .side-logo{width:28px;height:28px;background:var(--blue);border-radius:7px;display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:800}
+    .side-title{font-size:15px;font-weight:800}
+    .side-nav{padding:10px 10px 0}
+    .side-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;padding:8px 10px 6px}
+    .side-item{display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:13px;font-weight:500;color:var(--t1);border-radius:8px;cursor:pointer;border:none;background:none;width:100%;text-align:left;transition:all .12s}
+    .side-item:hover{background:var(--bg)}
+    .side-item.on{background:var(--blue-l);color:var(--blue);font-weight:600}
+    .side-item .si{width:20px;text-align:center;font-size:15px}
+    .side-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--border-l)}
+    .side-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px}
+    .side-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700}
+    .side-uname{font-size:13px;font-weight:600}
+    .side-uplan{font-size:11px;color:var(--t3)}
+
+    /* MAIN */
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 28px;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0}
+    .topbar h1{font-size:18px;font-weight:800}
+    .topbar p{font-size:12px;color:var(--t2);margin-top:1px}
+    .top-actions{display:flex;gap:8px}
+    .tbtn{padding:7px 16px;font-size:12px;font-weight:600;border-radius:8px;cursor:pointer;transition:all .12s;border:1px solid var(--border);background:white;color:var(--t1);display:flex;align-items:center;gap:5px}
+    .tbtn:hover{border-color:var(--blue);color:var(--blue)}
+    .tbtn.primary{background:var(--blue);color:white;border-color:var(--blue)}
+    .tbtn.primary:hover{background:var(--blue-d)}
+    .content{flex:1;overflow-y:auto;padding:24px 28px}
+
+    /* KPI ROW */
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+    .kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px}
+    .kpi-label{font-size:10px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+    .kpi-val{font-size:24px;font-weight:800;line-height:1}
+    .kpi-delta{font-size:12px;font-weight:600;margin-top:5px;display:flex;align-items:center;gap:3px}
+    .up{color:var(--green)}.down{color:var(--red)}
+
+    /* ETF CARD */
+    .etf-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px;position:relative;overflow:hidden}
+    .etf-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple))}
+    .etf-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px}
+    .etf-left{display:flex;gap:14px;align-items:center}
+    .etf-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:800}
+    .etf-name{font-size:20px;font-weight:800}
+    .etf-ticker{font-size:13px;color:var(--t2);margin-top:1px}
+    .etf-price-area{text-align:right}
+    .etf-price{font-size:28px;font-weight:800}
+    .etf-change{font-size:13px;font-weight:600;margin-top:2px}
+    .live-dot{display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-right:5px;animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+    /* CHART */
+    .chart-section{margin-bottom:18px}
+    .chart-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .chart-top h3{font-size:14px;font-weight:700}
+    .pills{display:flex;gap:2px}
+    .pill{padding:4px 12px;font-size:11px;font-weight:600;border-radius:6px;border:none;cursor:pointer;background:transparent;color:var(--t3);transition:all .12s}
+    .pill:hover{color:var(--t1)}.pill.on{background:var(--blue);color:white}
+    .chart-wrap{height:200px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;overflow:hidden}
+    .chart-wrap canvas{width:100%!important;height:100%!important}
+
+    /* HOLDINGS TABLE */
+    .grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-bottom:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+    .card-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 10px}
+    .card-hd h3{font-size:13px;font-weight:700}
+    .card-body{padding:0 20px 16px}
+
+    .h-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border-l)}
+    .h-row:last-child{border:none}
+    .h-rank{font-size:11px;font-weight:700;color:var(--t3);width:20px;text-align:center}
+    .h-sym-box{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:white;flex-shrink:0}
+    .h-info{flex:1;min-width:0}
+    .h-name{font-size:13px;font-weight:600}
+    .h-sub{font-size:11px;color:var(--t3)}
+    .h-score{text-align:right;min-width:60px}
+    .h-score-val{font-size:13px;font-weight:700;color:var(--blue)}
+    .h-score-bar{height:4px;border-radius:2px;background:var(--border-l);margin-top:4px;overflow:hidden}
+    .h-score-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--blue),var(--purple))}
+    .h-alloc{text-align:right;min-width:50px}
+    .h-alloc-val{font-size:13px;font-weight:700}
+    .h-price-col{text-align:right;min-width:70px}
+    .h-price{font-size:13px;font-weight:600}
+    .h-chg{font-size:11px;font-weight:600}
+
+    /* TREND SCORE BREAKDOWN */
+    .ts-row{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-l)}
+    .ts-row:last-child{border:none}
+    .ts-label{font-size:12px;font-weight:600;flex:1;color:var(--t1)}
+    .ts-bar{flex:2;height:6px;background:var(--border-l);border-radius:3px;overflow:hidden}
+    .ts-fill{height:100%;border-radius:3px}
+    .ts-val{font-size:12px;font-weight:700;width:40px;text-align:right}
+
+    /* AUTO RULES */
+    .rules-section{margin-bottom:16px}
+    .rules-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .rules-hd h3{font-size:16px;font-weight:800}
+    .rule-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:8px;border-left:3px solid var(--green);transition:all .12s}
+    .rule-card:hover{border-color:var(--blue)}
+    .rule-card.off{border-left-color:var(--t3);opacity:.6}
+    .rule-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .rule-type{font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px}
+    .rule-actions{display:flex;gap:4px}
+    .rule-btn{font-size:11px;font-weight:600;padding:3px 10px;border-radius:6px;border:none;cursor:pointer;transition:all .12s}
+    .rule-active{background:var(--green-l);color:var(--green)}
+    .rule-paused{background:var(--red-l);color:var(--red)}
+    .rule-del{background:var(--bg);color:var(--t3)}.rule-del:hover{background:var(--red-l);color:var(--red)}
+    .rule-text{font-size:14px;font-weight:600;line-height:1.5}
+    .rule-status{font-size:11px;color:var(--t3);margin-top:3px}
+
+    /* ACTIVITY LOG */
+    .log-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--border-l);font-size:12px}
+    .log-row:last-child{border:none}
+    .log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .log-time{color:var(--t3);width:65px;flex-shrink:0}
+    .log-msg{flex:1;color:var(--t1)}
+    .log-empty{font-size:13px;color:var(--t3);text-align:center;padding:20px 0}
+
+    /* MY STOCKS PAGE */
+    .stock-detail-top{display:flex;gap:16px;align-items:center;margin-bottom:20px}
+    .sd-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white}
+    .sd-name{font-size:22px;font-weight:800}
+    .sd-full{font-size:13px;color:var(--t2)}
+    .sd-price-area{margin-left:auto;text-align:right}
+    .sd-price{font-size:26px;font-weight:800}
+    .sd-chg{font-size:13px;font-weight:600}
+    .back-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--t2);background:none;border:none;cursor:pointer;padding:0;margin-bottom:16px}
+    .back-btn:hover{color:var(--blue)}
+
+    /* MODAL */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(3px);z-index:100;display:flex;align-items:center;justify-content:center;animation:fadeIn .15s ease}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .modal{background:var(--white);border-radius:18px;padding:28px;width:520px;max-width:92vw;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:slideUp .2s ease}
+    @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    .modal h2{font-size:18px;font-weight:800;margin-bottom:4px}
+    .modal .msub{font-size:13px;color:var(--t2);margin-bottom:20px}
+    .rule-types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+    .rtype{padding:14px;border:2px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all .12s;text-align:center}
+    .rtype:hover{border-color:var(--blue)}.rtype.sel{border-color:var(--blue);background:var(--blue-l)}
+    .rtype-icon{font-size:24px;margin-bottom:4px}
+    .rtype-name{font-size:13px;font-weight:700}
+    .rtype-desc{font-size:11px;color:var(--t2);margin-top:2px;line-height:1.4}
+    .rule-form{margin-top:12px}
+    .rule-sentence{font-size:15px;font-weight:600;line-height:2.2;padding:8px 0}
+    .rule-sentence select,.rule-sentence input{display:inline-block;padding:4px 10px;font-size:14px;font-weight:700;font-family:inherit;border:2px solid var(--border);border-radius:6px;background:var(--bg);color:var(--blue);outline:none;transition:all .12s;min-width:60px;text-align:center}
+    .rule-sentence select:focus,.rule-sentence input:focus{border-color:var(--blue)}
+    .rule-sentence input{width:70px}
+    .rule-sentence input[type=number]{-moz-appearance:textfield}
+    .rule-sentence input::-webkit-outer-spin-button,.rule-sentence input::-webkit-inner-spin-button{-webkit-appearance:none}
+    .modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+    .mbtn{padding:9px 22px;font-size:13px;font-weight:700;border-radius:8px;cursor:pointer;border:none;transition:all .12s}
+    .mbtn-x{background:var(--bg);color:var(--t2)}.mbtn-x:hover{background:var(--border)}
+    .mbtn-go{background:var(--blue);color:white}.mbtn-go:hover{background:var(--blue-d)}
+
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--t0);color:white;padding:10px 22px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:999;animation:slideUp .25s ease}
+
+    /* INVEST MODAL */
+    .invest-amt{display:flex;gap:8px;margin:16px 0}
+    .invest-preset{padding:8px 18px;font-size:14px;font-weight:700;border-radius:8px;border:2px solid var(--border);background:white;cursor:pointer;transition:all .12s;color:var(--t1)}
+    .invest-preset:hover{border-color:var(--blue);color:var(--blue)}
+    .invest-preset.sel{border-color:var(--blue);background:var(--blue-l);color:var(--blue)}
+    .invest-custom{flex:1;padding:8px 14px;font-size:14px;font-weight:700;font-family:inherit;border:2px solid var(--border);border-radius:8px;outline:none;color:var(--t0);text-align:center}
+    .invest-custom:focus{border-color:var(--blue)}
+
+    @media(max-width:900px){.side{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback} = React;
+
+/* ====== STOCK DATA ====== */
+const STOCKS_INIT = [
+  {sym:'AAPL',name:'Apple Inc.',color:'#333',price:218.27,shares:25,score:62},
+  {sym:'MSFT',name:'Microsoft',color:'#00A4EF',price:421.50,shares:12,score:55},
+  {sym:'NVDA',name:'NVIDIA',color:'#76B900',price:882.35,shares:6,score:83},
+  {sym:'AMZN',name:'Amazon',color:'#FF9900',price:194.60,shares:28,score:58},
+  {sym:'GOOGL',name:'Alphabet',color:'#4285F4',price:171.82,shares:32,score:39},
+  {sym:'META',name:'Meta Platforms',color:'#0668E1',price:582.14,shares:9,score:69},
+  {sym:'BRK.B',name:'Berkshire Hathaway',color:'#6E2C00',price:462.30,shares:12,score:44},
+  {sym:'TSLA',name:'Tesla',color:'#E31937',price:261.45,shares:20,score:72},
+  {sym:'AVGO',name:'Broadcom',color:'#CC092F',price:186.70,shares:28,score:49},
+  {sym:'JPM',name:'JPMorgan Chase',color:'#005EB8',price:232.80,shares:22,score:42},
+];
+
+const RULE_TYPES = [
+  {id:'stop_loss',icon:'🛡️',name:'Stop Loss',desc:'Sell if price drops too much',defaults:{pct:5,amt:100}},
+  {id:'take_profit',icon:'🎯',name:'Take Profit',desc:'Sell when price rises enough',defaults:{pct:10,amt:50}},
+  {id:'buy_dip',icon:'💰',name:'Buy the Dip',desc:'Buy more when price drops',defaults:{pct:3,shares:5}},
+  {id:'swing',icon:'🔄',name:'Swing Trade',desc:'Sell on drop, buy back on rise',defaults:{dpct:2,amt:50,upct:2}},
+  {id:'auto_invest',icon:'📅',name:'Auto Invest',desc:'Buy on a schedule',defaults:{freq:'week',amount:100}},
+  {id:'trailing_stop',icon:'📉',name:'Trailing Stop',desc:'Sell if it falls from peak',defaults:{pct:8,amt:100}},
+];
+
+/* ====== PRICE ENGINE ====== */
+function usePrices(init) {
+  const [stocks, setStocks] = useState(() => init.map(s => ({
+    ...s, base:s.price, prevClose:s.price, high:s.price,
+    history: Array.from({length:80},(_,i) => {
+      let p = s.price*(1+(Math.random()-.5)*.06);
+      p += Math.sin(i*.18)*s.price*.008;
+      return Math.round(p*100)/100;
+    }),
+    scoreBreakdown:{volume:Math.random()*40+30,quality:Math.random()*40+20,sentiment:Math.random()*30+40,spike:Math.random()*50+10}
+  })));
+
+  useEffect(()=>{
+    const iv=setInterval(()=>{
+      setStocks(prev=>prev.map(s=>{
+        const vol=.0003+Math.random()*.0005;
+        const drift=(Math.random()-.498)*vol*s.price;
+        const np=Math.round((s.price+drift)*100)/100;
+        const nh=Math.max(s.high,np);
+        // Slowly drift score
+        const ns = Math.max(10,Math.min(95, s.score + (Math.random()-.5)*0.3));
+        return{...s,price:np,high:nh,history:[...s.history.slice(1),np],score:Math.round(ns*10)/10};
+      }));
+    },2000);
+    return()=>clearInterval(iv);
+  },[]);
+  return stocks;
+}
+
+/* ====== CHART ====== */
+function Chart({history}) {
+  const ref=useRef(null);
+  useEffect(()=>{
+    const c=ref.current;if(!c||!history.length)return;
+    const ctx=c.getContext('2d');
+    const dpr=window.devicePixelRatio||1;
+    const r=c.getBoundingClientRect();
+    c.width=r.width*dpr;c.height=r.height*dpr;
+    ctx.scale(dpr,dpr);
+    const W=r.width,H=r.height;
+    const min=Math.min(...history)*.999,max=Math.max(...history)*1.001,rng=max-min||1;
+    const toX=i=>(i/(history.length-1))*W,toY=v=>H-((v-min)/rng)*(H-10)-5;
+    ctx.strokeStyle='#F0F1F3';ctx.lineWidth=1;
+    for(let i=0;i<4;i++){const y=10+(i/3)*(H-20);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+    const isUp=history[history.length-1]>=history[0];
+    const lc=isUp?'#10B981':'#EF4444';
+    const grad=ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,isUp?'rgba(16,185,129,.1)':'rgba(239,68,68,.07)');
+    grad.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.beginPath();ctx.moveTo(toX(0),toY(history[0]));
+    for(let i=1;i<history.length;i++)ctx.lineTo(toX(i),toY(history[i]));
+    ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+    ctx.beginPath();ctx.moveTo(toX(0),toY(history[0]));
+    for(let i=1;i<history.length;i++)ctx.lineTo(toX(i),toY(history[i]));
+    ctx.strokeStyle=lc;ctx.lineWidth=2;ctx.lineJoin='round';ctx.stroke();
+    const lx=toX(history.length-1),ly=toY(history[history.length-1]);
+    ctx.beginPath();ctx.arc(lx,ly,4,0,Math.PI*2);ctx.fillStyle=lc;ctx.fill();
+    ctx.beginPath();ctx.arc(lx,ly,7,0,Math.PI*2);ctx.fillStyle=isUp?'rgba(16,185,129,.2)':'rgba(239,68,68,.15)';ctx.fill();
+  },[history]);
+  return <canvas ref={ref} style={{width:'100%',height:'100%'}}/>;
+}
+
+/* ====== ETF CHART — Composite ====== */
+function ETFChart({stocks}) {
+  // Average all stock histories normalized to same scale
+  const composite = [];
+  if(stocks.length && stocks[0].history.length) {
+    for(let i=0;i<stocks[0].history.length;i++){
+      let sum=0;
+      stocks.forEach(s=>{
+        const base=s.history[0]||1;
+        sum+=(s.history[i]/base)*100;
+      });
+      composite.push(Math.round(sum/stocks.length*100)/100);
+    }
+  }
+  return <Chart history={composite}/>;
+}
+
+/* ====== INVEST MODAL ====== */
+function InvestModal({onClose,onInvest,etfPrice}) {
+  const [amount,setAmount]=useState(1000);
+  const shares = (amount/etfPrice).toFixed(4);
+  return(
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h2>Invest in Trending Stocks ETF</h2>
+        <div className="msub">Your money is automatically spread across the highest-trending stocks, weighted by their TrendScore.</div>
+        <div style={{fontSize:13,fontWeight:600,color:'var(--t2)',marginBottom:8}}>Choose amount</div>
+        <div className="invest-amt">
+          {[500,1000,5000,10000].map(v=>(
+            <button key={v} className={`invest-preset ${amount===v?'sel':''}`} onClick={()=>setAmount(v)}>${v.toLocaleString()}</button>
+          ))}
+          <input className="invest-custom" type="number" placeholder="Custom $" value={amount} onChange={e=>setAmount(Number(e.target.value))} />
+        </div>
+        <div style={{background:'var(--bg)',borderRadius:10,padding:16,marginBottom:16}}>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+            <span style={{fontSize:13,color:'var(--t2)'}}>ETF Price</span>
+            <span style={{fontSize:13,fontWeight:700}}>${etfPrice.toFixed(2)}</span>
+          </div>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}>
+            <span style={{fontSize:13,color:'var(--t2)'}}>Shares</span>
+            <span style={{fontSize:13,fontWeight:700}}>{shares}</span>
+          </div>
+          <div style={{display:'flex',justifyContent:'space-between',borderTop:'1px solid var(--border)',paddingTop:8}}>
+            <span style={{fontSize:14,fontWeight:700}}>Total</span>
+            <span style={{fontSize:14,fontWeight:800,color:'var(--blue)'}}>${amount.toLocaleString()}</span>
+          </div>
+        </div>
+        <div style={{fontSize:11,color:'var(--t3)',marginBottom:12,lineHeight:1.5}}>
+          The ETF rebalances automatically based on TrendScore. Stocks that trend higher get more weight. The 3% auto-trade rule protects your downside.
+        </div>
+        <div className="modal-foot">
+          <button className="mbtn mbtn-x" onClick={onClose}>Cancel</button>
+          <button className="mbtn mbtn-go" onClick={()=>{onInvest(amount);onClose()}}>Invest ${amount.toLocaleString()}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ====== RULE MODAL ====== */
+function RuleModal({stock,onClose,onSave}) {
+  const [type,setType]=useState(null);
+  const [params,setParams]=useState({});
+  const sel=t=>{setType(t);setParams({...t.defaults})};
+  const sp=(k,v)=>setParams(p=>({...p,[k]:v}));
+  const buildText=()=>{
+    if(!type)return'';const s=stock.sym;
+    switch(type.id){
+      case'stop_loss':return`If ${s} drops ${params.pct}% from today's open, sell ${params.amt==='100'?'all':params.amt+'%'} of my shares`;
+      case'take_profit':return`If ${s} goes up ${params.pct}%, sell ${params.amt==='100'?'all':params.amt+'%'} of my shares`;
+      case'buy_dip':return`If ${s} drops ${params.pct}%, buy ${params.shares} more shares`;
+      case'swing':return`If ${s} drops ${params.dpct}%, sell ${params.amt}% — buy back when it rises ${params.upct}%`;
+      case'auto_invest':return`Every ${params.freq}, buy $${params.amount} of ${s}`;
+      case'trailing_stop':return`If ${s} drops ${params.pct}% from its peak, sell ${params.amt==='100'?'all':params.amt+'%'}`;
+    }return'';
+  };
+  const renderForm=()=>{
+    if(!type)return null;const s=stock.sym;
+    switch(type.id){
+      case'stop_loss':return(<div className="rule-sentence">If <strong>{s}</strong> drops <input type="number" value={params.pct} onChange={e=>sp('pct',e.target.value)} min="1" max="50"/>% from today's open, sell <select value={params.amt} onChange={e=>sp('amt',e.target.value)}><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100">All</option></select> of my shares</div>);
+      case'take_profit':return(<div className="rule-sentence">If <strong>{s}</strong> goes up <input type="number" value={params.pct} onChange={e=>sp('pct',e.target.value)} min="1" max="100"/>%, sell <select value={params.amt} onChange={e=>sp('amt',e.target.value)}><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100">All</option></select> of my shares</div>);
+      case'buy_dip':return(<div className="rule-sentence">If <strong>{s}</strong> drops <input type="number" value={params.pct} onChange={e=>sp('pct',e.target.value)} min="1" max="30"/>%, buy <input type="number" value={params.shares} onChange={e=>sp('shares',e.target.value)} min="1" max="100"/> more shares</div>);
+      case'swing':return(<div className="rule-sentence">If <strong>{s}</strong> drops <input type="number" value={params.dpct} onChange={e=>sp('dpct',e.target.value)} min="1" max="20"/>%, sell <select value={params.amt} onChange={e=>sp('amt',e.target.value)}><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100">All</option></select> — buy back when it rises <input type="number" value={params.upct} onChange={e=>sp('upct',e.target.value)} min="1" max="20"/>%</div>);
+      case'auto_invest':return(<div className="rule-sentence">Every <select value={params.freq} onChange={e=>sp('freq',e.target.value)}><option value="day">day</option><option value="week">week</option><option value="month">month</option></select>, buy $<input type="number" value={params.amount} onChange={e=>sp('amount',e.target.value)} min="1" max="10000" style={{width:80}}/> of <strong>{s}</strong></div>);
+      case'trailing_stop':return(<div className="rule-sentence">If <strong>{s}</strong> drops <input type="number" value={params.pct} onChange={e=>sp('pct',e.target.value)} min="1" max="30"/>% from its peak, sell <select value={params.amt} onChange={e=>sp('amt',e.target.value)}><option value="25">25%</option><option value="50">50%</option><option value="75">75%</option><option value="100">All</option></select></div>);
+    }
+  };
+  return(
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h2>New Rule for {stock.sym}</h2>
+        <div className="msub">Pick what you want to happen, then set the numbers.</div>
+        <div className="rule-types">{RULE_TYPES.map(rt=>(<div key={rt.id} className={`rtype ${type?.id===rt.id?'sel':''}`} onClick={()=>sel(rt)}><div className="rtype-icon">{rt.icon}</div><div className="rtype-name">{rt.name}</div><div className="rtype-desc">{rt.desc}</div></div>))}</div>
+        {type&&<div className="rule-form"><div style={{fontSize:11,fontWeight:600,color:'var(--t3)',marginBottom:4,textTransform:'uppercase',letterSpacing:'.05em'}}>Your rule</div>{renderForm()}</div>}
+        <div className="modal-foot">
+          <button className="mbtn mbtn-x" onClick={onClose}>Cancel</button>
+          <button className="mbtn mbtn-go" disabled={!type} onClick={()=>{onSave({typeId:type.id,typeName:type.name,typeIcon:type.icon,params:{...params},text:buildText(),active:true});onClose()}}>Create Rule</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ====== PAGES ====== */
+
+function ETFPage({stocks,onViewStock,onInvest,etfInvested}) {
+  const sorted=[...stocks].sort((a,b)=>b.score-a.score);
+  const totalScore=sorted.reduce((s,x)=>s+x.score,0);
+  const etfPrice = sorted.reduce((s,x)=>s+(x.price*(x.score/totalScore)),0)*10;
+  const etfBase = sorted.reduce((s,x)=>s+(x.base*(x.score/totalScore)),0)*10;
+  const etfChg = ((etfPrice-etfBase)/etfBase)*100;
+
+  return(
+    <>
+      <div className="topbar">
+        <div><h1>Trending Stocks ETF</h1><p>Auto-weighted by online trending score · Rebalances in real time</p></div>
+        <div className="top-actions">
+          <button className="tbtn primary" onClick={()=>onInvest(etfPrice)}>Invest in ETF</button>
+        </div>
+      </div>
+      <div className="content">
+        <div className="etf-card">
+          <div className="etf-header">
+            <div className="etf-left">
+              <div className="etf-icon">TS</div>
+              <div>
+                <div className="etf-name">Trending Stocks ETF</div>
+                <div className="etf-ticker">TSCORE · Auto-rebalancing</div>
+              </div>
+            </div>
+            <div className="etf-price-area">
+              <div className="etf-price">${etfPrice.toFixed(2)}</div>
+              <div className={`etf-change ${etfChg>=0?'up':'down'}`}>
+                <span className="live-dot"></span>
+                {etfChg>=0?'+':''}{etfChg.toFixed(2)}% today · Live
+              </div>
+            </div>
+          </div>
+          <div className="chart-section">
+            <div className="chart-wrap"><ETFChart stocks={sorted}/></div>
+          </div>
+          {etfInvested>0&&(
+            <div style={{background:'var(--green-l)',borderRadius:8,padding:12,display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <span style={{fontSize:13,fontWeight:600,color:'var(--green)'}}>Your Investment</span>
+              <span style={{fontSize:16,fontWeight:800,color:'var(--green)'}}>${etfInvested.toLocaleString()}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="kpis">
+          <div className="kpi"><div className="kpi-label">Top Trending</div><div className="kpi-val">{sorted[0].sym}</div><div className="kpi-delta" style={{color:'var(--blue)'}}>Score: {sorted[0].score.toFixed(1)}</div></div>
+          <div className="kpi"><div className="kpi-label">Stocks in ETF</div><div className="kpi-val">{sorted.length}</div><div className="kpi-delta" style={{color:'var(--t3)'}}>Top S&P 500 companies</div></div>
+          <div className="kpi"><div className="kpi-label">ETF Price</div><div className="kpi-val">${etfPrice.toFixed(2)}</div><div className={`kpi-delta ${etfChg>=0?'up':'down'}`}>{etfChg>=0?'↑':'↓'} {Math.abs(etfChg).toFixed(2)}%</div></div>
+          <div className="kpi"><div className="kpi-label">Auto Rules Active</div><div className="kpi-val">2</div><div className="kpi-delta" style={{color:'var(--green)'}}>3% sell/buy cycle</div></div>
+        </div>
+
+        <div className="grid-2">
+          <div className="card">
+            <div className="card-hd"><h3>Holdings (Weighted by TrendScore)</h3></div>
+            <div className="card-body">
+              {sorted.map((s,i)=>{
+                const alloc=((s.score/totalScore)*100).toFixed(1);
+                const chg=((s.price-s.base)/s.base*100);
+                return(
+                  <div className="h-row" key={s.sym} style={{cursor:'pointer'}} onClick={()=>onViewStock(s.sym)}>
+                    <div className="h-rank">#{i+1}</div>
+                    <div className="h-sym-box" style={{background:s.color}}>{s.sym.slice(0,3)}</div>
+                    <div className="h-info"><div className="h-name">{s.sym}</div><div className="h-sub">{s.name}</div></div>
+                    <div className="h-score">
+                      <div className="h-score-val">{s.score.toFixed(1)}</div>
+                      <div className="h-score-bar"><div className="h-score-fill" style={{width:s.score+'%'}}/></div>
+                    </div>
+                    <div className="h-alloc"><div className="h-alloc-val">{alloc}%</div></div>
+                    <div className="h-price-col">
+                      <div className="h-price">${s.price.toFixed(2)}</div>
+                      <div className={`h-chg ${chg>=0?'up':'down'}`}>{chg>=0?'+':''}{chg.toFixed(2)}%</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <div className="card">
+            <div className="card-hd"><h3>TrendScore Breakdown</h3><span style={{fontSize:11,color:'var(--blue)',fontWeight:600}}>{sorted[0].sym}</span></div>
+            <div className="card-body">
+              {[
+                {label:'Social Volume',val:sorted[0].scoreBreakdown.volume,color:'var(--blue)'},
+                {label:'Source Quality',val:sorted[0].scoreBreakdown.quality,color:'var(--purple)'},
+                {label:'Sentiment',val:sorted[0].scoreBreakdown.sentiment,color:'var(--green)'},
+                {label:'Spike Velocity',val:sorted[0].scoreBreakdown.spike,color:'var(--amber)'},
+              ].map((b,i)=>(
+                <div className="ts-row" key={i}>
+                  <div className="ts-label">{b.label}</div>
+                  <div className="ts-bar"><div className="ts-fill" style={{width:b.val+'%',background:b.color}}/></div>
+                  <div className="ts-val" style={{color:b.color}}>{b.val.toFixed(0)}</div>
+                </div>
+              ))}
+              <div style={{marginTop:12,padding:10,background:'var(--bg)',borderRadius:8}}>
+                <div style={{fontSize:11,fontWeight:600,color:'var(--t3)',marginBottom:4}}>HOW IT WORKS</div>
+                <div style={{fontSize:12,color:'var(--t1)',lineHeight:1.6}}>
+                  Stocks are scored by who's talking about them (big outlets count more), how much buzz there is, whether it's positive or negative, and if attention is spiking. Higher score = bigger allocation in the ETF.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function StockPage({stock,onBack,rules,onAddRule,onToggle,onDelete,logs}) {
+  const chg=((stock.price-stock.base)/stock.base*100);
+  const stockRules=rules[stock.sym]||[];
+  const stockLogs=logs.filter(l=>l.sym===stock.sym);
+  return(
+    <>
+      <div className="topbar"><div><h1>{stock.sym}</h1><p>{stock.name}</p></div>
+        <div className="top-actions"><button className="tbtn primary" onClick={onAddRule}>+ New Rule</button></div>
+      </div>
+      <div className="content">
+        <button className="back-btn" onClick={onBack}>← Back to ETF</button>
+        <div className="stock-detail-top">
+          <div className="sd-icon" style={{background:stock.color}}>{stock.sym.slice(0,3)}</div>
+          <div><div className="sd-name">{stock.sym}</div><div className="sd-full">{stock.name} · TrendScore: {stock.score.toFixed(1)}</div></div>
+          <div className="sd-price-area">
+            <div className="sd-price">${stock.price.toFixed(2)}</div>
+            <div className={`sd-chg ${chg>=0?'up':'down'}`}><span className="live-dot"></span>{chg>=0?'+':''}{chg.toFixed(2)}% · Live</div>
+          </div>
+        </div>
+        <div className="chart-section">
+          <div className="chart-wrap"><Chart history={stock.history}/></div>
+        </div>
+        <div className="kpis" style={{gridTemplateColumns:'repeat(3,1fr)'}}>
+          <div className="kpi"><div className="kpi-label">Your Shares</div><div className="kpi-val">{stock.shares}</div></div>
+          <div className="kpi"><div className="kpi-label">Value</div><div className="kpi-val">${(stock.shares*stock.price).toLocaleString(undefined,{maximumFractionDigits:0})}</div></div>
+          <div className="kpi"><div className="kpi-label">TrendScore</div><div className="kpi-val" style={{color:'var(--blue)'}}>{stock.score.toFixed(1)}</div></div>
+        </div>
+        <div className="rules-section">
+          <div className="rules-hd"><h3>Auto Rules ({stockRules.length})</h3></div>
+          {stockRules.length===0?(
+            <div style={{textAlign:'center',padding:28,color:'var(--t3)',background:'white',border:'1px solid var(--border)',borderRadius:'var(--radius)'}}>
+              <div style={{fontSize:28,marginBottom:6}}>📋</div>
+              <div style={{fontSize:14,fontWeight:600,color:'var(--t2)'}}>No rules yet</div>
+              <div style={{fontSize:12,marginTop:4}}>Create a rule to automate trades for {stock.sym}</div>
+            </div>
+          ):(
+            stockRules.map((r,i)=>(
+              <div className={`rule-card ${r.active?'':'off'}`} key={i}>
+                <div className="rule-top">
+                  <span className="rule-type" style={{background:r.active?'var(--green-l)':'var(--red-l)',color:r.active?'var(--green)':'var(--red)'}}>{r.typeIcon} {r.typeName}</span>
+                  <div className="rule-actions">
+                    <button className={`rule-btn ${r.active?'rule-active':'rule-paused'}`} onClick={()=>onToggle(stock.sym,i)}>{r.active?'Active':'Paused'}</button>
+                    <button className="rule-btn rule-del" onClick={()=>onDelete(stock.sym,i)}>✕</button>
+                  </div>
+                </div>
+                <div className="rule-text">{r.text}</div>
+                <div className="rule-status">{r.active?'Watching price...':'Paused'}</div>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="card" style={{marginTop:12}}>
+          <div className="card-hd"><h3>Activity Log</h3></div>
+          <div className="card-body">
+            {stockLogs.length===0?<div className="log-empty">No activity yet</div>:
+              stockLogs.slice(0,10).map((l,i)=>(
+                <div className="log-row" key={i}><div className="log-dot" style={{background:l.color}}></div><div className="log-time">{l.time}</div><div className="log-msg">{l.msg}</div></div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ====== ROOT APP ====== */
+function App() {
+  const stocks=usePrices(STOCKS_INIT);
+  const [page,setPage]=useState('etf');
+  const [viewSym,setViewSym]=useState(null);
+  const [rules,setRules]=useState({});
+  const [logs,setLogs]=useState([]);
+  const [showInvest,setShowInvest]=useState(false);
+  const [investPrice,setInvestPrice]=useState(0);
+  const [etfInvested,setEtfInvested]=useState(0);
+  const [showRule,setShowRule]=useState(false);
+  const [toast,setToast]=useState(null);
+
+  const viewStock=useCallback(sym=>{setViewSym(sym);setPage('stock')},[]);
+  const backToETF=useCallback(()=>{setPage('etf');setViewSym(null)},[]);
+  const openInvest=useCallback(price=>{setInvestPrice(price);setShowInvest(true)},[]);
+  const doInvest=useCallback(amt=>{setEtfInvested(p=>p+amt);setToast(`Invested $${amt.toLocaleString()} in Trending Stocks ETF!`)},[]);
+  const addRule=useCallback(rule=>{setRules(p=>({...p,[viewSym]:[...(p[viewSym]||[]),rule]}));setToast('Rule created!')},[viewSym]);
+  const toggleRule=useCallback((sym,i)=>{setRules(p=>{const u=[...(p[sym]||[])];u[i]={...u[i],active:!u[i].active};return{...p,[sym]:u}})},[]);
+  const deleteRule=useCallback((sym,i)=>{setRules(p=>{const u=[...(p[sym]||[])];u.splice(i,1);return{...p,[sym]:u}})},[]);
+
+  // Rule execution
+  useEffect(()=>{
+    stocks.forEach(s=>{
+      (rules[s.sym]||[]).forEach((rule,idx)=>{
+        if(!rule.active)return;
+        const chg=((s.price-s.base)/s.base)*100;
+        const fromHigh=((s.high-s.price)/s.high)*100;
+        let fired=false,msg='';
+        switch(rule.typeId){
+          case'stop_loss':if(chg<=-parseFloat(rule.params.pct)){fired=true;msg=`🛡️ Stop Loss: Sold ${rule.params.amt}% of ${s.sym} at $${s.price.toFixed(2)}`}break;
+          case'take_profit':if(chg>=parseFloat(rule.params.pct)){fired=true;msg=`🎯 Take Profit: Sold ${rule.params.amt}% of ${s.sym} at $${s.price.toFixed(2)}`}break;
+          case'buy_dip':if(chg<=-parseFloat(rule.params.pct)){fired=true;msg=`💰 Buy Dip: Bought ${rule.params.shares} ${s.sym} at $${s.price.toFixed(2)}`}break;
+          case'swing':if(chg<=-parseFloat(rule.params.dpct)){fired=true;msg=`🔄 Swing: Sold ${rule.params.amt}% of ${s.sym} at $${s.price.toFixed(2)}`}break;
+          case'trailing_stop':if(fromHigh>=parseFloat(rule.params.pct)){fired=true;msg=`📉 Trailing Stop: Sold ${rule.params.amt}% of ${s.sym} at $${s.price.toFixed(2)}`}break;
+        }
+        if(fired){
+          setLogs(p=>[{time:new Date().toLocaleTimeString(),msg,sym:s.sym,color:rule.typeId==='buy_dip'?'var(--green)':'var(--amber)'},...p.slice(0,49)]);
+          if(['stop_loss','take_profit','buy_dip'].includes(rule.typeId)){
+            setRules(p=>{const u=[...(p[s.sym]||[])];u[idx]={...u[idx],active:false};return{...p,[s.sym]:u}});
+          }
+        }
+      });
+    });
+  },[stocks]);
+
+  const selected=stocks.find(s=>s.sym===viewSym);
+
+  return(
+    <div className="shell">
+      <aside className="side">
+        <div className="side-hd"><div className="side-logo">⚡</div><span className="side-title">Auto Trader Pro</span></div>
+        <div className="side-nav">
+          <div className="side-label">Invest</div>
+          <button className={`side-item ${page==='etf'?'on':''}`} onClick={backToETF}><span className="si">📈</span>Trending Stocks ETF</button>
+          <div className="side-label" style={{marginTop:8}}>My Stocks</div>
+          {stocks.sort((a,b)=>b.score-a.score).map(s=>{
+            const chg=((s.price-s.base)/s.base*100);
+            return(
+              <button key={s.sym} className={`side-item ${page==='stock'&&viewSym===s.sym?'on':''}`} onClick={()=>viewStock(s.sym)}>
+                <span className="si" style={{fontSize:11,fontWeight:800,color:s.color}}>{s.sym.slice(0,3)}</span>
+                <span style={{flex:1}}>{s.sym}</span>
+                <span style={{fontSize:11,fontWeight:600}} className={chg>=0?'up':'down'}>{chg>=0?'+':''}{chg.toFixed(1)}%</span>
+              </button>
+            );
+          })}
+        </div>
+        <div className="side-bottom">
+          <div className="side-user">
+            <div className="side-avatar">HD</div>
+            <div><div className="side-uname">Hagay D.</div><div className="side-uplan">Pro Plan</div></div>
+          </div>
+        </div>
+      </aside>
+      <div className="main">
+        {page==='etf'&&<ETFPage stocks={stocks} onViewStock={viewStock} onInvest={openInvest} etfInvested={etfInvested}/>}
+        {page==='stock'&&selected&&<StockPage stock={selected} onBack={backToETF} rules={rules} onAddRule={()=>setShowRule(true)} onToggle={toggleRule} onDelete={deleteRule} logs={logs}/>}
+      </div>
+      {showInvest&&<InvestModal etfPrice={investPrice} onClose={()=>setShowInvest(false)} onInvest={doInvest}/>}
+      {showRule&&selected&&<RuleModal stock={selected} onClose={()=>setShowRule(false)} onSave={addRule}/>}
+      {toast&&<Toast msg={toast} onClose={()=>setToast(null)}/>}
+    </div>
+  );
+}
+
+function Toast({msg,onClose}){useEffect(()=>{const t=setTimeout(onClose,2500);return()=>clearTimeout(t)},[]);return<div className="toast">✓ {msg}</div>}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

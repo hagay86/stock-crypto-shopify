@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TrendScore ETF — Live Algorithmic Stock Ranking</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg-primary: #0a0e17;
+    --bg-secondary: #111827;
+    --bg-card: #1a2035;
+    --bg-card-hover: #1f2847;
+    --border: #2a3555;
+    --text-primary: #e8edf5;
+    --text-secondary: #8892a8;
+    --text-muted: #5a6580;
+    --accent-green: #00e676;
+    --accent-red: #ff1744;
+    --accent-blue: #448aff;
+    --accent-gold: #ffd740;
+    --accent-purple: #b388ff;
+    --gradient-green: linear-gradient(135deg, #00c853, #00e676);
+    --gradient-red: linear-gradient(135deg, #d50000, #ff1744);
+    --gradient-blue: linear-gradient(135deg, #2962ff, #448aff);
+    --gradient-gold: linear-gradient(135deg, #ff8f00, #ffd740);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HERO HEADER */
+  .hero {
+    background: linear-gradient(135deg, #0d1520 0%, #1a1040 50%, #0d2030 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 0 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(68, 138, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(0, 230, 118, 0.06) 0%, transparent 50%);
+    animation: drift 20s ease-in-out infinite;
+  }
+  @keyframes drift { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-5%, 3%); } }
+
+  .hero-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 30px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .hero h1 {
+    font-size: 2.6rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #fff, #448aff, #00e676);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 230, 118, 0.1);
+    border: 1px solid rgba(0, 230, 118, 0.3);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--accent-green);
+    font-weight: 600;
+  }
+  .hero-badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* MARKET OVERVIEW STRIP */
+  .market-strip {
+    display: flex;
+    gap: 20px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+  }
+  .market-item {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    min-width: 160px;
+  }
+  .market-item .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+  .market-item .value { font-size: 1.3rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; margin-top: 4px; }
+  .market-item .change { font-size: 0.8rem; margin-top: 2px; font-weight: 600; }
+  .up { color: var(--accent-green); }
+  .down { color: var(--accent-red); }
+
+  /* ALGORITHM EXPLAINER */
+  .algo-section {
+    max-width: 1400px;
+    margin: 30px auto 0;
+    padding: 0 30px;
+  }
+  .algo-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 25px;
+  }
+  .algo-card h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .algo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .algo-indicator {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .algo-indicator .ind-name {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--accent-blue);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .algo-indicator .ind-weight {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    float: right;
+    margin-top: -20px;
+  }
+  .algo-indicator .ind-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* CONTROLS */
+  .controls {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 30px 15px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--accent-blue);
+    color: #fff;
+    border-color: var(--accent-blue);
+  }
+  .search-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    width: 220px;
+    font-family: 'Inter', sans-serif;
+    margin-left: auto;
+  }
+  .search-box::placeholder { color: var(--text-muted); }
+  .search-box:focus { outline: none; border-color: var(--accent-blue); }
+
+  /* STOCK TABLE */
+  .table-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 30px 40px;
+  }
+  .stock-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+  }
+  .stock-table thead th {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    position: sticky;
+    top: 0;
+    background: var(--bg-primary);
+    z-index: 10;
+  }
+  .stock-table thead th:hover { color: var(--accent-blue); }
+  .stock-table thead th.sort-active { color: var(--accent-blue); }
+  .stock-table thead th .sort-arrow { margin-left: 4px; font-size: 0.6rem; }
+  .stock-table tbody tr {
+    background: var(--bg-card);
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .stock-table tbody tr:hover {
+    background: var(--bg-card-hover);
+    transform: translateX(4px);
+  }
+  .stock-table tbody td {
+    padding: 14px 16px;
+    font-size: 0.88rem;
+  }
+  .stock-table tbody tr td:first-child { border-radius: 10px 0 0 10px; }
+  .stock-table tbody tr td:last-child { border-radius: 0 10px 10px 0; }
+
+  /* RANK BADGE */
+  .rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .rank-1 { background: linear-gradient(135deg, #ffd700, #ff8f00); color: #000; }
+  .rank-2 { background: linear-gradient(135deg, #b0bec5, #78909c); color: #000; }
+  .rank-3 { background: linear-gradient(135deg, #a1887f, #795548); color: #fff; }
+  .rank-other { background: rgba(255,255,255,0.06); color: var(--text-secondary); }
+
+  /* TICKER CELL */
+  .ticker-cell { display: flex; align-items: center; gap: 12px; }
+  .ticker-symbol {
+    font-weight: 800;
+    font-size: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: #fff;
+  }
+  .ticker-name {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+  }
+
+  /* PRICE CELL */
+  .price-cell .price {
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+  }
+  .price-cell .change {
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* TREND SCORE BAR */
+  .trend-cell { min-width: 180px; }
+  .trend-score-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .trend-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .trend-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease-out;
+  }
+  .trend-number {
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    min-width: 42px;
+    text-align: right;
+  }
+
+  /* GRADE BADGE */
+  .grade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+    min-width: 42px;
+  }
+
+  /* SIGNAL BADGE */
+  .signal-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .signal-strong-buy { background: rgba(0, 200, 83, 0.15); color: #00e676; border: 1px solid rgba(0, 200, 83, 0.3); }
+  .signal-buy { background: rgba(76, 175, 80, 0.15); color: #69f0ae; border: 1px solid rgba(76, 175, 80, 0.3); }
+  .signal-accumulate { background: rgba(139, 195, 74, 0.15); color: #b2ff59; border: 1px solid rgba(139, 195, 74, 0.3); }
+  .signal-hold { background: rgba(255, 193, 7, 0.15); color: #ffd740; border: 1px solid rgba(255, 193, 7, 0.3); }
+  .signal-watch { background: rgba(255, 152, 0, 0.15); color: #ffab40; border: 1px solid rgba(255, 152, 0, 0.3); }
+  .signal-caution { background: rgba(255, 87, 34, 0.15); color: #ff6e40; border: 1px solid rgba(255, 87, 34, 0.3); }
+  .signal-avoid { background: rgba(244, 67, 54, 0.15); color: #ff5252; border: 1px solid rgba(244, 67, 54, 0.3); }
+
+  /* 52-WEEK RANGE VISUAL */
+  .range-cell { min-width: 160px; }
+  .range-visual {
+    position: relative;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 3px;
+    margin: 4px 0;
+  }
+  .range-marker {
+    position: absolute;
+    top: -4px;
+    width: 12px;
+    height: 14px;
+    border-radius: 3px;
+    transform: translateX(-6px);
+  }
+  .range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* SECTOR TAG */
+  .sector-tag {
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 5px;
+    background: rgba(255,255,255,0.04);
+    color: var(--text-secondary);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* EXPANDED ROW / DETAIL PANEL */
+  .detail-row { display: none; }
+  .detail-row.expanded { display: table-row; }
+  .detail-row td {
+    padding: 0 16px 16px !important;
+    background: var(--bg-card) !important;
+    border-radius: 0 0 10px 10px !important;
+  }
+  .detail-content {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    padding: 16px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+  }
+  .detail-item {
+    text-align: center;
+    padding: 12px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+  }
+  .detail-item .d-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .detail-item .d-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .detail-item .d-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .detail-item .d-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.8s;
+  }
+
+  /* SUMMARY CARDS */
+  .summary-section {
+    max-width: 1400px;
+    margin: 0 auto 30px;
+    padding: 0 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .summary-card h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+  .summary-top-list {
+    list-style: none;
+  }
+  .summary-top-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .summary-top-list li:last-child { border: none; }
+  .summary-ticker { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .summary-score { font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    border-top: 1px solid var(--border);
+    margin-top: 20px;
+  }
+  .footer a { color: var(--accent-blue); text-decoration: none; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero h1 { font-size: 1.8rem; }
+    .detail-content { grid-template-columns: repeat(3, 1fr); }
+    .stock-table { font-size: 0.8rem; }
+  }
+  @media (max-width: 600px) {
+    .detail-content { grid-template-columns: repeat(2, 1fr); }
+    .algo-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-top">
+      <div>
+        <h1>TrendScore ETF</h1>
+        <p class="hero-sub">Algorithmic Stock Ranking Engine — Real-Time Trend Analysis</p>
+      </div>
+      <div class="hero-badge"><span class="dot"></span> LIVE DATA — March 28, 2026</div>
+    </div>
+    <div class="market-strip" id="marketStrip"></div>
+  </div>
+</div>
+
+<!-- ALGORITHM EXPLAINER -->
+<div class="algo-section">
+  <div class="algo-card">
+    <h2>&#x1f9e0; How the TrendScore Algorithm Works</h2>
+    <div class="algo-grid" id="algoGrid"></div>
+  </div>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary-section" id="summaryCards"></div>
+
+<!-- CONTROLS -->
+<div class="controls" id="controls"></div>
+
+<!-- TABLE -->
+<div class="table-container">
+  <table class="stock-table" id="stockTable">
+    <thead>
+      <tr>
+        <th data-sort="rank">Rank <span class="sort-arrow">&#9660;</span></th>
+        <th data-sort="ticker">Stock</th>
+        <th data-sort="price">Price</th>
+        <th data-sort="composite" class="sort-active">Trend Score <span class="sort-arrow">&#9660;</span></th>
+        <th data-sort="grade">Grade</th>
+        <th data-sort="recommendation">Signal</th>
+        <th>52-Week Range</th>
+        <th data-sort="sector">Sector</th>
+        <th data-sort="mcap">Mkt Cap</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  TrendScore ETF Algorithm v1.0 &mdash; Data source: Yahoo Finance (March 28, 2026)<br>
+  <strong>Disclaimer:</strong> This is an algorithmic analysis tool, not financial advice. Past performance does not guarantee future results.<br>
+  Built for <a href="#">Shopify of Stock & Crypto Investments</a>
+</div>
+
+<script>
+// ============================================================
+// REAL STOCK DATA (from Python algorithm output)
+// ============================================================
+const stockData = [
+  {"ticker":"XOM","name":"Exxon Mobil Corp.","price":171.67,"change_pct":0.4,"sector":"Energy","mcap":715308000000,"low52":97.8,"high52":176.4,"scores":{"position":94.0,"momentum":90.0,"breakout":87.7,"support":86.8,"signal":54.0},"composite":84.7,"grade":"A+","recommendation":"STRONG BUY","color":"#00c853"},
+  {"ticker":"COST","name":"Costco Wholesale Corp.","price":994.55,"change_pct":1.09,"sector":"Consumer Defensive","mcap":441264000000,"low52":844.06,"high52":1067.08,"scores":{"position":67.5,"momentum":70.6,"breakout":72.8,"support":58.7,"signal":60.9},"composite":67.0,"grade":"B+","recommendation":"ACCUMULATE","color":"#8bc34a"},
+  {"ticker":"AAPL","name":"Apple Inc.","price":245.98,"change_pct":-1.13,"sector":"Technology","mcap":3615000000000,"low52":169.21,"high52":288.62,"scores":{"position":64.3,"momentum":67.1,"breakout":40.9,"support":76.7,"signal":38.7},"composite":58.4,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"TPL","name":"Texas Pacific Land Corp.","price":468.47,"change_pct":-8.46,"sector":"Energy","mcap":32297000000,"low52":269.23,"high52":547.2,"scores":{"position":71.7,"momentum":74.7,"breakout":42.4,"support":86.4,"signal":0.0},"composite":58.0,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"GOOGL","name":"Alphabet Inc.","price":272.39,"change_pct":-0.71,"sector":"Technology","mcap":3295000000000,"low52":140.53,"high52":349.0,"scores":{"position":63.3,"momentum":66.0,"breakout":26.1,"support":91.0,"signal":42.9},"composite":57.6,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"GLW","name":"Corning Inc.","price":127.07,"change_pct":-7.12,"sector":"Technology","mcap":109155000000,"low52":37.31,"high52":162.1,"scores":{"position":71.9,"momentum":74.9,"breakout":28.2,"support":100.0,"signal":0.0},"composite":57.1,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"JPM","name":"JPMorgan Chase & Co.","price":282.48,"change_pct":-0.13,"sector":"Financial Services","mcap":761858000000,"low52":202.16,"high52":337.25,"scores":{"position":59.5,"momentum":62.9,"breakout":33.3,"support":74.9,"signal":48.7},"composite":56.2,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"MRNA","name":"Moderna Inc.","price":47.38,"change_pct":-4.41,"sector":"Healthcare","mcap":18788000000,"low52":22.28,"high52":59.55,"scores":{"position":67.3,"momentum":70.4,"breakout":33.5,"support":85.6,"signal":5.9},"composite":55.4,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"NVDA","name":"NVIDIA Corp.","price":164.56,"change_pct":-1.77,"sector":"Technology","mcap":4000000000000,"low52":86.62,"high52":212.19,"scores":{"position":62.1,"momentum":65.1,"breakout":20.3,"support":90.0,"signal":32.3},"composite":55.1,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"BAC","name":"Bank of America Corp.","price":46.96,"change_pct":-0.03,"sector":"Financial Services","mcap":336981000000,"low52":33.07,"high52":57.55,"scores":{"position":56.7,"momentum":60.1,"breakout":21.6,"support":75.6,"signal":49.7},"composite":54.1,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"SNDK","name":"SanDisk Corp.","price":560.36,"change_pct":-9.01,"sector":"Technology","mcap":82710000000,"low52":27.89,"high52":777.6,"scores":{"position":71.0,"momentum":74.2,"breakout":16.5,"support":100.0,"signal":0.0},"composite":54.1,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"LLY","name":"Eli Lilly & Co.","price":886.64,"change_pct":0.96,"sector":"Healthcare","mcap":793555000000,"low52":623.78,"high52":1133.95,"scores":{"position":51.5,"momentum":55.0,"breakout":32.5,"support":75.1,"signal":59.6},"composite":51.4,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"INTC","name":"Intel Corp.","price":40.72,"change_pct":-5.59,"sector":"Technology","mcap":204456000000,"low52":17.67,"high52":54.6,"scores":{"position":62.4,"momentum":65.5,"breakout":22.5,"support":96.0,"signal":0.0},"composite":50.3,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"AMD","name":"Advanced Micro Devices","price":193.12,"change_pct":-4.39,"sector":"Technology","mcap":314979000000,"low52":76.48,"high52":267.08,"scores":{"position":61.1,"momentum":64.4,"breakout":16.5,"support":95.8,"signal":6.1},"composite":50.0,"grade":"B","recommendation":"HOLD","color":"#ffc107"},
+  {"ticker":"GNRC","name":"Generac Holdings Inc.","price":185.49,"change_pct":-4.58,"sector":"Industrials","mcap":10885000000,"low52":99.5,"high52":241.09,"scores":{"position":60.8,"momentum":64.0,"breakout":23.8,"support":90.0,"signal":4.2},"composite":49.8,"grade":"C","recommendation":"WATCH","color":"#ff9800"},
+  {"ticker":"MU","name":"Micron Technology Inc.","price":319.52,"change_pct":-10.51,"sector":"Technology","mcap":360339000000,"low52":61.54,"high52":471.34,"scores":{"position":63.0,"momentum":66.2,"breakout":0.9,"support":100.0,"signal":0.0},"composite":49.0,"grade":"C","recommendation":"WATCH","color":"#ff9800"},
+  {"ticker":"AVGO","name":"Broadcom Inc.","price":290.29,"change_pct":-3.46,"sector":"Technology","mcap":1376000000000,"low52":138.1,"high52":414.61,"scores":{"position":55.0,"momentum":58.5,"breakout":6.5,"support":85.8,"signal":15.4},"composite":46.3,"grade":"C","recommendation":"WATCH","color":"#ff9800"},
+  {"ticker":"TSLA","name":"Tesla Inc.","price":352.71,"change_pct":-2.52,"sector":"Consumer Cyclical","mcap":1324000000000,"low52":214.25,"high52":498.83,"scores":{"position":48.7,"momentum":52.3,"breakout":20.9,"support":80.3,"signal":24.8},"composite":42.8,"grade":"C","recommendation":"WATCH","color":"#ff9800"},
+  {"ticker":"AMZN","name":"Amazon.com Inc.","price":200.05,"change_pct":0.36,"sector":"Consumer Cyclical","mcap":2148000000000,"low52":161.38,"high52":258.6,"scores":{"position":39.8,"momentum":42.5,"breakout":28.7,"support":59.9,"signal":53.6},"composite":42.0,"grade":"C","recommendation":"WATCH","color":"#ff9800"},
+  {"ticker":"MA","name":"Mastercard Inc.","price":491.9,"change_pct":1.58,"sector":"Financial Services","mcap":438995000000,"low52":465.59,"high52":601.77,"scores":{"position":19.3,"momentum":26.6,"breakout":27.3,"support":41.7,"signal":65.8},"composite":31.5,"grade":"D","recommendation":"CAUTION","color":"#ff5722"},
+  {"ticker":"NFLX","name":"Netflix Inc.","price":92.46,"change_pct":-1.04,"sector":"Communication","mcap":392205000000,"low52":75.01,"high52":134.12,"scores":{"position":29.5,"momentum":35.2,"breakout":11.1,"support":58.6,"signal":39.6},"composite":31.4,"grade":"D","recommendation":"CAUTION","color":"#ff5722"},
+  {"ticker":"PG","name":"Procter & Gamble Co.","price":144.57,"change_pct":1.3,"sector":"Consumer Defensive","mcap":337822000000,"low52":137.62,"high52":174.8,"scores":{"position":18.7,"momentum":26.0,"breakout":31.1,"support":41.3,"signal":63.0},"composite":30.9,"grade":"D","recommendation":"CAUTION","color":"#ff5722"},
+  {"ticker":"META","name":"Meta Platforms Inc.","price":535.29,"change_pct":1.82,"sector":"Technology","mcap":1354000000000,"low52":479.8,"high52":796.25,"scores":{"position":17.5,"momentum":24.7,"breakout":0.0,"support":46.8,"signal":68.2},"composite":28.2,"grade":"F","recommendation":"AVOID","color":"#f44336"},
+  {"ticker":"CRM","name":"Salesforce Inc.","price":183.54,"change_pct":2.36,"sector":"Technology","mcap":172071000000,"low52":174.57,"high52":296.05,"scores":{"position":7.4,"momentum":16.2,"breakout":0.0,"support":41.6,"signal":73.6},"composite":22.5,"grade":"F","recommendation":"AVOID","color":"#f44336"},
+  {"ticker":"V","name":"Visa Inc.","price":298.65,"change_pct":1.06,"sector":"Financial Services","mcap":575809000000,"low52":294.32,"high52":375.51,"scores":{"position":5.3,"momentum":13.5,"breakout":16.7,"support":35.2,"signal":60.6},"composite":21.4,"grade":"F","recommendation":"AVOID","color":"#f44336"},
+  {"ticker":"UNH","name":"UnitedHealth Group Inc.","price":259.9,"change_pct":0.34,"sector":"Healthcare","mcap":235905000000,"low52":234.6,"high52":606.36,"scores":{"position":6.8,"momentum":14.9,"breakout":0.0,"support":46.6,"signal":53.4},"composite":20.1,"grade":"F","recommendation":"AVOID","color":"#f44336"},
+  {"ticker":"ORCL","name":"Oracle Corp.","price":137.43,"change_pct":-1.59,"sector":"Technology","mcap":395264000000,"low52":118.86,"high52":345.72,"scores":{"position":8.2,"momentum":17.0,"breakout":0.0,"support":53.2,"signal":34.1},"composite":18.5,"grade":"F","recommendation":"AVOID","color":"#f44336"},
+  {"ticker":"QCOM","name":"Qualcomm Inc.","price":126.65,"change_pct":-0.36,"sector":"Technology","mcap":135268000000,"low52":120.8,"high52":205.95,"scores":{"position":6.9,"momentum":14.9,"breakout":0.0,"support":41.3,"signal":46.4},"composite":18.1,"grade":"F","recommendation":"AVOID","color":"#f44336"},
+  {"ticker":"MSFT","name":"Microsoft Corp.","price":356.81,"change_pct":0.01,"sector":"Technology","mcap":2652000000000,"low52":344.79,"high52":555.45,"scores":{"position":5.7,"momentum":13.9,"breakout":0.0,"support":36.3,"signal":50.1},"composite":17.6,"grade":"F","recommendation":"AVOID","color":"#f44336"},
+  {"ticker":"HD","name":"Home Depot Inc.","price":322.68,"change_pct":0.32,"sector":"Consumer Cyclical","mcap":321393000000,"low52":320.26,"high52":426.75,"scores":{"position":2.3,"momentum":10.4,"breakout":0.0,"support":32.6,"signal":53.2},"composite":16.6,"grade":"F","recommendation":"AVOID","color":"#f44336"}
+];
+
+// ============================================================
+// ALGORITHM INDICATORS INFO
+// ============================================================
+const indicators = [
+  { name: "Position Score", weight: "25%", desc: "Where price sits in the 52-week range. Stocks near highs score higher — indicates sustained buying pressure." },
+  { name: "Momentum Score", weight: "25%", desc: "Sigmoid-scaled distance above the 52-week midpoint. Above midpoint = bullish momentum confirmed." },
+  { name: "Breakout Proximity", weight: "20%", desc: "Distance from 52-week high. Within 5% = breakout candidate. The best trend signals come from new highs." },
+  { name: "Support Strength", weight: "15%", desc: "Log-scaled distance above 52-week low. Further above = stronger buying support and floor." },
+  { name: "Short-Term Signal", weight: "15%", desc: "Today's price action confirms or denies the trend. Green days in uptrends = strongest signal." }
+];
+
+// ============================================================
+// RENDER FUNCTIONS
+// ============================================================
+
+function formatMcap(val) {
+  if (val >= 1e12) return '$' + (val / 1e12).toFixed(2) + 'T';
+  if (val >= 1e9) return '$' + (val / 1e9).toFixed(0) + 'B';
+  return '$' + (val / 1e6).toFixed(0) + 'M';
+}
+
+function getSignalClass(rec) {
+  return 'signal-' + rec.toLowerCase().replace(' ', '-');
+}
+
+function getRankClass(rank) {
+  if (rank === 1) return 'rank-1';
+  if (rank === 2) return 'rank-2';
+  if (rank === 3) return 'rank-3';
+  return 'rank-other';
+}
+
+// Market overview strip
+function renderMarketStrip() {
+  const el = document.getElementById('marketStrip');
+  const items = [
+    { label: 'S&P 500', value: '6,319.91', change: '-0.77%', down: true },
+    { label: 'Nasdaq', value: '20,703.22', change: '-1.17%', down: true },
+    { label: 'Bitcoin', value: '$66,211.52', change: '-0.23%', down: true },
+    { label: 'Gold', value: '$4,528.40', change: '+0.09%', down: false },
+    { label: 'VIX', value: '31.33', change: '+0.90%', down: false },
+    { label: 'Stocks Scanned', value: '30', change: 'Universe', down: false },
+  ];
+  el.innerHTML = items.map(i => `
+    <div class="market-item">
+      <div class="label">${i.label}</div>
+      <div class="value">${i.value}</div>
+      <div class="change ${i.down ? 'down' : 'up'}">${i.change}</div>
+    </div>
+  `).join('');
+}
+
+// Algorithm explainer
+function renderAlgoGrid() {
+  document.getElementById('algoGrid').innerHTML = indicators.map(ind => `
+    <div class="algo-indicator">
+      <div class="ind-name">${ind.name}</div>
+      <div class="ind-weight">${ind.weight}</div>
+      <div class="ind-desc">${ind.desc}</div>
+    </div>
+  `).join('');
+}
+
+// Summary cards
+function renderSummary() {
+  const el = document.getElementById('summaryCards');
+
+  const topBuy = stockData.filter(s => s.composite >= 60);
+  const topWatch = stockData.filter(s => s.composite >= 40 && s.composite < 60);
+  const avoid = stockData.filter(s => s.composite < 30);
+
+  const sectors = {};
+  stockData.forEach(s => {
+    if (!sectors[s.sector]) sectors[s.sector] = [];
+    sectors[s.sector].push(s);
+  });
+  const sectorAvg = Object.entries(sectors).map(([sec, stocks]) => ({
+    sector: sec,
+    avg: stocks.reduce((a, b) => a + b.composite, 0) / stocks.length,
+    count: stocks.length
+  })).sort((a, b) => b.avg - a.avg);
+
+  el.innerHTML = `
+    <div class="summary-card">
+      <h3>&#x1f525; Top Picks (Score 60+)</h3>
+      <ul class="summary-top-list">
+        ${topBuy.length > 0 ? topBuy.map(s => `
+          <li>
+            <span>
+              <span class="summary-ticker" style="color:${s.color}">${s.ticker}</span>
+              <span style="color:var(--text-muted); font-size:0.75rem; margin-left:8px;">$${s.price.toLocaleString()}</span>
+            </span>
+            <span class="summary-score" style="color:${s.color}">${s.composite}</span>
+          </li>
+        `).join('') : '<li style="color:var(--text-muted)">No stocks currently qualify</li>'}
+      </ul>
+    </div>
+    <div class="summary-card">
+      <h3>&#x1f4ca; Sector Strength</h3>
+      <ul class="summary-top-list">
+        ${sectorAvg.map(s => `
+          <li>
+            <span class="summary-ticker">${s.sector}</span>
+            <span class="summary-score" style="color:${s.avg >= 50 ? '#00e676' : s.avg >= 35 ? '#ffd740' : '#ff5252'}">${s.avg.toFixed(1)}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+    <div class="summary-card">
+      <h3>&#x26a0;&#xfe0f; Avoid Zone (Score &lt;30)</h3>
+      <ul class="summary-top-list">
+        ${avoid.slice(0, 6).map(s => `
+          <li>
+            <span>
+              <span class="summary-ticker" style="color:#ff5252">${s.ticker}</span>
+              <span style="color:var(--text-muted); font-size:0.75rem; margin-left:8px;">$${s.price.toLocaleString()}</span>
+            </span>
+            <span class="summary-score" style="color:#ff5252">${s.composite}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `;
+}
+
+// Filter controls
+function renderControls() {
+  const el = document.getElementById('controls');
+  const sectors = ['All', ...new Set(stockData.map(s => s.sector))];
+  el.innerHTML = sectors.map(s => `
+    <button class="filter-btn ${s === 'All' ? 'active' : ''}" data-sector="${s}">${s}</button>
+  `).join('') + '<input type="text" class="search-box" id="searchBox" placeholder="Search ticker or name...">';
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTable(btn.dataset.sector, document.getElementById('searchBox').value);
+    });
+  });
+
+  document.getElementById('searchBox').addEventListener('input', (e) => {
+    const activeBtn = document.querySelector('.filter-btn.active');
+    renderTable(activeBtn?.dataset.sector || 'All', e.target.value);
+  });
+}
+
+// Main stock table
+function renderTable(sectorFilter = 'All', searchQuery = '') {
+  const tbody = document.getElementById('tableBody');
+  let filtered = [...stockData];
+
+  if (sectorFilter !== 'All') {
+    filtered = filtered.filter(s => s.sector === sectorFilter);
+  }
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(s =>
+      s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
+    );
+  }
+
+  tbody.innerHTML = filtered.map((s, i) => {
+    const rank = stockData.indexOf(s) + 1;
+    const rangePos = ((s.price - s.low52) / (s.high52 - s.low52)) * 100;
+
+    return `
+      <tr onclick="toggleDetail('detail-${s.ticker}', this)">
+        <td><span class="rank-badge ${getRankClass(rank)}">${rank}</span></td>
+        <td>
+          <div class="ticker-cell">
+            <div>
+              <div class="ticker-symbol">${s.ticker}</div>
+              <div class="ticker-name">${s.name}</div>
+            </div>
+          </div>
+        </td>
+        <td class="price-cell">
+          <div class="price">$${s.price.toLocaleString(undefined, {minimumFractionDigits: 2})}</div>
+          <div class="change ${s.change_pct >= 0 ? 'up' : 'down'}">${s.change_pct >= 0 ? '+' : ''}${s.change_pct.toFixed(2)}%</div>
+        </td>
+        <td class="trend-cell">
+          <div class="trend-score-container">
+            <div class="trend-bar-bg">
+              <div class="trend-bar-fill" style="width:${s.composite}%; background:${s.color};"></div>
+            </div>
+            <span class="trend-number" style="color:${s.color}">${s.composite}</span>
+          </div>
+        </td>
+        <td><span class="grade-badge" style="background:${s.color}20; color:${s.color}; border:1px solid ${s.color}40;">${s.grade}</span></td>
+        <td><span class="signal-badge ${getSignalClass(s.recommendation)}">${s.recommendation}</span></td>
+        <td class="range-cell">
+          <div class="range-visual">
+            <div class="range-marker" style="left:${rangePos}%; background:${s.color};"></div>
+          </div>
+          <div class="range-labels">
+            <span>$${s.low52.toFixed(0)}</span>
+            <span>$${s.high52.toFixed(0)}</span>
+          </div>
+        </td>
+        <td><span class="sector-tag">${s.sector}</span></td>
+        <td style="font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--text-secondary);">${formatMcap(s.mcap)}</td>
+      </tr>
+      <tr class="detail-row" id="detail-${s.ticker}">
+        <td colspan="9">
+          <div class="detail-content">
+            ${Object.entries(s.scores).map(([key, val]) => `
+              <div class="detail-item">
+                <div class="d-label">${key}</div>
+                <div class="d-value" style="color:${val >= 70 ? '#00e676' : val >= 40 ? '#ffd740' : '#ff5252'}">${val}</div>
+                <div class="d-bar"><div class="d-bar-fill" style="width:${val}%; background:${val >= 70 ? '#00e676' : val >= 40 ? '#ffd740' : '#ff5252'};"></div></div>
+              </div>
+            `).join('')}
+          </div>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function toggleDetail(id, row) {
+  const detailRow = document.getElementById(id);
+  if (detailRow) {
+    detailRow.classList.toggle('expanded');
+  }
+}
+
+// Column sorting
+let currentSort = { key: 'composite', dir: 'desc' };
+document.querySelectorAll('.stock-table thead th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.sort;
+    if (currentSort.key === key) {
+      currentSort.dir = currentSort.dir === 'desc' ? 'asc' : 'desc';
+    } else {
+      currentSort = { key, dir: 'desc' };
+    }
+
+    stockData.sort((a, b) => {
+      let va = key === 'rank' ? stockData.indexOf(a) : a[key];
+      let vb = key === 'rank' ? stockData.indexOf(b) : b[key];
+      if (typeof va === 'string') return currentSort.dir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+      return currentSort.dir === 'asc' ? va - vb : vb - va;
+    });
+
+    document.querySelectorAll('.stock-table thead th').forEach(h => h.classList.remove('sort-active'));
+    th.classList.add('sort-active');
+
+    const activeBtn = document.querySelector('.filter-btn.active');
+    renderTable(activeBtn?.dataset.sector || 'All', document.getElementById('searchBox')?.value || '');
+  });
+});
+
+// Initialize
+renderMarketStrip();
+renderAlgoGrid();
+renderSummary();
+renderControls();
+renderTable();
+</script>
+</body>
+</html>

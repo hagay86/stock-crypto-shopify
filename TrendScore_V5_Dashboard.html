@@ -1,0 +1,8644 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrendScore V5 — Deep Algorithm Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#060b14;color:#e0e0e0;line-height:1.6}
+.container{max-width:1800px;margin:0 auto;padding:16px}
+
+/* Header */
+.header{background:linear-gradient(135deg,#0d1a2f 0%,#0a1020 50%,#111b30 100%);border-radius:14px;padding:32px 40px;margin-bottom:20px;border:1px solid #1e2d4a;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#ffd700,#00e676,#ffd700,transparent)}
+.header h1{font-size:2.4em;font-weight:700;margin-bottom:4px}
+.header h1 .gold{color:#ffd700}
+.header h1 .white{color:#fff}
+.header p{color:#8899aa;font-size:0.88em}
+.version-badges{display:flex;gap:8px;margin-top:8px;margin-bottom:12px}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:0.72em;font-weight:700;letter-spacing:0.5px}
+.badge-v5{background:linear-gradient(135deg,#ffd700,#ff9800);color:#0a0e17}
+.badge-deep{background:linear-gradient(135deg,#00e676,#00bfa5);color:#0a0e17}
+.badge-moat{background:linear-gradient(135deg,#7c4dff,#536dfe);color:#fff}
+.badge-stocks{background:#1a2a4a;color:#88aacc;border:1px solid #2a3a5a}
+
+/* Philosophy Section */
+.philosophy{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.phil-card{background:#0a1525;border-radius:10px;padding:14px 18px;border:1px solid #1e2d4a}
+.phil-card h3{font-size:0.8em;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
+.phil-card.original h3{color:#ffd700}
+.phil-card.gemini h3{color:#00e676}
+.phil-row{display:flex;justify-content:space-between;padding:3px 0;font-size:0.78em}
+.phil-row .name{color:#99aabb}
+.phil-row .detail{color:#ddd;font-weight:600}
+.phil-row .pct{color:#ffd700;font-family:'JetBrains Mono',monospace;min-width:35px;text-align:right}
+.v5-note{background:#0a1525;border:1px solid #1e2d4a;border-radius:10px;padding:14px 18px;margin-top:12px;grid-column:span 2}
+.v5-note h3{color:#ff9800;font-size:0.8em;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.v5-note p{color:#8899aa;font-size:0.78em;line-height:1.5}
+.v5-note .highlight{color:#ffd700;font-weight:600}
+
+/* Stats */
+.stats{display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.stat-card{background:#0d1a2f;border:1px solid #1e2d4a;border-radius:10px;padding:14px 20px;min-width:110px;position:relative}
+.stat-card::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,#ffd70040,transparent)}
+.stat-card .label{color:#667788;font-size:0.7em;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:2px}
+.stat-card .value{font-size:1.4em;font-weight:700;font-family:'JetBrains Mono',monospace}
+.stat-card .value.gold{color:#ffd700}
+.stat-card .value.green{color:#00e676}
+.stat-card .value.blue{color:#536dfe}
+.stat-card .value.teal{color:#00bfa5}
+.stat-card .value.orange{color:#ff9800}
+
+/* Controls */
+.controls{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.controls select,.controls input{background:#0d1a2f;border:1px solid #1e2d4a;color:#e0e0e0;padding:9px 14px;border-radius:8px;font-size:0.84em;transition:border-color 0.2s}
+.controls select:focus,.controls input:focus{border-color:#ffd700;outline:none}
+.controls input{width:200px}
+.count-display{color:#ffd700;font-size:0.88em;margin-left:12px;font-family:'JetBrains Mono',monospace}
+
+/* Table */
+.table-container{background:#0d1a2f;border:1px solid #1e2d4a;border-radius:10px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:0.82em}
+thead{background:#081428;position:sticky;top:0;z-index:10}
+th{padding:11px 8px;text-align:left;font-weight:600;color:#ffd700;cursor:pointer;white-space:nowrap;border-bottom:2px solid #1e2d4a;user-select:none;font-size:0.9em;transition:background 0.15s}
+th:hover{background:#142240}
+th .sort-arrow{margin-left:4px;opacity:0.3;font-size:0.8em}
+th.sorted .sort-arrow{opacity:1;color:#00e676}
+td{padding:8px;border-bottom:1px solid #111d30;white-space:nowrap}
+tbody tr{transition:background 0.15s}
+tbody tr:hover{background:#162040}
+.ticker{color:#00e676;font-weight:600;font-family:'JetBrains Mono',monospace;font-size:1.05em}
+.grade{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;color:white;font-size:0.8em}
+.grade-S{background:linear-gradient(135deg,#ffd700,#ffab00);color:#0a0e17;box-shadow:0 0 8px #ffd70060}
+.grade-A{background:linear-gradient(135deg,#00e676,#00c853);color:#0a0e17}
+.grade-B{background:#4caf50}
+.grade-C{background:#ffc107;color:#0a0e17}
+.grade-D{background:#ff9800}
+.grade-E{background:#ff5722}
+.grade-F{background:#f44336}
+.score{color:#00e676;font-weight:700;font-family:'JetBrains Mono',monospace}
+.positive{color:#00e676}
+.negative{color:#ff6b6b}
+.risk{color:#ff9800;font-family:'JetBrains Mono',monospace}
+.sector-cell{color:#667788;font-size:0.78em}
+
+/* Moat highlight for top column */
+th[data-col="6"]{color:#e0a0ff}
+
+/* Footer */
+.footer{background:#0d1a2f;border:1px solid #1e2d4a;padding:18px;text-align:center;color:#445566;font-size:0.78em;margin-top:20px;border-radius:10px;line-height:1.7}
+.footer .formula{color:#8899aa;font-family:'JetBrains Mono',monospace;font-size:0.85em;margin-top:6px}
+.footer .highlight{color:#ffd700}
+
+@media(max-width:1200px){
+  .philosophy{grid-template-columns:1fr}
+  .v5-note{grid-column:span 1}
+  table{font-size:0.73em}
+  th,td{padding:6px 4px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+<h1><span class="gold">TrendScore</span> <span class="white">V5</span></h1>
+<div class="version-badges">
+<span class="badge badge-v5">V5 DEEP</span>
+<span class="badge badge-deep">8-DIMENSION</span>
+<span class="badge badge-moat">MOAT IS KING 45%</span>
+<span class="badge badge-stocks">441 S&P 500 STOCKS</span>
+</div>
+<p>S&P 500 Intelligence Engine — Deep Sub-Factor Scoring | Company Soul Over Price</p>
+<p style="color:#556677;font-size:0.82em;margin-top:6px">Last updated: March 31, 2026 | Price = tiebreaker only (max 1.3x) | 10-20 sub-factors per dimension</p>
+
+<div class="philosophy">
+<div class="phil-card original">
+<h3>Core 4 Pillars (80%)</h3>
+<div class="phil-row"><span class="name">P1 Trend (15%)</span><span class="detail">5 sub-factors: social buzz, CEO visibility, news catalysts, analyst attention, retail interest</span></div>
+<div class="phil-row"><span class="name">P2 Moat/Dig (45%)</span><span class="detail">20 sub-factors: brand, network effects, switching costs, patents, regulatory, scale, data...</span></div>
+<div class="phil-row"><span class="name">P3 Growth (10%)</span><span class="detail">10 sub-factors: rev consistency, EPS trend, margin expansion, TAM, customer growth...</span></div>
+<div class="phil-row"><span class="name">P4 Financial (10%)</span><span class="detail">10 sub-factors: cash, FCF, debt service, dividends, buybacks, working capital...</span></div>
+</div>
+<div class="phil-card gemini">
+<h3>Intelligence Layer (20%)</h3>
+<div class="phil-row"><span class="name">G1 Risk Penalty</span><span class="detail">8 sub-factors: debt severity, beta, litigation, concentration, supply chain, currency...</span></div>
+<div class="phil-row"><span class="name">G2 Smart Money (7%)</span><span class="detail">6 sub-factors: institutional %, buying trend, hedge funds, insider, short interest...</span></div>
+<div class="phil-row"><span class="name">G3 Forward (8%)</span><span class="detail">6 sub-factors: fwd P/E, analyst consensus, upgrades, mgmt tone, revisions...</span></div>
+<div class="phil-row"><span class="name">G4 Sector Rel (5%)</span><span class="detail">Stock YTD vs sector average — leader or laggard within its industry</span></div>
+</div>
+<div class="v5-note">
+<h3>V5 Philosophy</h3>
+<p>V5 goes <span class="highlight">10-20 sub-factors deep</span> inside each dimension. The Moat pillar alone has 20 granular scores per stock — brand power, network effects, switching costs, patents, regulatory moat, scale advantage, distribution, data/tech moat, pricing power, customer captivity, R&D intensity, management quality, ecosystem lock-in, market share, vertical integration, geographic diversification, recurring revenue, barrier to entry, innovation pipeline, cultural moat. Price is a <span class="highlight">tiebreaker only</span> (max 1.3x boost). This algorithm rewards company soul, not cheap share prices.</p>
+</div>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat-card"><div class="label">Total Stocks</div><div class="value gold">441</div></div>
+<div class="stat-card"><div class="label">S-Grade</div><div class="value gold">14</div></div>
+<div class="stat-card"><div class="label">A-Grade</div><div class="value green">26</div></div>
+<div class="stat-card"><div class="label">B-Grade</div><div class="value teal">77</div></div>
+<div class="stat-card"><div class="label">C-Grade</div><div class="value blue">139</div></div>
+<div class="stat-card"><div class="label">Median Score</div><div class="value orange">433</div></div>
+<div class="stat-card"><div class="label">Top Sector</div><div class="value green" style="font-size:0.85em">CS</div></div>
+</div>
+
+<div class="controls">
+<select id="sectorFilter" onchange="filterTable()">
+<option value="all">All Sectors</option>
+<option value="CD">CD</option>
+<option value="CS">CS</option>
+<option value="EN">EN</option>
+<option value="FIN">FIN</option>
+<option value="HC">HC</option>
+<option value="IND">IND</option>
+<option value="IT">IT</option>
+<option value="MAT">MAT</option>
+<option value="RE">RE</option>
+<option value="STAP">STAP</option>
+<option value="UTIL">UTIL</option>
+
+</select>
+<input type="text" id="searchBox" placeholder="Search ticker..." oninput="filterTable()">
+<select id="gradeFilter" onchange="filterTable()">
+<option value="all">All Grades</option>
+<option value="S">S-Grade Only</option>
+<option value="A">A-Grade+</option>
+<option value="B">B-Grade+</option>
+<option value="C">C-Grade+</option>
+</select>
+<span class="count-display" id="countDisplay">Showing 441 stocks</span>
+</div>
+
+<div class="table-container">
+<table id="tbl">
+<thead>
+<tr>
+<th data-col="0" data-type="num">Rk<span class="sort-arrow">&#9660;</span></th>
+<th data-col="1" data-type="str">Ticker<span class="sort-arrow">&#9660;</span></th>
+<th data-col="2" data-type="num">Price<span class="sort-arrow">&#9660;</span></th>
+<th data-col="3" data-type="num">Daily<span class="sort-arrow">&#9660;</span></th>
+<th data-col="4" data-type="num">Score<span class="sort-arrow">&#9660;</span></th>
+<th data-col="5" data-type="str">Gr<span class="sort-arrow">&#9660;</span></th>
+<th data-col="6" data-type="num" title="Moat/Dig — THE KING (45% weight, 20 sub-factors)">Moat<span class="sort-arrow">&#9660;</span></th>
+<th data-col="7" data-type="num" title="Trend Visibility (15%, 5 sub-factors)">Trnd<span class="sort-arrow">&#9660;</span></th>
+<th data-col="8" data-type="num" title="Growth Deep (10%, 10 sub-factors)">Grow<span class="sort-arrow">&#9660;</span></th>
+<th data-col="9" data-type="num" title="Financial Strength (10%, 10 sub-factors)">Fin<span class="sort-arrow">&#9660;</span></th>
+<th data-col="10" data-type="num" title="Risk Penalty (8 sub-factors, 0-25% penalty)">Risk<span class="sort-arrow">&#9660;</span></th>
+<th data-col="11" data-type="num" title="Smart Money (7%, 6 sub-factors)">SmMn<span class="sort-arrow">&#9660;</span></th>
+<th data-col="12" data-type="num" title="Forward Guidance (8%, 6 sub-factors)">Fwd<span class="sort-arrow">&#9660;</span></th>
+<th data-col="13" data-type="num" title="Sector Relative Strength (5%)">SRel<span class="sort-arrow">&#9660;</span></th>
+<th data-col="14" data-type="num" title="Price Boost — Tiebreaker Only (max 1.3x)">Bst<span class="sort-arrow">&#9660;</span></th>
+<th data-col="15" data-type="num">YTD<span class="sort-arrow">&#9660;</span></th>
+<th data-col="16" data-type="str">Sector<span class="sort-arrow">&#9660;</span></th>
+</tr>
+</thead>
+<tbody>
+<tr data-sector="CS">
+<td>1</td>
+<td class="ticker">VZ</td>
+<td>$50.41</td>
+<td class="positive">+0.19%</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>72.0</td>
+<td>57.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>48.3</td>
+<td>51.7</td>
+<td>96.7</td>
+<td>1.13x</td>
+<td class="positive">+23.47%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="STAP">
+<td>2</td>
+<td class="ticker">KO</td>
+<td>$76.31</td>
+<td class="positive">+0.79%</td>
+<td class="score">980</td>
+<td><div class="grade grade-S">S</div></td>
+<td>77.0</td>
+<td>56.2</td>
+<td>54.0</td>
+<td>72.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>53.3</td>
+<td>1.07x</td>
+<td class="positive">+3.17%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>3</td>
+<td class="ticker">SCHW</td>
+<td>$58.32</td>
+<td class="positive">+1.65%</td>
+<td class="score">947</td>
+<td><div class="grade grade-S">S</div></td>
+<td>74.0</td>
+<td>47.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>66.7</td>
+<td>58.8</td>
+<td>1.11x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="CS">
+<td>4</td>
+<td class="ticker">T</td>
+<td>$28.93</td>
+<td class="negative">-0.60%</td>
+<td class="score">940</td>
+<td><div class="grade grade-S">S</div></td>
+<td>63.0</td>
+<td>50.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>48.3</td>
+<td>50.0</td>
+<td>86.0</td>
+<td>1.21x</td>
+<td class="positive">+16.29%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CD">
+<td>5</td>
+<td class="ticker">AMZN</td>
+<td>$200.54</td>
+<td class="positive">+0.60%</td>
+<td class="score">940</td>
+<td><div class="grade grade-S">S</div></td>
+<td>84.0</td>
+<td>58.2</td>
+<td>88.0</td>
+<td>84.0</td>
+<td class="risk">8.4%</td>
+<td>56.7</td>
+<td>80.0</td>
+<td>39.6</td>
+<td>0.96x</td>
+<td class="negative">-13.48%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IT">
+<td>6</td>
+<td class="ticker">NVDA</td>
+<td>$164.81</td>
+<td class="negative">-1.62%</td>
+<td class="score">934</td>
+<td><div class="grade grade-S">S</div></td>
+<td>80.5</td>
+<td>58.5</td>
+<td>97.0</td>
+<td>92.0</td>
+<td class="risk">11.2%</td>
+<td>61.7</td>
+<td>85.0</td>
+<td>28.7</td>
+<td>0.98x</td>
+<td class="negative">-19.28%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="HC">
+<td>7</td>
+<td class="ticker">PFE</td>
+<td>$41.72</td>
+<td class="positive">+0.02%</td>
+<td class="score">930</td>
+<td><div class="grade grade-S">S</div></td>
+<td>65.5</td>
+<td>60.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>50.0</td>
+<td>71.6</td>
+<td>1.15x</td>
+<td class="positive">+11.31%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CD">
+<td>8</td>
+<td class="ticker">NKE</td>
+<td>$51.24</td>
+<td class="negative">-0.26%</td>
+<td class="score">923</td>
+<td><div class="grade grade-S">S</div></td>
+<td>73.5</td>
+<td>50.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>51.7</td>
+<td>50.0</td>
+<td>59.9</td>
+<td>1.13x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CS">
+<td>9</td>
+<td class="ticker">CMCSA</td>
+<td>$28.88</td>
+<td class="positive">+1.92%</td>
+<td class="score">916</td>
+<td><div class="grade grade-S">S</div></td>
+<td>65.0</td>
+<td>42.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>51.7</td>
+<td>61.5</td>
+<td>1.21x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CS">
+<td>10</td>
+<td class="ticker">NFLX</td>
+<td>$92.82</td>
+<td class="negative">-0.65%</td>
+<td class="score">910</td>
+<td><div class="grade grade-S">S</div></td>
+<td>74.5</td>
+<td>50.0</td>
+<td>85.0</td>
+<td>74.0</td>
+<td class="risk">7.8%</td>
+<td>60.0</td>
+<td>70.0</td>
+<td>24.9</td>
+<td>1.05x</td>
+<td class="negative">-24.46%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="STAP">
+<td>11</td>
+<td class="ticker">KVUE</td>
+<td>$17.27</td>
+<td class="negative">-1.45%</td>
+<td class="score">873</td>
+<td><div class="grade grade-S">S</div></td>
+<td>58.5</td>
+<td>37.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.0</td>
+<td>1.28x</td>
+<td class="negative">-1.66%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>12</td>
+<td class="ticker">BAC</td>
+<td>$47.16</td>
+<td class="positive">+0.40%</td>
+<td class="score">872</td>
+<td><div class="grade grade-S">S</div></td>
+<td>65.0</td>
+<td>45.3</td>
+<td>58.0</td>
+<td>70.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>61.7</td>
+<td>44.4</td>
+<td>1.14x</td>
+<td class="negative">-9.59%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>13</td>
+<td class="ticker">WMT</td>
+<td>$123.65</td>
+<td class="positive">+0.62%</td>
+<td class="score">866</td>
+<td><div class="grade grade-S">S</div></td>
+<td>73.5</td>
+<td>58.0</td>
+<td>72.0</td>
+<td>77.0</td>
+<td class="risk">6.6%</td>
+<td>45.0</td>
+<td>66.7</td>
+<td>56.1</td>
+<td>1.01x</td>
+<td class="positive">+5.04%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="IND">
+<td>14</td>
+<td class="ticker">FAST</td>
+<td>$45.06</td>
+<td class="positive">+0.26%</td>
+<td class="score">862</td>
+<td><div class="grade grade-S">S</div></td>
+<td>58.0</td>
+<td>50.0</td>
+<td>57.0</td>
+<td>78.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>58.3</td>
+<td>65.4</td>
+<td>1.14x</td>
+<td class="positive">+12.37%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>15</td>
+<td class="ticker">MSFT</td>
+<td>$358.83</td>
+<td class="positive">+0.58%</td>
+<td class="score">845</td>
+<td><div class="grade grade-A">A</div></td>
+<td>85.5</td>
+<td>54.6</td>
+<td>85.0</td>
+<td>97.0</td>
+<td class="risk">6.6%</td>
+<td>63.3</td>
+<td>73.3</td>
+<td>26.2</td>
+<td>0.89x</td>
+<td class="negative">-20.96%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="STAP">
+<td>16</td>
+<td class="ticker">KDP</td>
+<td>$26.55</td>
+<td class="positive">+1.20%</td>
+<td class="score">813</td>
+<td><div class="grade grade-A">A</div></td>
+<td>57.0</td>
+<td>46.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>55.5</td>
+<td>1.22x</td>
+<td class="positive">+4.67%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="CD">
+<td>17</td>
+<td class="ticker">CMG</td>
+<td>$31.10</td>
+<td class="positive">+0.78%</td>
+<td class="score">813</td>
+<td><div class="grade grade-A">A</div></td>
+<td>62.5</td>
+<td>42.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>33.8</td>
+<td>1.19x</td>
+<td class="negative">-17.37%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="FIN">
+<td>18</td>
+<td class="ticker">FIS</td>
+<td>$47.44</td>
+<td class="positive">+1.16%</td>
+<td class="score">812</td>
+<td><div class="grade grade-A">A</div></td>
+<td>66.5</td>
+<td>41.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>58.8</td>
+<td>1.14x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>19</td>
+<td class="ticker">BSX</td>
+<td>$62.89</td>
+<td class="negative">-9.08%</td>
+<td class="score">810</td>
+<td><div class="grade grade-A">A</div></td>
+<td>68.0</td>
+<td>29.4</td>
+<td>76.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>70.0</td>
+<td>37.6</td>
+<td>1.10x</td>
+<td class="negative">-11.34%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CS">
+<td>20</td>
+<td class="ticker">GOOG</td>
+<td>$272.56</td>
+<td class="negative">-0.44%</td>
+<td class="score">795</td>
+<td><div class="grade grade-A">A</div></td>
+<td>83.5</td>
+<td>53.7</td>
+<td>76.0</td>
+<td>92.0</td>
+<td class="risk">8.1%</td>
+<td>58.3</td>
+<td>71.7</td>
+<td>24.5</td>
+<td>0.92x</td>
+<td class="negative">-24.70%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CS">
+<td>21</td>
+<td class="ticker">GOOGL</td>
+<td>$272.97</td>
+<td class="negative">-0.50%</td>
+<td class="score">795</td>
+<td><div class="grade grade-A">A</div></td>
+<td>83.5</td>
+<td>53.7</td>
+<td>76.0</td>
+<td>92.0</td>
+<td class="risk">8.1%</td>
+<td>58.3</td>
+<td>71.7</td>
+<td>24.7</td>
+<td>0.92x</td>
+<td class="negative">-24.53%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="STAP">
+<td>22</td>
+<td class="ticker">MDLZ</td>
+<td>$58.37</td>
+<td class="positive">+0.17%</td>
+<td class="score">794</td>
+<td><div class="grade grade-A">A</div></td>
+<td>70.5</td>
+<td>40.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>48.5</td>
+<td>1.11x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="IT">
+<td>23</td>
+<td class="ticker">DDOG</td>
+<td>$115.06</td>
+<td class="positive">+0.51%</td>
+<td class="score">785</td>
+<td><div class="grade grade-A">A</div></td>
+<td>67.5</td>
+<td>47.1</td>
+<td>80.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>71.7</td>
+<td>57.6</td>
+<td>1.02x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>24</td>
+<td class="ticker">KKR</td>
+<td>$90.30</td>
+<td class="positive">+2.03%</td>
+<td class="score">780</td>
+<td><div class="grade grade-A">A</div></td>
+<td>66.0</td>
+<td>42.3</td>
+<td>75.0</td>
+<td>61.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>66.7</td>
+<td>58.8</td>
+<td>1.05x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>25</td>
+<td class="ticker">PG</td>
+<td>$145.14</td>
+<td class="positive">+1.70%</td>
+<td class="score">775</td>
+<td><div class="grade grade-A">A</div></td>
+<td>74.5</td>
+<td>50.4</td>
+<td>55.0</td>
+<td>79.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>52.3</td>
+<td>0.99x</td>
+<td class="positive">+2.55%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>26</td>
+<td class="ticker">FISV</td>
+<td>$54.51</td>
+<td class="positive">+1.14%</td>
+<td class="score">762</td>
+<td><div class="grade grade-A">A</div></td>
+<td>66.5</td>
+<td>39.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>53.2</td>
+<td>1.12x</td>
+<td class="negative">-3.73%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="CD">
+<td>27</td>
+<td class="ticker">UBER</td>
+<td>$57.62</td>
+<td class="negative">-0.64%</td>
+<td class="score">760</td>
+<td><div class="grade grade-A">A</div></td>
+<td>63.5</td>
+<td>51.5</td>
+<td>79.0</td>
+<td>55.0</td>
+<td class="risk">10.3%</td>
+<td>56.7</td>
+<td>68.3</td>
+<td>44.7</td>
+<td>1.11x</td>
+<td class="negative">-10.12%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="HC">
+<td>28</td>
+<td class="ticker">BMY</td>
+<td>$75.88</td>
+<td class="positive">+0.72%</td>
+<td class="score">753</td>
+<td><div class="grade grade-A">A</div></td>
+<td>65.5</td>
+<td>51.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>71.5</td>
+<td>1.07x</td>
+<td class="positive">+11.24%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="HC">
+<td>29</td>
+<td class="ticker">MRK</td>
+<td>$117.91</td>
+<td class="negative">-1.44%</td>
+<td class="score">744</td>
+<td><div class="grade grade-A">A</div></td>
+<td>70.5</td>
+<td>52.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>60.0</td>
+<td>72.6</td>
+<td>1.02x</td>
+<td class="positive">+12.01%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>30</td>
+<td class="ticker">ICE</td>
+<td>$157.07</td>
+<td class="positive">+2.88%</td>
+<td class="score">742</td>
+<td><div class="grade grade-A">A</div></td>
+<td>72.5</td>
+<td>42.8</td>
+<td>65.0</td>
+<td>67.0</td>
+<td class="risk">5.0%</td>
+<td>65.0</td>
+<td>63.3</td>
+<td>58.4</td>
+<td>0.98x</td>
+<td class="negative">-0.22%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>31</td>
+<td class="ticker">JNJ</td>
+<td>$242.32</td>
+<td class="positive">+0.78%</td>
+<td class="score">740</td>
+<td><div class="grade grade-A">A</div></td>
+<td>77.5</td>
+<td>60.7</td>
+<td>54.0</td>
+<td>84.0</td>
+<td class="risk">7.5%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>80.1</td>
+<td>0.93x</td>
+<td class="positive">+17.01%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="HC">
+<td>32</td>
+<td class="ticker">ABT</td>
+<td>$102.12</td>
+<td class="negative">-1.80%</td>
+<td class="score">738</td>
+<td><div class="grade grade-A">A</div></td>
+<td>72.0</td>
+<td>43.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>58.3</td>
+<td>65.9</td>
+<td>1.04x</td>
+<td class="positive">+7.52%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="UTIL">
+<td>33</td>
+<td class="ticker">PCG</td>
+<td>$17.46</td>
+<td class="positive">+1.71%</td>
+<td class="score">728</td>
+<td><div class="grade grade-A">A</div></td>
+<td>50.0</td>
+<td>48.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.8%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>49.0</td>
+<td>1.28x</td>
+<td class="positive">+6.48%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="HC">
+<td>34</td>
+<td class="ticker">MDT</td>
+<td>$96.83</td>
+<td class="positive">+2.38%</td>
+<td class="score">725</td>
+<td><div class="grade grade-A">A</div></td>
+<td>70.0</td>
+<td>48.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>58.6</td>
+<td>1.04x</td>
+<td class="positive">+2.67%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="UTIL">
+<td>35</td>
+<td class="ticker">CNP</td>
+<td>$42.89</td>
+<td class="positive">+1.21%</td>
+<td class="score">725</td>
+<td><div class="grade grade-A">A</div></td>
+<td>58.5</td>
+<td>50.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.1</td>
+<td>1.15x</td>
+<td class="positive">+11.83%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="FIN">
+<td>36</td>
+<td class="ticker">HBAN</td>
+<td>$14.98</td>
+<td class="negative">-0.60%</td>
+<td class="score">724</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46.0</td>
+<td>40.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>60.3</td>
+<td>1.30x</td>
+<td class="positive">+1.02%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>37</td>
+<td class="ticker">UNH</td>
+<td>$261.72</td>
+<td class="positive">+1.04%</td>
+<td class="score">723</td>
+<td><div class="grade grade-A">A</div></td>
+<td>73.0</td>
+<td>48.8</td>
+<td>80.0</td>
+<td>80.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>68.3</td>
+<td>43.0</td>
+<td>0.93x</td>
+<td class="negative">-7.76%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="STAP">
+<td>38</td>
+<td class="ticker">PEP</td>
+<td>$157.23</td>
+<td class="positive">+2.74%</td>
+<td class="score">722</td>
+<td><div class="grade grade-A">A</div></td>
+<td>77.0</td>
+<td>55.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>51.7</td>
+<td>57.3</td>
+<td>0.98x</td>
+<td class="positive">+5.85%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>39</td>
+<td class="ticker">V</td>
+<td>$299.34</td>
+<td class="positive">+1.29%</td>
+<td class="score">704</td>
+<td><div class="grade grade-A">A</div></td>
+<td>79.5</td>
+<td>46.1</td>
+<td>77.0</td>
+<td>85.0</td>
+<td class="risk">8.1%</td>
+<td>65.0</td>
+<td>70.0</td>
+<td>39.5</td>
+<td>0.91x</td>
+<td class="negative">-12.83%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IT">
+<td>40</td>
+<td class="ticker">AAPL</td>
+<td>$246.23</td>
+<td class="negative">-1.03%</td>
+<td class="score">701</td>
+<td><div class="grade grade-A">A</div></td>
+<td>86.5</td>
+<td>57.7</td>
+<td>61.0</td>
+<td>92.0</td>
+<td class="risk">12.5%</td>
+<td>53.3</td>
+<td>58.3</td>
+<td>28.8</td>
+<td>0.93x</td>
+<td class="negative">-19.22%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="UTIL">
+<td>41</td>
+<td class="ticker">EXC</td>
+<td>$49.21</td>
+<td class="positive">+1.84%</td>
+<td class="score">694</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>51.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">6.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.6</td>
+<td>1.13x</td>
+<td class="positive">+12.88%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="FIN">
+<td>42</td>
+<td class="ticker">PYPL</td>
+<td>$60.53</td>
+<td class="positive">+2.19%</td>
+<td class="score">690</td>
+<td><div class="grade grade-B">B</div></td>
+<td>64.0</td>
+<td>44.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>39.7</td>
+<td>1.10x</td>
+<td class="negative">-12.73%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>43</td>
+<td class="ticker">LLY</td>
+<td>$887.40</td>
+<td class="positive">+1.04%</td>
+<td class="score">682</td>
+<td><div class="grade grade-B">B</div></td>
+<td>77.0</td>
+<td>62.7</td>
+<td>97.0</td>
+<td>67.0</td>
+<td class="risk">8.1%</td>
+<td>66.7</td>
+<td>91.7</td>
+<td>54.6</td>
+<td>0.85x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IT">
+<td>44</td>
+<td class="ticker">JNPR</td>
+<td>$25.05</td>
+<td class="negative">-1.20%</td>
+<td class="score">676</td>
+<td><div class="grade grade-B">B</div></td>
+<td>50.0</td>
+<td>40.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.4</td>
+<td>1.23x</td>
+<td class="positive">+1.18%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>45</td>
+<td class="ticker">SQ</td>
+<td>$90.63</td>
+<td class="negative">-3.29%</td>
+<td class="score">674</td>
+<td><div class="grade grade-B">B</div></td>
+<td>69.0</td>
+<td>43.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>49.0</td>
+<td>1.05x</td>
+<td class="negative">-6.52%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="EN">
+<td>46</td>
+<td class="ticker">SLB</td>
+<td>$51.35</td>
+<td class="negative">-4.02%</td>
+<td class="score">670</td>
+<td><div class="grade grade-B">B</div></td>
+<td>57.5</td>
+<td>49.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>58.3</td>
+<td>40.1</td>
+<td>1.12x</td>
+<td class="positive">+34.01%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="IND">
+<td>47</td>
+<td class="ticker">ROL</td>
+<td>$53.00</td>
+<td class="positive">+1.02%</td>
+<td class="score">668</td>
+<td><div class="grade grade-B">B</div></td>
+<td>61.0</td>
+<td>41.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>1.12x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>48</td>
+<td class="ticker">CRM</td>
+<td>$184.50</td>
+<td class="positive">+2.89%</td>
+<td class="score">668</td>
+<td><div class="grade grade-B">B</div></td>
+<td>76.0</td>
+<td>46.3</td>
+<td>67.0</td>
+<td>74.0</td>
+<td class="risk">6.9%</td>
+<td>58.3</td>
+<td>63.3</td>
+<td>9.7</td>
+<td>0.96x</td>
+<td class="negative">-31.94%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>49</td>
+<td class="ticker">MET</td>
+<td>$68.00</td>
+<td class="positive">+0.45%</td>
+<td class="score">668</td>
+<td><div class="grade grade-B">B</div></td>
+<td>63.5</td>
+<td>41.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.8</td>
+<td>1.09x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>50</td>
+<td class="ticker">BRK.B</td>
+<td>$475.64</td>
+<td class="positive">+1.53%</td>
+<td class="score">667</td>
+<td><div class="grade grade-B">B</div></td>
+<td>78.5</td>
+<td>57.4</td>
+<td>67.0</td>
+<td>93.0</td>
+<td class="risk">5.9%</td>
+<td>60.0</td>
+<td>68.3</td>
+<td>46.7</td>
+<td>0.86x</td>
+<td class="negative">-8.08%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="UTIL">
+<td>51</td>
+<td class="ticker">PPL</td>
+<td>$38.01</td>
+<td class="positive">+0.95%</td>
+<td class="score">666</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>41.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">6.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>39.3</td>
+<td>1.17x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="HC">
+<td>52</td>
+<td class="ticker">DHR</td>
+<td>$207.32</td>
+<td class="positive">+1.73%</td>
+<td class="score">665</td>
+<td><div class="grade grade-B">B</div></td>
+<td>74.0</td>
+<td>42.0</td>
+<td>61.0</td>
+<td>67.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>61.7</td>
+<td>54.6</td>
+<td>0.95x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="EN">
+<td>53</td>
+<td class="ticker">OXY</td>
+<td>$49.93</td>
+<td class="negative">-0.26%</td>
+<td class="score">664</td>
+<td><div class="grade grade-B">B</div></td>
+<td>52.0</td>
+<td>55.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>51.7</td>
+<td>55.0</td>
+<td>80.7</td>
+<td>1.13x</td>
+<td class="positive">+61.04%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="EN">
+<td>54</td>
+<td class="ticker">KMI</td>
+<td>$33.53</td>
+<td class="negative">-1.45%</td>
+<td class="score">662</td>
+<td><div class="grade grade-B">B</div></td>
+<td>55.0</td>
+<td>48.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>51.7</td>
+<td>55.0</td>
+<td>22.4</td>
+<td>1.18x</td>
+<td class="positive">+22.18%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="HC">
+<td>55</td>
+<td class="ticker">HOLX</td>
+<td>$75.58</td>
+<td class="negative">-0.13%</td>
+<td class="score">661</td>
+<td><div class="grade grade-B">B</div></td>
+<td>64.0</td>
+<td>41.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>56.7</td>
+<td>1.07x</td>
+<td class="positive">+1.42%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="RE">
+<td>56</td>
+<td class="ticker">VICI</td>
+<td>$27.11</td>
+<td class="positive">+1.88%</td>
+<td class="score">660</td>
+<td><div class="grade grade-B">B</div></td>
+<td>46.5</td>
+<td>48.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>69.5</td>
+<td>1.21x</td>
+<td class="positive">+7.35%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="STAP">
+<td>57</td>
+<td class="ticker">MO</td>
+<td>$44.82</td>
+<td class="positive">+0.47%</td>
+<td class="score">660</td>
+<td><div class="grade grade-B">B</div></td>
+<td>55.0</td>
+<td>51.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.5%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>72.4</td>
+<td>1.14x</td>
+<td class="positive">+15.90%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="IND">
+<td>58</td>
+<td class="ticker">ODFL</td>
+<td>$189.96</td>
+<td class="positive">+2.45%</td>
+<td class="score">658</td>
+<td><div class="grade grade-B">B</div></td>
+<td>60.5</td>
+<td>54.3</td>
+<td>64.0</td>
+<td>80.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>66.7</td>
+<td>79.1</td>
+<td>0.96x</td>
+<td class="positive">+21.48%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="HC">
+<td>59</td>
+<td class="ticker">ZBH</td>
+<td>$88.73</td>
+<td class="positive">+0.18%</td>
+<td class="score">652</td>
+<td><div class="grade grade-B">B</div></td>
+<td>67.0</td>
+<td>40.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.6</td>
+<td>1.05x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IND">
+<td>60</td>
+<td class="ticker">WM</td>
+<td>$229.80</td>
+<td class="positive">+2.10%</td>
+<td class="score">649</td>
+<td><div class="grade grade-B">B</div></td>
+<td>72.0</td>
+<td>49.4</td>
+<td>62.0</td>
+<td>69.0</td>
+<td class="risk">5.0%</td>
+<td>56.7</td>
+<td>60.0</td>
+<td>59.3</td>
+<td>0.94x</td>
+<td class="positive">+8.30%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>61</td>
+<td class="ticker">ADBE</td>
+<td>$240.63</td>
+<td class="positive">+2.46%</td>
+<td class="score">645</td>
+<td><div class="grade grade-B">B</div></td>
+<td>74.0</td>
+<td>43.2</td>
+<td>67.0</td>
+<td>78.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>61.7</td>
+<td>26.8</td>
+<td>0.93x</td>
+<td class="negative">-20.55%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="UTIL">
+<td>62</td>
+<td class="ticker">EIX</td>
+<td>$71.87</td>
+<td class="positive">+2.23%</td>
+<td class="score">642</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>53.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>68.9</td>
+<td>1.08x</td>
+<td class="positive">+19.70%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="CD">
+<td>63</td>
+<td class="ticker">SBUX</td>
+<td>$86.80</td>
+<td class="negative">-0.01%</td>
+<td class="score">642</td>
+<td><div class="grade grade-B">B</div></td>
+<td>72.0</td>
+<td>48.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.0%</td>
+<td>51.7</td>
+<td>50.0</td>
+<td>53.5</td>
+<td>1.06x</td>
+<td class="negative">-4.22%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="HC">
+<td>64</td>
+<td class="ticker">BDX</td>
+<td>$154.26</td>
+<td class="negative">-0.16%</td>
+<td class="score">638</td>
+<td><div class="grade grade-B">B</div></td>
+<td>73.5</td>
+<td>41.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>0.99x</td>
+<td class="positive">+1.99%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>65</td>
+<td class="ticker">MS</td>
+<td>$157.78</td>
+<td class="negative">-0.38%</td>
+<td class="score">634</td>
+<td><div class="grade grade-B">B</div></td>
+<td>65.0</td>
+<td>50.9</td>
+<td>50.0</td>
+<td>69.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>65.0</td>
+<td>62.5</td>
+<td>0.98x</td>
+<td class="positive">+2.47%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>66</td>
+<td class="ticker">PAYX</td>
+<td>$93.05</td>
+<td class="positive">+1.50%</td>
+<td class="score">634</td>
+<td><div class="grade grade-B">B</div></td>
+<td>65.0</td>
+<td>46.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>51.9</td>
+<td>1.05x</td>
+<td class="positive">+3.34%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CD">
+<td>67</td>
+<td class="ticker">MCD</td>
+<td>$308.91</td>
+<td class="positive">+0.98%</td>
+<td class="score">631</td>
+<td><div class="grade grade-B">B</div></td>
+<td>79.0</td>
+<td>58.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>56.7</td>
+<td>66.5</td>
+<td>0.91x</td>
+<td class="positive">+4.41%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="HC">
+<td>68</td>
+<td class="ticker">GEHC</td>
+<td>$68.68</td>
+<td class="negative">-0.79%</td>
+<td class="score">631</td>
+<td><div class="grade grade-B">B</div></td>
+<td>63.0</td>
+<td>36.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>48.8</td>
+<td>1.09x</td>
+<td class="negative">-3.86%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="RE">
+<td>69</td>
+<td class="ticker">INVH</td>
+<td>$24.70</td>
+<td class="positive">+0.96%</td>
+<td class="score">629</td>
+<td><div class="grade grade-B">B</div></td>
+<td>48.5</td>
+<td>38.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>51.0</td>
+<td>1.23x</td>
+<td class="negative">-5.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="HC">
+<td>70</td>
+<td class="ticker">ABBV</td>
+<td>$212.98</td>
+<td class="positive">+1.71%</td>
+<td class="score">627</td>
+<td><div class="grade grade-B">B</div></td>
+<td>68.0</td>
+<td>52.1</td>
+<td>70.0</td>
+<td>57.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>66.7</td>
+<td>55.5</td>
+<td>0.95x</td>
+<td class="positive">+0.59%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="HC">
+<td>71</td>
+<td class="ticker">ZTS</td>
+<td>$116.41</td>
+<td class="positive">+2.70%</td>
+<td class="score">626</td>
+<td><div class="grade grade-B">B</div></td>
+<td>67.5</td>
+<td>42.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>54.6</td>
+<td>1.02x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CS">
+<td>72</td>
+<td class="ticker">DIS</td>
+<td>$116.15</td>
+<td class="negative">-4.68%</td>
+<td class="score">625</td>
+<td><div class="grade grade-B">B</div></td>
+<td>77.0</td>
+<td>45.0</td>
+<td>52.0</td>
+<td>57.0</td>
+<td class="risk">9.1%</td>
+<td>51.7</td>
+<td>50.0</td>
+<td>30.5</td>
+<td>1.02x</td>
+<td class="negative">-20.72%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="STAP">
+<td>73</td>
+<td class="ticker">COST</td>
+<td>$996.41</td>
+<td class="positive">+1.28%</td>
+<td class="score">623</td>
+<td><div class="grade grade-B">B</div></td>
+<td>74.0</td>
+<td>63.7</td>
+<td>76.0</td>
+<td>78.0</td>
+<td class="risk">5.3%</td>
+<td>55.0</td>
+<td>63.3</td>
+<td>71.7</td>
+<td>0.85x</td>
+<td class="positive">+15.44%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="UTIL">
+<td>74</td>
+<td class="ticker">D</td>
+<td>$61.95</td>
+<td class="positive">+1.76%</td>
+<td class="score">623</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>49.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>51.6</td>
+<td>1.10x</td>
+<td class="positive">+8.18%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="HC">
+<td>75</td>
+<td class="ticker">EW</td>
+<td>$79.40</td>
+<td class="positive">+0.08%</td>
+<td class="score">621</td>
+<td><div class="grade grade-B">B</div></td>
+<td>64.0</td>
+<td>38.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>48.2</td>
+<td>1.07x</td>
+<td class="negative">-4.29%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IT">
+<td>76</td>
+<td class="ticker">FTNT</td>
+<td>$79.19</td>
+<td class="positive">+1.28%</td>
+<td class="score">621</td>
+<td><div class="grade grade-B">B</div></td>
+<td>67.0</td>
+<td>30.5</td>
+<td>70.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>6.7</td>
+<td>1.07x</td>
+<td class="negative">-33.96%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="HC">
+<td>77</td>
+<td class="ticker">VRTX</td>
+<td>$373.41</td>
+<td class="positive">+1.10%</td>
+<td class="score">620</td>
+<td><div class="grade grade-B">B</div></td>
+<td>65.5</td>
+<td>41.5</td>
+<td>88.0</td>
+<td>84.0</td>
+<td class="risk">5.0%</td>
+<td>68.3</td>
+<td>88.3</td>
+<td>54.6</td>
+<td>0.89x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CD">
+<td>78</td>
+<td class="ticker">TGT</td>
+<td>$118.32</td>
+<td class="negative">-1.27%</td>
+<td class="score">618</td>
+<td><div class="grade grade-B">B</div></td>
+<td>59.0</td>
+<td>56.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>91.3</td>
+<td>1.02x</td>
+<td class="positive">+20.95%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="RE">
+<td>79</td>
+<td class="ticker">KIM</td>
+<td>$22.27</td>
+<td class="positive">+0.25%</td>
+<td class="score">614</td>
+<td><div class="grade grade-B">B</div></td>
+<td>47.5</td>
+<td>36.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.5</td>
+<td>1.24x</td>
+<td class="negative">-8.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="CS">
+<td>80</td>
+<td class="ticker">TMUS</td>
+<td>$213.98</td>
+<td class="positive">+1.50%</td>
+<td class="score">614</td>
+<td><div class="grade grade-B">B</div></td>
+<td>69.5</td>
+<td>54.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>70.0</td>
+<td>65.8</td>
+<td>0.95x</td>
+<td class="positive">+2.86%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CS">
+<td>81</td>
+<td class="ticker">META</td>
+<td>$535.02</td>
+<td class="positive">+1.77%</td>
+<td class="score">612</td>
+<td><div class="grade grade-B">B</div></td>
+<td>78.0</td>
+<td>57.4</td>
+<td>91.0</td>
+<td>92.0</td>
+<td class="risk">10.0%</td>
+<td>63.3</td>
+<td>78.3</td>
+<td>25.0</td>
+<td>0.85x</td>
+<td class="negative">-24.35%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="UTIL">
+<td>82</td>
+<td class="ticker">LNT</td>
+<td>$69.14</td>
+<td class="positive">+1.29%</td>
+<td class="score">609</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>48.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>50.0</td>
+<td>1.09x</td>
+<td class="positive">+7.14%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IT">
+<td>83</td>
+<td class="ticker">GEN</td>
+<td>$23.45</td>
+<td class="positive">+1.87%</td>
+<td class="score">608</td>
+<td><div class="grade grade-B">B</div></td>
+<td>52.5</td>
+<td>32.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>17.6</td>
+<td>1.24x</td>
+<td class="negative">-26.63%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="UTIL">
+<td>84</td>
+<td class="ticker">ES</td>
+<td>$68.51</td>
+<td class="positive">+1.36%</td>
+<td class="score">602</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>49.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>52.5</td>
+<td>1.09x</td>
+<td class="positive">+8.81%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="FIN">
+<td>85</td>
+<td class="ticker">NDAQ</td>
+<td>$83.16</td>
+<td class="positive">+2.06%</td>
+<td class="score">601</td>
+<td><div class="grade grade-B">B</div></td>
+<td>61.0</td>
+<td>42.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>58.2</td>
+<td>1.06x</td>
+<td class="negative">-0.39%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="CD">
+<td>86</td>
+<td class="ticker">YUM</td>
+<td>$154.67</td>
+<td class="positive">+0.46%</td>
+<td class="score">600</td>
+<td><div class="grade grade-B">B</div></td>
+<td>71.5</td>
+<td>41.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>0.99x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="UTIL">
+<td>87</td>
+<td class="ticker">NEE</td>
+<td>$92.01</td>
+<td class="positive">+0.66%</td>
+<td class="score">598</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>52.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">6.6%</td>
+<td>60.0</td>
+<td>66.7</td>
+<td>61.1</td>
+<td>1.05x</td>
+<td class="positive">+14.55%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="EN">
+<td>88</td>
+<td class="ticker">BKR</td>
+<td>$60.82</td>
+<td class="negative">-3.80%</td>
+<td class="score">598</td>
+<td><div class="grade grade-B">B</div></td>
+<td>57.0</td>
+<td>48.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>39.0</td>
+<td>1.10x</td>
+<td class="positive">+33.25%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="EN">
+<td>89</td>
+<td class="ticker">XOM</td>
+<td>$171.53</td>
+<td class="positive">+0.32%</td>
+<td class="score">598</td>
+<td><div class="grade grade-B">B</div></td>
+<td>62.0</td>
+<td>66.0</td>
+<td>59.0</td>
+<td>81.0</td>
+<td class="risk">8.4%</td>
+<td>53.3</td>
+<td>60.0</td>
+<td>53.5</td>
+<td>0.97x</td>
+<td class="positive">+42.96%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="FIN">
+<td>90</td>
+<td class="ticker">APO</td>
+<td>$109.55</td>
+<td class="positive">+1.04%</td>
+<td class="score">597</td>
+<td><div class="grade grade-B">B</div></td>
+<td>66.0</td>
+<td>38.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>65.0</td>
+<td>50.1</td>
+<td>1.03x</td>
+<td class="negative">-5.76%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IT">
+<td>91</td>
+<td class="ticker">TTD</td>
+<td>$60.31</td>
+<td class="negative">-3.63%</td>
+<td class="score">596</td>
+<td><div class="grade grade-B">B</div></td>
+<td>66.0</td>
+<td>29.4</td>
+<td>68.0</td>
+<td>55.0</td>
+<td class="risk">6.6%</td>
+<td>51.7</td>
+<td>55.0</td>
+<td>0.0</td>
+<td>1.10x</td>
+<td class="negative">-42.11%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>92</td>
+<td class="ticker">JPM</td>
+<td>$283.41</td>
+<td class="positive">+0.20%</td>
+<td class="score">595</td>
+<td><div class="grade grade-B">B</div></td>
+<td>74.0</td>
+<td>55.3</td>
+<td>74.0</td>
+<td>82.0</td>
+<td class="risk">10.9%</td>
+<td>58.3</td>
+<td>66.7</td>
+<td>42.4</td>
+<td>0.92x</td>
+<td class="negative">-10.95%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="CS">
+<td>93</td>
+<td class="ticker">NWS</td>
+<td>$28.27</td>
+<td class="positive">+1.71%</td>
+<td class="score">594</td>
+<td><div class="grade grade-B">B</div></td>
+<td>46.0</td>
+<td>42.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>61.5</td>
+<td>1.21x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CS">
+<td>94</td>
+<td class="ticker">NWSA</td>
+<td>$28.27</td>
+<td class="positive">+1.65%</td>
+<td class="score">594</td>
+<td><div class="grade grade-B">B</div></td>
+<td>46.0</td>
+<td>42.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>61.5</td>
+<td>1.21x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="IT">
+<td>95</td>
+<td class="ticker">MCHP</td>
+<td>$59.55</td>
+<td class="negative">-3.95%</td>
+<td class="score">594</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.0</td>
+<td>36.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>1.11x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>96</td>
+<td class="ticker">NOW</td>
+<td>$736.08</td>
+<td class="positive">+2.07%</td>
+<td class="score">592</td>
+<td><div class="grade grade-B">B</div></td>
+<td>75.5</td>
+<td>44.9</td>
+<td>90.0</td>
+<td>76.0</td>
+<td class="risk">6.2%</td>
+<td>66.7</td>
+<td>81.7</td>
+<td>34.9</td>
+<td>0.85x</td>
+<td class="negative">-15.16%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>97</td>
+<td class="ticker">ORCL</td>
+<td>$138.28</td>
+<td class="negative">-0.99%</td>
+<td class="score">591</td>
+<td><div class="grade grade-B">B</div></td>
+<td>76.0</td>
+<td>42.8</td>
+<td>76.0</td>
+<td>55.0</td>
+<td class="risk">10.3%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>10.1</td>
+<td>1.00x</td>
+<td class="negative">-31.65%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>98</td>
+<td class="ticker">CSCO</td>
+<td>$76.91</td>
+<td class="negative">-3.77%</td>
+<td class="score">590</td>
+<td><div class="grade grade-B">B</div></td>
+<td>63.5</td>
+<td>36.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>51.7</td>
+<td>49.1</td>
+<td>1.07x</td>
+<td class="negative">-5.63%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>99</td>
+<td class="ticker">SMCI</td>
+<td>$20.91</td>
+<td class="negative">-4.84%</td>
+<td class="score">589</td>
+<td><div class="grade grade-B">B</div></td>
+<td>52.5</td>
+<td>39.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.3%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>27.9</td>
+<td>1.25x</td>
+<td class="negative">-19.81%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="MAT">
+<td>100</td>
+<td class="ticker">DOW</td>
+<td>$41.53</td>
+<td class="positive">+1.75%</td>
+<td class="score">588</td>
+<td><div class="grade grade-B">B</div></td>
+<td>41.5</td>
+<td>61.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>48.3</td>
+<td>100.0</td>
+<td>1.15x</td>
+<td class="positive">+77.71%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="EN">
+<td>101</td>
+<td class="ticker">APA</td>
+<td>$43.54</td>
+<td class="negative">-1.91%</td>
+<td class="score">586</td>
+<td><div class="grade grade-B">B</div></td>
+<td>42.5</td>
+<td>55.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>1.15x</td>
+<td class="positive">+78.21%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="HC">
+<td>102</td>
+<td class="ticker">ISRG</td>
+<td>$495.04</td>
+<td class="positive">+2.35%</td>
+<td class="score">586</td>
+<td><div class="grade grade-B">B</div></td>
+<td>76.0</td>
+<td>46.5</td>
+<td>80.0</td>
+<td>83.0</td>
+<td class="risk">6.2%</td>
+<td>60.0</td>
+<td>73.3</td>
+<td>38.3</td>
+<td>0.86x</td>
+<td class="negative">-10.84%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="EN">
+<td>103</td>
+<td class="ticker">HAL</td>
+<td>$39.47</td>
+<td class="negative">-2.34%</td>
+<td class="score">579</td>
+<td><div class="grade grade-B">B</div></td>
+<td>47.5</td>
+<td>50.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>48.2</td>
+<td>1.16x</td>
+<td class="positive">+39.40%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="IT">
+<td>104</td>
+<td class="ticker">AKAM</td>
+<td>$109.93</td>
+<td class="negative">-3.99%</td>
+<td class="score">579</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>47.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>96.8</td>
+<td>1.03x</td>
+<td class="positive">+26.17%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>105</td>
+<td class="ticker">VRT</td>
+<td>$233.68</td>
+<td class="negative">-6.93%</td>
+<td class="score">578</td>
+<td><div class="grade grade-B">B</div></td>
+<td>57.5</td>
+<td>49.7</td>
+<td>82.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>78.3</td>
+<td>100.0</td>
+<td>0.94x</td>
+<td class="positive">+44.28%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>106</td>
+<td class="ticker">OTIS</td>
+<td>$76.23</td>
+<td class="positive">+0.37%</td>
+<td class="score">574</td>
+<td><div class="grade grade-B">B</div></td>
+<td>61.0</td>
+<td>40.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>44.2</td>
+<td>1.07x</td>
+<td class="negative">-1.78%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="UTIL">
+<td>107</td>
+<td class="ticker">CMS</td>
+<td>$77.17</td>
+<td class="positive">+1.26%</td>
+<td class="score">571</td>
+<td><div class="grade grade-B">B</div></td>
+<td>58.5</td>
+<td>48.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.6%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>49.5</td>
+<td>1.07x</td>
+<td class="positive">+6.82%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IT">
+<td>108</td>
+<td class="ticker">CRWD</td>
+<td>$379.01</td>
+<td class="positive">+2.55%</td>
+<td class="score">566</td>
+<td><div class="grade grade-B">B</div></td>
+<td>67.0</td>
+<td>56.9</td>
+<td>90.0</td>
+<td>65.0</td>
+<td class="risk">7.8%</td>
+<td>60.0</td>
+<td>80.0</td>
+<td>57.6</td>
+<td>0.89x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>109</td>
+<td class="ticker">PLTR</td>
+<td>$137.48</td>
+<td class="negative">-3.90%</td>
+<td class="score">566</td>
+<td><div class="grade grade-B">B</div></td>
+<td>63.0</td>
+<td>49.1</td>
+<td>92.0</td>
+<td>73.0</td>
+<td class="risk">10.3%</td>
+<td>50.0</td>
+<td>66.7</td>
+<td>10.2</td>
+<td>1.00x</td>
+<td class="negative">-31.59%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>110</td>
+<td class="ticker">BRO</td>
+<td>$65.33</td>
+<td class="positive">+3.00%</td>
+<td class="score">564</td>
+<td><div class="grade grade-B">B</div></td>
+<td>55.5</td>
+<td>43.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.8</td>
+<td>1.09x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>111</td>
+<td class="ticker">KR</td>
+<td>$73.59</td>
+<td class="positive">+0.51%</td>
+<td class="score">559</td>
+<td><div class="grade grade-B">B</div></td>
+<td>52.0</td>
+<td>52.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>75.1</td>
+<td>1.08x</td>
+<td class="positive">+17.69%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="CS">
+<td>112</td>
+<td class="ticker">FOX</td>
+<td>$42.25</td>
+<td class="positive">+0.84%</td>
+<td class="score">555</td>
+<td><div class="grade grade-B">B</div></td>
+<td>56.0</td>
+<td>32.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>27.5</td>
+<td>1.15x</td>
+<td class="negative">-22.71%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="FIN">
+<td>113</td>
+<td class="ticker">PRU</td>
+<td>$94.24</td>
+<td class="positive">+1.01%</td>
+<td class="score">554</td>
+<td><div class="grade grade-B">B</div></td>
+<td>63.5</td>
+<td>37.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.1</td>
+<td>1.05x</td>
+<td class="negative">-8.42%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="EN">
+<td>114</td>
+<td class="ticker">DVN</td>
+<td>$51.44</td>
+<td class="negative">-1.20%</td>
+<td class="score">554</td>
+<td><div class="grade grade-B">B</div></td>
+<td>49.5</td>
+<td>52.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>49.9</td>
+<td>1.12x</td>
+<td class="positive">+40.51%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="IND">
+<td>115</td>
+<td class="ticker">HON</td>
+<td>$277.60</td>
+<td class="positive">+2.33%</td>
+<td class="score">554</td>
+<td><div class="grade grade-B">B</div></td>
+<td>71.5</td>
+<td>54.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>56.7</td>
+<td>58.3</td>
+<td>68.3</td>
+<td>0.92x</td>
+<td class="positive">+14.29%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>116</td>
+<td class="ticker">CSGP</td>
+<td>$40.81</td>
+<td class="positive">+2.60%</td>
+<td class="score">553</td>
+<td><div class="grade grade-B">B</div></td>
+<td>59.0</td>
+<td>30.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>0.0</td>
+<td>1.16x</td>
+<td class="negative">-39.34%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="CD">
+<td>117</td>
+<td class="ticker">CCL</td>
+<td>$23.86</td>
+<td class="negative">-1.36%</td>
+<td class="score">552</td>
+<td><div class="grade grade-B">B</div></td>
+<td>51.5</td>
+<td>36.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">11.6%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>55.7</td>
+<td>1.23x</td>
+<td class="negative">-2.76%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="EN">
+<td>118</td>
+<td class="ticker">CVX</td>
+<td>$210.66</td>
+<td class="negative">-0.23%</td>
+<td class="score">550</td>
+<td><div class="grade grade-C">C</div></td>
+<td>62.0</td>
+<td>58.7</td>
+<td>53.0</td>
+<td>79.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>58.3</td>
+<td>46.6</td>
+<td>0.95x</td>
+<td class="positive">+38.34%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="HC">
+<td>119</td>
+<td class="ticker">GILD</td>
+<td>$136.64</td>
+<td class="positive">+1.78%</td>
+<td class="score">549</td>
+<td><div class="grade grade-C">C</div></td>
+<td>66.0</td>
+<td>44.1</td>
+<td>56.0</td>
+<td>60.0</td>
+<td class="risk">7.8%</td>
+<td>60.0</td>
+<td>60.0</td>
+<td>47.4</td>
+<td>1.00x</td>
+<td class="negative">-4.78%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CS">
+<td>120</td>
+<td class="ticker">FOXA</td>
+<td>$44.32</td>
+<td class="positive">+1.30%</td>
+<td class="score">548</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56.0</td>
+<td>32.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>27.9</td>
+<td>1.15x</td>
+<td class="negative">-22.43%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="RE">
+<td>121</td>
+<td class="ticker">WY</td>
+<td>$24.30</td>
+<td class="positive">+1.82%</td>
+<td class="score">545</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41.5</td>
+<td>42.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.5</td>
+<td>1.23x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IT">
+<td>122</td>
+<td class="ticker">AMD</td>
+<td>$194.58</td>
+<td class="negative">-3.67%</td>
+<td class="score">543</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.5</td>
+<td>49.8</td>
+<td>74.0</td>
+<td>73.0</td>
+<td class="risk">9.7%</td>
+<td>58.3</td>
+<td>73.3</td>
+<td>27.2</td>
+<td>0.96x</td>
+<td class="negative">-20.26%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="UTIL">
+<td>123</td>
+<td class="ticker">SO</td>
+<td>$97.96</td>
+<td class="positive">+0.82%</td>
+<td class="score">543</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>49.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>58.3</td>
+<td>56.3</td>
+<td>1.04x</td>
+<td class="positive">+11.34%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="CD">
+<td>124</td>
+<td class="ticker">BBY</td>
+<td>$63.92</td>
+<td class="positive">+1.49%</td>
+<td class="score">538</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49.5</td>
+<td>49.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>74.6</td>
+<td>1.10x</td>
+<td class="positive">+9.83%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>125</td>
+<td class="ticker">CARR</td>
+<td>$54.45</td>
+<td class="positive">+0.37%</td>
+<td class="score">537</td>
+<td><div class="grade grade-C">C</div></td>
+<td>57.5</td>
+<td>34.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>27.8</td>
+<td>1.12x</td>
+<td class="negative">-12.67%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>126</td>
+<td class="ticker">PANW</td>
+<td>$182.28</td>
+<td class="negative">-2.27%</td>
+<td class="score">536</td>
+<td><div class="grade grade-C">C</div></td>
+<td>67.0</td>
+<td>39.7</td>
+<td>85.0</td>
+<td>55.0</td>
+<td class="risk">9.1%</td>
+<td>60.0</td>
+<td>76.7</td>
+<td>27.1</td>
+<td>0.97x</td>
+<td class="negative">-20.35%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="HC">
+<td>127</td>
+<td class="ticker">DXCM</td>
+<td>$61.72</td>
+<td class="negative">-0.85%</td>
+<td class="score">536</td>
+<td><div class="grade grade-C">C</div></td>
+<td>63.5</td>
+<td>30.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.8%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>28.3</td>
+<td>1.10x</td>
+<td class="negative">-17.56%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="UTIL">
+<td>128</td>
+<td class="ticker">ETR</td>
+<td>$110.96</td>
+<td class="positive">+0.99%</td>
+<td class="score">536</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>52.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">6.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>69.3</td>
+<td>1.03x</td>
+<td class="positive">+19.98%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="STAP">
+<td>129</td>
+<td class="ticker">KMB</td>
+<td>$96.59</td>
+<td class="negative">-2.10%</td>
+<td class="score">533</td>
+<td><div class="grade grade-C">C</div></td>
+<td>62.0</td>
+<td>37.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>48.4</td>
+<td>1.04x</td>
+<td class="negative">-0.07%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>130</td>
+<td class="ticker">KEY</td>
+<td>$20.32</td>
+<td class="negative">-2.19%</td>
+<td class="score">532</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46.0</td>
+<td>29.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>32.5</td>
+<td>1.26x</td>
+<td class="negative">-17.54%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>131</td>
+<td class="ticker">KHC</td>
+<td>$22.36</td>
+<td class="positive">+1.43%</td>
+<td class="score">531</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46.5</td>
+<td>33.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>22.7</td>
+<td>1.24x</td>
+<td class="negative">-17.24%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="STAP">
+<td>132</td>
+<td class="ticker">HRL</td>
+<td>$23.09</td>
+<td class="positive">+0.07%</td>
+<td class="score">531</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38.0</td>
+<td>47.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>60.6</td>
+<td>1.24x</td>
+<td class="positive">+8.04%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="IND">
+<td>133</td>
+<td class="ticker">PCAR</td>
+<td>$112.41</td>
+<td class="negative">-0.30%</td>
+<td class="score">530</td>
+<td><div class="grade grade-C">C</div></td>
+<td>60.0</td>
+<td>45.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>61.2</td>
+<td>1.02x</td>
+<td class="positive">+9.56%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="STAP">
+<td>134</td>
+<td class="ticker">MKC</td>
+<td>$53.56</td>
+<td class="positive">+0.92%</td>
+<td class="score">529</td>
+<td><div class="grade grade-C">C</div></td>
+<td>50.0</td>
+<td>46.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.1</td>
+<td>1.12x</td>
+<td class="positive">+3.69%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>135</td>
+<td class="ticker">CME</td>
+<td>$297.50</td>
+<td class="positive">+1.27%</td>
+<td class="score">529</td>
+<td><div class="grade grade-C">C</div></td>
+<td>67.0</td>
+<td>45.7</td>
+<td>50.0</td>
+<td>85.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>56.7</td>
+<td>62.4</td>
+<td>0.91x</td>
+<td class="positive">+2.43%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="UTIL">
+<td>136</td>
+<td class="ticker">SRE</td>
+<td>$96.57</td>
+<td class="positive">+0.72%</td>
+<td class="score">527</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>48.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>53.4</td>
+<td>1.04x</td>
+<td class="positive">+9.41%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="STAP">
+<td>137</td>
+<td class="ticker">EL</td>
+<td>$67.34</td>
+<td class="positive">+0.17%</td>
+<td class="score">525</td>
+<td><div class="grade grade-C">C</div></td>
+<td>61.5</td>
+<td>32.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>18.4</td>
+<td>1.09x</td>
+<td class="negative">-20.05%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="STAP">
+<td>138</td>
+<td class="ticker">MNST</td>
+<td>$85.88</td>
+<td class="positive">+3.01%</td>
+<td class="score">525</td>
+<td><div class="grade grade-C">C</div></td>
+<td>62.0</td>
+<td>33.5</td>
+<td>65.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>10.7</td>
+<td>1.06x</td>
+<td class="negative">-25.22%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>139</td>
+<td class="ticker">AIG</td>
+<td>$74.15</td>
+<td class="positive">+1.64%</td>
+<td class="score">524</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.5</td>
+<td>41.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>56.5</td>
+<td>1.08x</td>
+<td class="negative">-1.50%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>140</td>
+<td class="ticker">VRSK</td>
+<td>$187.46</td>
+<td class="positive">+2.57%</td>
+<td class="score">520</td>
+<td><div class="grade grade-C">C</div></td>
+<td>67.0</td>
+<td>42.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>58.8</td>
+<td>0.96x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>141</td>
+<td class="ticker">BLK</td>
+<td>$957.68</td>
+<td class="positive">+1.47%</td>
+<td class="score">520</td>
+<td><div class="grade grade-C">C</div></td>
+<td>72.5</td>
+<td>47.7</td>
+<td>72.0</td>
+<td>78.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>66.7</td>
+<td>46.6</td>
+<td>0.85x</td>
+<td class="negative">-8.14%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="MAT">
+<td>142</td>
+<td class="ticker">IFF</td>
+<td>$55.34</td>
+<td class="negative">-0.34%</td>
+<td class="score">518</td>
+<td><div class="grade grade-C">C</div></td>
+<td>52.5</td>
+<td>42.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>40.2</td>
+<td>1.11x</td>
+<td class="positive">+3.76%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="UTIL">
+<td>143</td>
+<td class="ticker">XEL</td>
+<td>$79.12</td>
+<td class="positive">+1.32%</td>
+<td class="score">517</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>41.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.6%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>39.3</td>
+<td>1.07x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="FIN">
+<td>144</td>
+<td class="ticker">IBKR</td>
+<td>$63.48</td>
+<td class="negative">-1.12%</td>
+<td class="score">514</td>
+<td><div class="grade grade-C">C</div></td>
+<td>63.5</td>
+<td>27.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>50.0</td>
+<td>55.0</td>
+<td>8.3</td>
+<td>1.10x</td>
+<td class="negative">-33.62%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>145</td>
+<td class="ticker">MA</td>
+<td>$493.26</td>
+<td class="positive">+1.86%</td>
+<td class="score">513</td>
+<td><div class="grade grade-C">C</div></td>
+<td>79.5</td>
+<td>41.2</td>
+<td>77.0</td>
+<td>76.0</td>
+<td class="risk">9.4%</td>
+<td>65.0</td>
+<td>68.3</td>
+<td>34.2</td>
+<td>0.86x</td>
+<td class="negative">-16.37%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IT">
+<td>146</td>
+<td class="ticker">INTC</td>
+<td>$40.93</td>
+<td class="negative">-5.11%</td>
+<td class="score">513</td>
+<td><div class="grade grade-C">C</div></td>
+<td>60.0</td>
+<td>41.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.3%</td>
+<td>51.7</td>
+<td>41.7</td>
+<td>22.1</td>
+<td>1.16x</td>
+<td class="negative">-23.67%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>147</td>
+<td class="ticker">AVGO</td>
+<td>$291.81</td>
+<td class="negative">-2.95%</td>
+<td class="score">511</td>
+<td><div class="grade grade-C">C</div></td>
+<td>70.5</td>
+<td>43.1</td>
+<td>83.0</td>
+<td>73.0</td>
+<td class="risk">10.9%</td>
+<td>63.3</td>
+<td>80.0</td>
+<td>24.3</td>
+<td>0.91x</td>
+<td class="negative">-22.21%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>148</td>
+<td class="ticker">CDNS</td>
+<td>$128.20</td>
+<td class="negative">-3.51%</td>
+<td class="score">511</td>
+<td><div class="grade grade-C">C</div></td>
+<td>67.5</td>
+<td>25.2</td>
+<td>71.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>6.4</td>
+<td>1.01x</td>
+<td class="negative">-34.13%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="RE">
+<td>149</td>
+<td class="ticker">HST</td>
+<td>$18.91</td>
+<td class="positive">+0.39%</td>
+<td class="score">511</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41.0</td>
+<td>34.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>40.5</td>
+<td>1.27x</td>
+<td class="negative">-12.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IT">
+<td>150</td>
+<td class="ticker">INTU</td>
+<td>$543.71</td>
+<td class="negative">-0.87%</td>
+<td class="score">510</td>
+<td><div class="grade grade-C">C</div></td>
+<td>76.5</td>
+<td>38.6</td>
+<td>70.0</td>
+<td>74.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>66.7</td>
+<td>40.1</td>
+<td>0.85x</td>
+<td class="negative">-11.64%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="EN">
+<td>151</td>
+<td class="ticker">WMB</td>
+<td>$72.56</td>
+<td class="negative">-1.39%</td>
+<td class="score">508</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.0</td>
+<td>48.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>20.3</td>
+<td>1.08x</td>
+<td class="positive">+20.80%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="UTIL">
+<td>152</td>
+<td class="ticker">AEE</td>
+<td>$109.75</td>
+<td class="positive">+0.94%</td>
+<td class="score">507</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>48.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.3%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>51.6</td>
+<td>1.03x</td>
+<td class="positive">+8.18%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="CD">
+<td>153</td>
+<td class="ticker">DECK</td>
+<td>$94.75</td>
+<td class="positive">+0.74%</td>
+<td class="score">507</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.5</td>
+<td>31.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>17.6</td>
+<td>1.05x</td>
+<td class="negative">-28.14%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="STAP">
+<td>154</td>
+<td class="ticker">TSN</td>
+<td>$63.71</td>
+<td class="negative">-0.33%</td>
+<td class="score">505</td>
+<td><div class="grade grade-C">C</div></td>
+<td>52.5</td>
+<td>41.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>52.3</td>
+<td>1.10x</td>
+<td class="positive">+2.51%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="HC">
+<td>155</td>
+<td class="ticker">CI</td>
+<td>$305.45</td>
+<td class="positive">+0.96%</td>
+<td class="score">505</td>
+<td><div class="grade grade-C">C</div></td>
+<td>73.0</td>
+<td>40.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>66.7</td>
+<td>52.4</td>
+<td>0.91x</td>
+<td class="negative">-1.45%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="EN">
+<td>156</td>
+<td class="ticker">CTRA</td>
+<td>$35.89</td>
+<td class="negative">-1.16%</td>
+<td class="score">503</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42.5</td>
+<td>51.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.9</td>
+<td>1.17x</td>
+<td class="positive">+36.53%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="CD">
+<td>157</td>
+<td class="ticker">GPC</td>
+<td>$104.14</td>
+<td class="negative">-0.84%</td>
+<td class="score">499</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56.0</td>
+<td>44.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>71.7</td>
+<td>1.03x</td>
+<td class="positive">+7.92%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="UTIL">
+<td>158</td>
+<td class="ticker">NI</td>
+<td>$46.49</td>
+<td class="positive">+1.14%</td>
+<td class="score">498</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46.0</td>
+<td>50.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">6.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>56.3</td>
+<td>1.14x</td>
+<td class="positive">+11.31%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IT">
+<td>159</td>
+<td class="ticker">ADI</td>
+<td>$215.32</td>
+<td class="negative">-2.15%</td>
+<td class="score">495</td>
+<td><div class="grade grade-C">C</div></td>
+<td>64.0</td>
+<td>44.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>61.7</td>
+<td>74.2</td>
+<td>0.95x</td>
+<td class="positive">+11.06%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>160</td>
+<td class="ticker">GLW</td>
+<td>$127.14</td>
+<td class="negative">-7.06%</td>
+<td class="score">494</td>
+<td><div class="grade grade-C">C</div></td>
+<td>53.5</td>
+<td>50.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>1.01x</td>
+<td class="positive">+46.01%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>161</td>
+<td class="ticker">ALL</td>
+<td>$207.65</td>
+<td class="positive">+2.44%</td>
+<td class="score">491</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.0</td>
+<td>48.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>66.9</td>
+<td>0.95x</td>
+<td class="positive">+5.41%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IT">
+<td>162</td>
+<td class="ticker">LRCX</td>
+<td>$199.82</td>
+<td class="negative">-5.48%</td>
+<td class="score">490</td>
+<td><div class="grade grade-C">C</div></td>
+<td>60.5</td>
+<td>50.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>82.0</td>
+<td>0.96x</td>
+<td class="positive">+16.28%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>163</td>
+<td class="ticker">ADP</td>
+<td>$297.64</td>
+<td class="positive">+1.18%</td>
+<td class="score">489</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.5</td>
+<td>47.0</td>
+<td>50.0</td>
+<td>77.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>63.3</td>
+<td>54.3</td>
+<td>0.91x</td>
+<td class="positive">+4.99%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CD">
+<td>164</td>
+<td class="ticker">ABNB</td>
+<td>$150.14</td>
+<td class="positive">+0.92%</td>
+<td class="score">488</td>
+<td><div class="grade grade-C">C</div></td>
+<td>68.5</td>
+<td>46.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">8.4%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>35.8</td>
+<td>0.99x</td>
+<td class="negative">-16.06%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="UTIL">
+<td>165</td>
+<td class="ticker">DUK</td>
+<td>$131.83</td>
+<td class="positive">+1.42%</td>
+<td class="score">487</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>51.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>58.3</td>
+<td>57.9</td>
+<td>1.00x</td>
+<td class="positive">+12.42%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="HC">
+<td>166</td>
+<td class="ticker">REGN</td>
+<td>$711.80</td>
+<td class="positive">+1.27%</td>
+<td class="score">485</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.5</td>
+<td>46.0</td>
+<td>75.0</td>
+<td>83.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>73.3</td>
+<td>59.1</td>
+<td>0.85x</td>
+<td class="positive">+2.97%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>167</td>
+<td class="ticker">WFC</td>
+<td>$76.66</td>
+<td class="negative">-0.69%</td>
+<td class="score">483</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56.0</td>
+<td>36.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>58.3</td>
+<td>40.1</td>
+<td>1.07x</td>
+<td class="negative">-12.43%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="UTIL">
+<td>168</td>
+<td class="ticker">WEC</td>
+<td>$115.58</td>
+<td class="positive">+1.06%</td>
+<td class="score">480</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>46.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.3%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.7</td>
+<td>1.02x</td>
+<td class="positive">+4.94%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="EN">
+<td>169</td>
+<td class="ticker">EOG</td>
+<td>$149.89</td>
+<td class="positive">+0.22%</td>
+<td class="score">480</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49.5</td>
+<td>56.4</td>
+<td>50.0</td>
+<td>78.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>66.7</td>
+<td>53.2</td>
+<td>0.99x</td>
+<td class="positive">+42.74%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="IND">
+<td>170</td>
+<td class="ticker">AXON</td>
+<td>$413.48</td>
+<td class="negative">-3.83%</td>
+<td class="score">478</td>
+<td><div class="grade grade-C">C</div></td>
+<td>70.0</td>
+<td>37.2</td>
+<td>88.0</td>
+<td>64.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>78.3</td>
+<td>5.7</td>
+<td>0.88x</td>
+<td class="negative">-27.42%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>171</td>
+<td class="ticker">MU</td>
+<td>$323.01</td>
+<td class="negative">-9.58%</td>
+<td class="score">476</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56.0</td>
+<td>58.5</td>
+<td>70.0</td>
+<td>66.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>70.0</td>
+<td>76.9</td>
+<td>0.90x</td>
+<td class="positive">+12.89%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>172</td>
+<td class="ticker">NTRS</td>
+<td>$135.71</td>
+<td class="positive">+0.54%</td>
+<td class="score">475</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.5</td>
+<td>49.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>73.9</td>
+<td>1.00x</td>
+<td class="positive">+10.06%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>173</td>
+<td class="ticker">SYK</td>
+<td>$388.42</td>
+<td class="positive">+1.01%</td>
+<td class="score">473</td>
+<td><div class="grade grade-C">C</div></td>
+<td>70.0</td>
+<td>41.8</td>
+<td>71.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>66.7</td>
+<td>51.7</td>
+<td>0.88x</td>
+<td class="negative">-1.94%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IT">
+<td>174</td>
+<td class="ticker">HPE</td>
+<td>$22.44</td>
+<td class="negative">-6.27%</td>
+<td class="score">472</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42.0</td>
+<td>30.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.1</td>
+<td>1.24x</td>
+<td class="negative">-9.66%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="MAT">
+<td>175</td>
+<td class="ticker">LYB</td>
+<td>$82.31</td>
+<td class="positive">+2.32%</td>
+<td class="score">471</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41.5</td>
+<td>62.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>1.06x</td>
+<td class="positive">+89.43%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IND">
+<td>176</td>
+<td class="ticker">UPS</td>
+<td>$94.95</td>
+<td class="positive">+0.16%</td>
+<td class="score">471</td>
+<td><div class="grade grade-C">C</div></td>
+<td>59.5</td>
+<td>38.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>50.0</td>
+<td>39.2</td>
+<td>1.04x</td>
+<td class="negative">-5.10%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="HC">
+<td>177</td>
+<td class="ticker">IQV</td>
+<td>$165.80</td>
+<td class="positive">+1.19%</td>
+<td class="score">470</td>
+<td><div class="grade grade-C">C</div></td>
+<td>64.5</td>
+<td>38.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>44.8</td>
+<td>0.98x</td>
+<td class="negative">-6.57%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="HC">
+<td>178</td>
+<td class="ticker">TMO</td>
+<td>$481.94</td>
+<td class="positive">+1.82%</td>
+<td class="score">470</td>
+<td><div class="grade grade-C">C</div></td>
+<td>74.0</td>
+<td>42.1</td>
+<td>60.0</td>
+<td>64.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>61.7</td>
+<td>54.6</td>
+<td>0.86x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="HC">
+<td>179</td>
+<td class="ticker">CAH</td>
+<td>$206.29</td>
+<td class="negative">-0.14%</td>
+<td class="score">468</td>
+<td><div class="grade grade-C">C</div></td>
+<td>64.0</td>
+<td>45.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>68.3</td>
+<td>0.95x</td>
+<td class="positive">+9.10%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="UTIL">
+<td>180</td>
+<td class="ticker">AWK</td>
+<td>$138.78</td>
+<td class="positive">+1.40%</td>
+<td class="score">467</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.0</td>
+<td>49.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.5</td>
+<td>1.00x</td>
+<td class="positive">+10.11%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IT">
+<td>181</td>
+<td class="ticker">WDAY</td>
+<td>$128.48</td>
+<td class="positive">+3.46%</td>
+<td class="score">464</td>
+<td><div class="grade grade-C">C</div></td>
+<td>68.0</td>
+<td>33.9</td>
+<td>61.0</td>
+<td>55.0</td>
+<td class="risk">6.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>0.0</td>
+<td>1.01x</td>
+<td class="negative">-40.19%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="HC">
+<td>182</td>
+<td class="ticker">INCY</td>
+<td>$90.28</td>
+<td class="negative">-0.02%</td>
+<td class="score">464</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56.0</td>
+<td>37.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>50.7</td>
+<td>1.05x</td>
+<td class="negative">-2.58%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="EN">
+<td>183</td>
+<td class="ticker">OKE</td>
+<td>$92.75</td>
+<td class="negative">-1.29%</td>
+<td class="score">464</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.0</td>
+<td>49.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>28.6</td>
+<td>1.05x</td>
+<td class="positive">+26.33%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="STAP">
+<td>184</td>
+<td class="ticker">GIS</td>
+<td>$71.05</td>
+<td class="negative">-1.74%</td>
+<td class="score">463</td>
+<td><div class="grade grade-C">C</div></td>
+<td>50.0</td>
+<td>43.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.3</td>
+<td>1.08x</td>
+<td class="positive">+7.17%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="CD">
+<td>185</td>
+<td class="ticker">ORLY</td>
+<td>$92.02</td>
+<td class="positive">+2.12%</td>
+<td class="score">462</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56.0</td>
+<td>35.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>60.0</td>
+<td>39.7</td>
+<td>1.05x</td>
+<td class="negative">-13.45%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="HC">
+<td>186</td>
+<td class="ticker">AMGN</td>
+<td>$349.47</td>
+<td class="positive">+0.21%</td>
+<td class="score">459</td>
+<td><div class="grade grade-C">C</div></td>
+<td>70.5</td>
+<td>48.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>63.6</td>
+<td>0.89x</td>
+<td class="positive">+5.98%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>187</td>
+<td class="ticker">USB</td>
+<td>$50.68</td>
+<td class="negative">-0.34%</td>
+<td class="score">459</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46.0</td>
+<td>40.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.7</td>
+<td>1.13x</td>
+<td class="positive">+0.60%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>188</td>
+<td class="ticker">HSY</td>
+<td>$213.93</td>
+<td class="positive">+0.09%</td>
+<td class="score">458</td>
+<td><div class="grade grade-C">C</div></td>
+<td>61.0</td>
+<td>51.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>74.4</td>
+<td>0.95x</td>
+<td class="positive">+17.24%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="STAP">
+<td>189</td>
+<td class="ticker">WBA</td>
+<td>$9.33</td>
+<td class="negative">-4.67%</td>
+<td class="score">456</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49.0</td>
+<td>26.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">8.8%</td>
+<td>55.0</td>
+<td>31.7</td>
+<td>16.2</td>
+<td>1.30x</td>
+<td class="negative">-21.56%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="CD">
+<td>190</td>
+<td class="ticker">GRMN</td>
+<td>$226.14</td>
+<td class="negative">-1.75%</td>
+<td class="score">456</td>
+<td><div class="grade grade-C">C</div></td>
+<td>63.5</td>
+<td>45.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>77.3</td>
+<td>0.94x</td>
+<td class="positive">+11.66%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CS">
+<td>191</td>
+<td class="ticker">SATS</td>
+<td>$112.37</td>
+<td class="negative">-2.47%</td>
+<td class="score">455</td>
+<td><div class="grade grade-C">C</div></td>
+<td>57.5</td>
+<td>37.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>61.5</td>
+<td>1.02x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="UTIL">
+<td>192</td>
+<td class="ticker">DTE</td>
+<td>$146.16</td>
+<td class="positive">+1.17%</td>
+<td class="score">455</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.5</td>
+<td>51.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">6.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.2</td>
+<td>0.99x</td>
+<td class="positive">+13.27%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IND">
+<td>193</td>
+<td class="ticker">SWK</td>
+<td>$68.66</td>
+<td class="negative">-0.04%</td>
+<td class="score">454</td>
+<td><div class="grade grade-C">C</div></td>
+<td>51.0</td>
+<td>40.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>47.4</td>
+<td>1.09x</td>
+<td class="positive">+0.38%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="UTIL">
+<td>194</td>
+<td class="ticker">FE</td>
+<td>$50.45</td>
+<td class="positive">+0.83%</td>
+<td class="score">454</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45.0</td>
+<td>50.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.2</td>
+<td>1.13x</td>
+<td class="positive">+12.59%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IND">
+<td>195</td>
+<td class="ticker">FTV</td>
+<td>$53.52</td>
+<td class="negative">-0.74%</td>
+<td class="score">453</td>
+<td><div class="grade grade-C">C</div></td>
+<td>47.0</td>
+<td>41.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>51.2</td>
+<td>1.12x</td>
+<td class="positive">+2.92%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="FIN">
+<td>196</td>
+<td class="ticker">AXP</td>
+<td>$297.68</td>
+<td class="positive">+1.84%</td>
+<td class="score">451</td>
+<td><div class="grade grade-C">C</div></td>
+<td>69.0</td>
+<td>44.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>61.7</td>
+<td>49.0</td>
+<td>0.91x</td>
+<td class="negative">-6.50%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="MAT">
+<td>197</td>
+<td class="ticker">CF</td>
+<td>$128.29</td>
+<td class="positive">+1.01%</td>
+<td class="score">451</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43.5</td>
+<td>60.5</td>
+<td>61.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>58.3</td>
+<td>100.0</td>
+<td>1.01x</td>
+<td class="positive">+76.86%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="FIN">
+<td>198</td>
+<td class="ticker">MCO</td>
+<td>$432.37</td>
+<td class="positive">+1.77%</td>
+<td class="score">450</td>
+<td><div class="grade grade-C">C</div></td>
+<td>67.5</td>
+<td>42.1</td>
+<td>66.0</td>
+<td>66.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>65.0</td>
+<td>58.8</td>
+<td>0.87x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="CD">
+<td>199</td>
+<td class="ticker">MAR</td>
+<td>$320.05</td>
+<td class="positive">+0.79%</td>
+<td class="score">450</td>
+<td><div class="grade grade-C">C</div></td>
+<td>71.0</td>
+<td>41.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>0.90x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="MAT">
+<td>200</td>
+<td class="ticker">DD</td>
+<td>$56.71</td>
+<td class="positive">+2.34%</td>
+<td class="score">447</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45.5</td>
+<td>49.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>46.5</td>
+<td>1.11x</td>
+<td class="positive">+7.93%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="CD">
+<td>201</td>
+<td class="ticker">F</td>
+<td>$11.18</td>
+<td class="negative">-1.64%</td>
+<td class="score">446</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45.0</td>
+<td>34.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">12.8%</td>
+<td>55.0</td>
+<td>41.7</td>
+<td>48.9</td>
+<td>1.30x</td>
+<td class="negative">-7.30%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CS">
+<td>202</td>
+<td class="ticker">EA</td>
+<td>$202.61</td>
+<td class="positive">+0.30%</td>
+<td class="score">446</td>
+<td><div class="grade grade-C">C</div></td>
+<td>63.5</td>
+<td>40.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>61.5</td>
+<td>0.95x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CD">
+<td>203</td>
+<td class="ticker">EBAY</td>
+<td>$87.78</td>
+<td class="negative">-0.23%</td>
+<td class="score">446</td>
+<td><div class="grade grade-C">C</div></td>
+<td>53.0</td>
+<td>39.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>1.05x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CD">
+<td>204</td>
+<td class="ticker">LULU</td>
+<td>$145.87</td>
+<td class="positive">+0.01%</td>
+<td class="score">445</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.5</td>
+<td>38.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>13.9</td>
+<td>0.99x</td>
+<td class="negative">-30.66%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="FIN">
+<td>205</td>
+<td class="ticker">WRB</td>
+<td>$66.30</td>
+<td class="positive">+2.41%</td>
+<td class="score">445</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46.0</td>
+<td>47.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>63.9</td>
+<td>1.09x</td>
+<td class="positive">+3.42%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>206</td>
+<td class="ticker">CPB</td>
+<td>$29.40</td>
+<td class="negative">-1.72%</td>
+<td class="score">444</td>
+<td><div class="grade grade-C">C</div></td>
+<td>40.5</td>
+<td>37.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>48.5</td>
+<td>1.20x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="FIN">
+<td>207</td>
+<td class="ticker">BK</td>
+<td>$115.39</td>
+<td class="positive">+0.63%</td>
+<td class="score">444</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.5</td>
+<td>40.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>57.9</td>
+<td>1.02x</td>
+<td class="negative">-0.57%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="CD">
+<td>208</td>
+<td class="ticker">DASH</td>
+<td>$146.56</td>
+<td class="negative">-0.03%</td>
+<td class="score">444</td>
+<td><div class="grade grade-C">C</div></td>
+<td>63.0</td>
+<td>39.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>33.7</td>
+<td>0.99x</td>
+<td class="negative">-17.42%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>209</td>
+<td class="ticker">CAT</td>
+<td>$667.49</td>
+<td class="negative">-4.01%</td>
+<td class="score">444</td>
+<td><div class="grade grade-C">C</div></td>
+<td>66.0</td>
+<td>51.7</td>
+<td>73.0</td>
+<td>68.0</td>
+<td class="risk">5.0%</td>
+<td>56.7</td>
+<td>58.3</td>
+<td>71.5</td>
+<td>0.85x</td>
+<td class="positive">+16.45%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>210</td>
+<td class="ticker">TRMB</td>
+<td>$62.30</td>
+<td class="negative">-1.06%</td>
+<td class="score">442</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.5</td>
+<td>29.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>22.9</td>
+<td>1.10x</td>
+<td class="negative">-23.11%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="RE">
+<td>211</td>
+<td class="ticker">IRM</td>
+<td>$97.07</td>
+<td class="negative">-1.25%</td>
+<td class="score">441</td>
+<td><div class="grade grade-C">C</div></td>
+<td>52.0</td>
+<td>47.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.8%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>84.0</td>
+<td>1.04x</td>
+<td class="positive">+17.03%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="HC">
+<td>212</td>
+<td class="ticker">VTRS</td>
+<td>$12.88</td>
+<td class="negative">-1.26%</td>
+<td class="score">440</td>
+<td><div class="grade grade-C">C</div></td>
+<td>32.0</td>
+<td>38.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.6</td>
+<td>1.30x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="HC">
+<td>213</td>
+<td class="ticker">CNC</td>
+<td>$31.86</td>
+<td class="negative">-0.44%</td>
+<td class="score">440</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45.5</td>
+<td>31.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>30.4</td>
+<td>1.19x</td>
+<td class="negative">-16.14%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>214</td>
+<td class="ticker">AFL</td>
+<td>$125.90</td>
+<td class="positive">+0.65%</td>
+<td class="score">437</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.5</td>
+<td>44.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>60.5</td>
+<td>1.01x</td>
+<td class="positive">+1.14%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>215</td>
+<td class="ticker">COO</td>
+<td>$69.21</td>
+<td class="negative">-0.80%</td>
+<td class="score">436</td>
+<td><div class="grade grade-C">C</div></td>
+<td>48.5</td>
+<td>40.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>55.3</td>
+<td>1.09x</td>
+<td class="positive">+0.46%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>216</td>
+<td class="ticker">TRV</td>
+<td>$290.63</td>
+<td class="positive">+1.88%</td>
+<td class="score">436</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.0</td>
+<td>48.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>69.0</td>
+<td>0.91x</td>
+<td class="positive">+6.79%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>217</td>
+<td class="ticker">MAS</td>
+<td>$56.60</td>
+<td class="negative">-1.20%</td>
+<td class="score">435</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49.0</td>
+<td>37.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.0</td>
+<td>1.11x</td>
+<td class="negative">-2.53%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>218</td>
+<td class="ticker">AMAT</td>
+<td>$322.50</td>
+<td class="negative">-4.35%</td>
+<td class="score">435</td>
+<td><div class="grade grade-C">C</div></td>
+<td>60.5</td>
+<td>56.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>55.0</td>
+<td>95.3</td>
+<td>0.90x</td>
+<td class="positive">+25.12%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>219</td>
+<td class="ticker">APH</td>
+<td>$80.68</td>
+<td class="negative">-3.03%</td>
+<td class="score">433</td>
+<td><div class="grade grade-C">C</div></td>
+<td>60.5</td>
+<td>27.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>9.6</td>
+<td>1.07x</td>
+<td class="negative">-24.84%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>220</td>
+<td class="ticker">CHRW</td>
+<td>$118.73</td>
+<td class="negative">-0.77%</td>
+<td class="score">433</td>
+<td><div class="grade grade-C">C</div></td>
+<td>55.5</td>
+<td>43.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>55.5</td>
+<td>1.02x</td>
+<td class="positive">+5.75%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>221</td>
+<td class="ticker">CTSH</td>
+<td>$60.82</td>
+<td class="positive">+1.82%</td>
+<td class="score">433</td>
+<td><div class="grade grade-C">C</div></td>
+<td>47.0</td>
+<td>41.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>55.3</td>
+<td>1.10x</td>
+<td class="negative">-1.56%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>222</td>
+<td class="ticker">PTC</td>
+<td>$139.11</td>
+<td class="positive">+1.09%</td>
+<td class="score">433</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.0</td>
+<td>41.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>1.00x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>223</td>
+<td class="ticker">GPN</td>
+<td>$112.47</td>
+<td class="positive">+2.37%</td>
+<td class="score">432</td>
+<td><div class="grade grade-C">C</div></td>
+<td>60.5</td>
+<td>37.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.5%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>42.0</td>
+<td>1.02x</td>
+<td class="negative">-10.38%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="CD">
+<td>224</td>
+<td class="ticker">APTV</td>
+<td>$66.33</td>
+<td class="negative">-1.07%</td>
+<td class="score">432</td>
+<td><div class="grade grade-C">C</div></td>
+<td>48.5</td>
+<td>38.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>1.09x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="UTIL">
+<td>225</td>
+<td class="ticker">ED</td>
+<td>$113.72</td>
+<td class="positive">+1.82%</td>
+<td class="score">430</td>
+<td><div class="grade grade-C">C</div></td>
+<td>51.0</td>
+<td>52.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>60.8</td>
+<td>1.02x</td>
+<td class="positive">+14.33%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="FIN">
+<td>226</td>
+<td class="ticker">GS</td>
+<td>$807.06</td>
+<td class="positive">+0.52%</td>
+<td class="score">429</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.0</td>
+<td>60.4</td>
+<td>50.0</td>
+<td>71.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>66.7</td>
+<td>62.9</td>
+<td>0.85x</td>
+<td class="positive">+2.76%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>227</td>
+<td class="ticker">PNR</td>
+<td>$84.07</td>
+<td class="negative">-1.00%</td>
+<td class="score">428</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49.5</td>
+<td>44.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.7</td>
+<td>1.06x</td>
+<td class="positive">+8.59%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="FIN">
+<td>228</td>
+<td class="ticker">GL</td>
+<td>$146.36</td>
+<td class="positive">+2.08%</td>
+<td class="score">428</td>
+<td><div class="grade grade-C">C</div></td>
+<td>58.0</td>
+<td>42.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.8</td>
+<td>0.99x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>229</td>
+<td class="ticker">RMD</td>
+<td>$220.10</td>
+<td class="negative">-0.17%</td>
+<td class="score">427</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.0</td>
+<td>38.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>55.0</td>
+<td>52.1</td>
+<td>0.94x</td>
+<td class="negative">-1.65%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="STAP">
+<td>230</td>
+<td class="ticker">PM</td>
+<td>$165.02</td>
+<td class="positive">+0.91%</td>
+<td class="score">426</td>
+<td><div class="grade grade-C">C</div></td>
+<td>63.5</td>
+<td>37.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>38.6</td>
+<td>0.98x</td>
+<td class="negative">-6.62%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="UTIL">
+<td>231</td>
+<td class="ticker">AES</td>
+<td>$16.57</td>
+<td class="positive">+0.59%</td>
+<td class="score">424</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44.5</td>
+<td>34.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">11.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>18.9</td>
+<td>1.29x</td>
+<td class="negative">-13.63%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IND">
+<td>232</td>
+<td class="ticker">XYL</td>
+<td>$116.16</td>
+<td class="negative">-1.19%</td>
+<td class="score">423</td>
+<td><div class="grade grade-C">C</div></td>
+<td>57.0</td>
+<td>38.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>1.02x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CS">
+<td>233</td>
+<td class="ticker">SW</td>
+<td>$22.24</td>
+<td class="negative">-7.45%</td>
+<td class="score">422</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43.0</td>
+<td>25.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>22.0</td>
+<td>1.24x</td>
+<td class="negative">-26.37%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CD">
+<td>234</td>
+<td class="ticker">TSCO</td>
+<td>$45.33</td>
+<td class="positive">+1.02%</td>
+<td class="score">422</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44.5</td>
+<td>37.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>48.6</td>
+<td>1.14x</td>
+<td class="negative">-7.51%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>235</td>
+<td class="ticker">EMR</td>
+<td>$103.56</td>
+<td class="positive">+0.46%</td>
+<td class="score">419</td>
+<td><div class="grade grade-C">C</div></td>
+<td>59.0</td>
+<td>33.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>25.8</td>
+<td>1.03x</td>
+<td class="negative">-14.04%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>236</td>
+<td class="ticker">LUV</td>
+<td>$36.31</td>
+<td class="negative">-2.81%</td>
+<td class="score">419</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43.0</td>
+<td>37.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>1.17x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="RE">
+<td>237</td>
+<td class="ticker">DLR</td>
+<td>$175.02</td>
+<td class="negative">-0.23%</td>
+<td class="score">418</td>
+<td><div class="grade grade-C">C</div></td>
+<td>52.5</td>
+<td>47.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>65.0</td>
+<td>66.7</td>
+<td>77.9</td>
+<td>0.97x</td>
+<td class="positive">+12.98%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IT">
+<td>238</td>
+<td class="ticker">DELL</td>
+<td>$163.77</td>
+<td class="negative">-4.68%</td>
+<td class="score">417</td>
+<td><div class="grade grade-C">C</div></td>
+<td>50.5</td>
+<td>54.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>50.0</td>
+<td>58.3</td>
+<td>100.0</td>
+<td>0.98x</td>
+<td class="positive">+29.92%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="HC">
+<td>239</td>
+<td class="ticker">CVS</td>
+<td>$69.99</td>
+<td class="negative">-0.13%</td>
+<td class="score">416</td>
+<td><div class="grade grade-C">C</div></td>
+<td>51.5</td>
+<td>39.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.5%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.6</td>
+<td>1.08x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>240</td>
+<td class="ticker">CB</td>
+<td>$204.30</td>
+<td class="positive">+0.87%</td>
+<td class="score">416</td>
+<td><div class="grade grade-C">C</div></td>
+<td>59.0</td>
+<td>44.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>61.7</td>
+<td>60.7</td>
+<td>0.95x</td>
+<td class="positive">+1.27%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>241</td>
+<td class="ticker">MMM</td>
+<td>$133.36</td>
+<td class="positive">+1.23%</td>
+<td class="score">414</td>
+<td><div class="grade grade-C">C</div></td>
+<td>54.5</td>
+<td>47.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.9</td>
+<td>1.00x</td>
+<td class="positive">+5.35%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CD">
+<td>242</td>
+<td class="ticker">ROST</td>
+<td>$208.17</td>
+<td class="negative">-1.65%</td>
+<td class="score">413</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56.5</td>
+<td>47.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>82.8</td>
+<td>0.95x</td>
+<td class="positive">+15.32%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="FIN">
+<td>243</td>
+<td class="ticker">STT</td>
+<td>$123.43</td>
+<td class="positive">+0.74%</td>
+<td class="score">412</td>
+<td><div class="grade grade-C">C</div></td>
+<td>52.5</td>
+<td>45.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>61.5</td>
+<td>1.01x</td>
+<td class="positive">+1.79%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="EN">
+<td>244</td>
+<td class="ticker">EQT</td>
+<td>$64.27</td>
+<td class="negative">-4.85%</td>
+<td class="score">412</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49.0</td>
+<td>45.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>19.1</td>
+<td>1.10x</td>
+<td class="positive">+20.03%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="IT">
+<td>245</td>
+<td class="ticker">SNPS</td>
+<td>$249.75</td>
+<td class="negative">-6.41%</td>
+<td class="score">409</td>
+<td><div class="grade grade-C">C</div></td>
+<td>67.5</td>
+<td>26.4</td>
+<td>71.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>26.0</td>
+<td>0.93x</td>
+<td class="negative">-21.05%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>246</td>
+<td class="ticker">IBM</td>
+<td>$237.63</td>
+<td class="positive">+0.54%</td>
+<td class="score">408</td>
+<td><div class="grade grade-C">C</div></td>
+<td>63.0</td>
+<td>47.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>50.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>0.94x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>247</td>
+<td class="ticker">TXN</td>
+<td>$185.71</td>
+<td class="negative">-1.87%</td>
+<td class="score">408</td>
+<td><div class="grade grade-C">C</div></td>
+<td>64.0</td>
+<td>31.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>58.3</td>
+<td>40.0</td>
+<td>0.96x</td>
+<td class="negative">-11.70%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="CD">
+<td>248</td>
+<td class="ticker">HAS</td>
+<td>$88.97</td>
+<td class="positive">+0.43%</td>
+<td class="score">408</td>
+<td><div class="grade grade-C">C</div></td>
+<td>50.0</td>
+<td>41.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>1.05x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="MAT">
+<td>249</td>
+<td class="ticker">ALB</td>
+<td>$82.73</td>
+<td class="positive">+0.65%</td>
+<td class="score">406</td>
+<td><div class="grade grade-C">C</div></td>
+<td>57.5</td>
+<td>32.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>51.7</td>
+<td>7.5</td>
+<td>1.06x</td>
+<td class="negative">-18.03%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IND">
+<td>250</td>
+<td class="ticker">RTX</td>
+<td>$186.13</td>
+<td class="negative">-1.88%</td>
+<td class="score">406</td>
+<td><div class="grade grade-C">C</div></td>
+<td>61.5</td>
+<td>40.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>58.3</td>
+<td>38.5</td>
+<td>0.96x</td>
+<td class="negative">-5.53%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>251</td>
+<td class="ticker">DE</td>
+<td>$572.56</td>
+<td class="negative">-1.98%</td>
+<td class="score">406</td>
+<td><div class="grade grade-C">C</div></td>
+<td>71.5</td>
+<td>49.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>58.3</td>
+<td>76.5</td>
+<td>0.85x</td>
+<td class="positive">+19.80%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>252</td>
+<td class="ticker">HPQ</td>
+<td>$18.89</td>
+<td class="negative">-2.85%</td>
+<td class="score">406</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38.5</td>
+<td>28.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>28.7</td>
+<td>1.27x</td>
+<td class="negative">-19.29%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="STAP">
+<td>253</td>
+<td class="ticker">STZ</td>
+<td>$151.06</td>
+<td class="negative">-0.22%</td>
+<td class="score">405</td>
+<td><div class="grade grade-C">C</div></td>
+<td>57.0</td>
+<td>42.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>55.3</td>
+<td>0.99x</td>
+<td class="positive">+4.49%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="CD">
+<td>254</td>
+<td class="ticker">HLT</td>
+<td>$229.37</td>
+<td class="positive">+0.28%</td>
+<td class="score">404</td>
+<td><div class="grade grade-C">C</div></td>
+<td>65.5</td>
+<td>35.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>43.8</td>
+<td>0.94x</td>
+<td class="negative">-10.71%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="HC">
+<td>255</td>
+<td class="ticker">WST</td>
+<td>$244.98</td>
+<td class="positive">+0.67%</td>
+<td class="score">403</td>
+<td><div class="grade grade-C">C</div></td>
+<td>61.5</td>
+<td>45.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>58.3</td>
+<td>0.93x</td>
+<td class="positive">+2.47%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>256</td>
+<td class="ticker">FITB</td>
+<td>$44.59</td>
+<td class="positive">+0.11%</td>
+<td class="score">401</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46.0</td>
+<td>32.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>35.6</td>
+<td>1.14x</td>
+<td class="negative">-15.44%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>257</td>
+<td class="ticker">RJF</td>
+<td>$141.06</td>
+<td class="negative">-0.18%</td>
+<td class="score">400</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.5</td>
+<td>39.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.8</td>
+<td>1.00x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="RE">
+<td>258</td>
+<td class="ticker">EQR</td>
+<td>$58.31</td>
+<td class="negative">-0.74%</td>
+<td class="score">398</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48.0</td>
+<td>33.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.9</td>
+<td>1.11x</td>
+<td class="negative">-9.70%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="RE">
+<td>259</td>
+<td class="ticker">CCI</td>
+<td>$79.75</td>
+<td class="positive">+1.48%</td>
+<td class="score">396</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>33.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>31.3</td>
+<td>1.07x</td>
+<td class="negative">-18.15%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="HC">
+<td>260</td>
+<td class="ticker">HSIC</td>
+<td>$59.41</td>
+<td class="negative">-1.35%</td>
+<td class="score">396</td>
+<td><div class="grade grade-D">D</div></td>
+<td>53.0</td>
+<td>28.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>15.8</td>
+<td>1.11x</td>
+<td class="negative">-25.89%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CD">
+<td>261</td>
+<td class="ticker">TJX</td>
+<td>$155.70</td>
+<td class="positive">+0.38%</td>
+<td class="score">396</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.0</td>
+<td>36.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>47.1</td>
+<td>0.98x</td>
+<td class="negative">-8.53%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CS">
+<td>262</td>
+<td class="ticker">CHTR</td>
+<td>$220.38</td>
+<td class="positive">+0.57%</td>
+<td class="score">395</td>
+<td><div class="grade grade-D">D</div></td>
+<td>65.0</td>
+<td>41.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.5%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>61.5</td>
+<td>0.94x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="IT">
+<td>263</td>
+<td class="ticker">ADSK</td>
+<td>$235.28</td>
+<td class="positive">+2.37%</td>
+<td class="score">394</td>
+<td><div class="grade grade-D">D</div></td>
+<td>62.5</td>
+<td>42.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>0.94x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="RE">
+<td>264</td>
+<td class="ticker">PLD</td>
+<td>$83.60</td>
+<td class="negative">-0.95%</td>
+<td class="score">392</td>
+<td><div class="grade grade-D">D</div></td>
+<td>52.0</td>
+<td>31.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>56.7</td>
+<td>38.5</td>
+<td>1.06x</td>
+<td class="negative">-13.32%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="FIN">
+<td>265</td>
+<td class="ticker">L</td>
+<td>$105.73</td>
+<td class="positive">+1.61%</td>
+<td class="score">391</td>
+<td><div class="grade grade-D">D</div></td>
+<td>53.0</td>
+<td>38.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>49.9</td>
+<td>1.03x</td>
+<td class="negative">-5.94%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>266</td>
+<td class="ticker">CHD</td>
+<td>$94.11</td>
+<td class="negative">-0.61%</td>
+<td class="score">391</td>
+<td><div class="grade grade-D">D</div></td>
+<td>47.0</td>
+<td>46.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>66.8</td>
+<td>1.05x</td>
+<td class="positive">+12.22%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="HC">
+<td>267</td>
+<td class="ticker">CTLT</td>
+<td>$46.28</td>
+<td class="positive">+0.57%</td>
+<td class="score">391</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41.0</td>
+<td>41.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.6</td>
+<td>1.14x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>268</td>
+<td class="ticker">HOOD</td>
+<td>$64.53</td>
+<td class="negative">-2.25%</td>
+<td class="score">390</td>
+<td><div class="grade grade-D">D</div></td>
+<td>51.5</td>
+<td>41.2</td>
+<td>74.0</td>
+<td>55.0</td>
+<td class="risk">8.8%</td>
+<td>46.7</td>
+<td>55.0</td>
+<td>0.0</td>
+<td>1.09x</td>
+<td class="negative">-42.98%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="HC">
+<td>269</td>
+<td class="ticker">WAT</td>
+<td>$293.76</td>
+<td class="positive">+1.59%</td>
+<td class="score">389</td>
+<td><div class="grade grade-D">D</div></td>
+<td>63.0</td>
+<td>45.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>58.1</td>
+<td>0.91x</td>
+<td class="positive">+2.35%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="FIN">
+<td>270</td>
+<td class="ticker">COF</td>
+<td>$207.66</td>
+<td class="positive">+0.99%</td>
+<td class="score">388</td>
+<td><div class="grade grade-D">D</div></td>
+<td>65.0</td>
+<td>33.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>36.5</td>
+<td>0.95x</td>
+<td class="negative">-14.88%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="CD">
+<td>271</td>
+<td class="ticker">LOW</td>
+<td>$245.24</td>
+<td class="negative">-0.20%</td>
+<td class="score">388</td>
+<td><div class="grade grade-D">D</div></td>
+<td>62.0</td>
+<td>42.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>56.7</td>
+<td>56.7</td>
+<td>59.3</td>
+<td>0.93x</td>
+<td class="negative">-0.37%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CD">
+<td>272</td>
+<td class="ticker">LVS</td>
+<td>$51.64</td>
+<td class="negative">-0.10%</td>
+<td class="score">387</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.5</td>
+<td>30.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">12.2%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>32.3</td>
+<td>1.12x</td>
+<td class="negative">-18.36%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="FIN">
+<td>273</td>
+<td class="ticker">C</td>
+<td>$107.03</td>
+<td class="negative">-0.32%</td>
+<td class="score">386</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>33.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>51.7</td>
+<td>42.8</td>
+<td>1.03x</td>
+<td class="negative">-10.68%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>274</td>
+<td class="ticker">HIG</td>
+<td>$134.49</td>
+<td class="positive">+1.64%</td>
+<td class="score">385</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>38.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>49.2</td>
+<td>1.00x</td>
+<td class="negative">-6.41%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IT">
+<td>275</td>
+<td class="ticker">VRSN</td>
+<td>$249.42</td>
+<td class="positive">+0.78%</td>
+<td class="score">384</td>
+<td><div class="grade grade-D">D</div></td>
+<td>64.5</td>
+<td>39.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>51.3</td>
+<td>0.93x</td>
+<td class="negative">-4.18%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>276</td>
+<td class="ticker">ON</td>
+<td>$48.56</td>
+<td class="negative">-3.54%</td>
+<td class="score">384</td>
+<td><div class="grade grade-D">D</div></td>
+<td>49.5</td>
+<td>26.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>16.8</td>
+<td>1.13x</td>
+<td class="negative">-27.22%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>277</td>
+<td class="ticker">JCI</td>
+<td>$126.13</td>
+<td class="negative">-3.93%</td>
+<td class="score">384</td>
+<td><div class="grade grade-D">D</div></td>
+<td>57.0</td>
+<td>34.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.1</td>
+<td>1.01x</td>
+<td class="negative">-2.49%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="MAT">
+<td>278</td>
+<td class="ticker">IP</td>
+<td>$47.95</td>
+<td class="negative">-1.93%</td>
+<td class="score">383</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41.5</td>
+<td>42.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>45.0</td>
+<td>1.13x</td>
+<td class="positive">+6.96%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="FIN">
+<td>279</td>
+<td class="ticker">COIN</td>
+<td>$231.20</td>
+<td class="negative">-2.42%</td>
+<td class="score">381</td>
+<td><div class="grade grade-D">D</div></td>
+<td>62.5</td>
+<td>48.9</td>
+<td>74.0</td>
+<td>63.0</td>
+<td class="risk">10.3%</td>
+<td>53.3</td>
+<td>60.0</td>
+<td>23.4</td>
+<td>0.94x</td>
+<td class="negative">-23.61%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>280</td>
+<td class="ticker">MMC</td>
+<td>$260.32</td>
+<td class="positive">+2.38%</td>
+<td class="score">380</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.0</td>
+<td>46.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>65.0</td>
+<td>60.0</td>
+<td>60.7</td>
+<td>0.93x</td>
+<td class="positive">+1.27%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="STAP">
+<td>281</td>
+<td class="ticker">CAG</td>
+<td>$24.58</td>
+<td class="positive">+0.38%</td>
+<td class="score">379</td>
+<td><div class="grade grade-D">D</div></td>
+<td>40.5</td>
+<td>31.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>13.7</td>
+<td>1.23x</td>
+<td class="negative">-23.18%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="IT">
+<td>282</td>
+<td class="ticker">MRVL</td>
+<td>$91.84</td>
+<td class="negative">-4.04%</td>
+<td class="score">378</td>
+<td><div class="grade grade-D">D</div></td>
+<td>58.0</td>
+<td>26.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>17.6</td>
+<td>1.05x</td>
+<td class="negative">-26.67%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>283</td>
+<td class="ticker">LMT</td>
+<td>$473.56</td>
+<td class="negative">-0.51%</td>
+<td class="score">376</td>
+<td><div class="grade grade-D">D</div></td>
+<td>61.5</td>
+<td>57.2</td>
+<td>50.0</td>
+<td>62.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>58.3</td>
+<td>81.5</td>
+<td>0.86x</td>
+<td class="positive">+23.08%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>284</td>
+<td class="ticker">GNRC</td>
+<td>$185.56</td>
+<td class="negative">-4.53%</td>
+<td class="score">376</td>
+<td><div class="grade grade-D">D</div></td>
+<td>51.0</td>
+<td>48.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.96x</td>
+<td class="positive">+35.71%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="EN">
+<td>285</td>
+<td class="ticker">TRGP</td>
+<td>$247.00</td>
+<td class="negative">-1.29%</td>
+<td class="score">375</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.0</td>
+<td>50.8</td>
+<td>72.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>55.0</td>
+<td>40.4</td>
+<td>0.93x</td>
+<td class="positive">+34.23%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="IND">
+<td>286</td>
+<td class="ticker">TDY</td>
+<td>$579.52</td>
+<td class="negative">-2.32%</td>
+<td class="score">374</td>
+<td><div class="grade grade-D">D</div></td>
+<td>71.5</td>
+<td>45.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>67.3</td>
+<td>0.85x</td>
+<td class="positive">+13.64%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="FIN">
+<td>287</td>
+<td class="ticker">CBOE</td>
+<td>$281.68</td>
+<td class="positive">+3.18%</td>
+<td class="score">373</td>
+<td><div class="grade grade-D">D</div></td>
+<td>57.5</td>
+<td>52.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>76.9</td>
+<td>0.92x</td>
+<td class="positive">+12.05%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="RE">
+<td>288</td>
+<td class="ticker">O</td>
+<td>$61.06</td>
+<td class="positive">+0.61%</td>
+<td class="score">371</td>
+<td><div class="grade grade-D">D</div></td>
+<td>47.0</td>
+<td>35.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>40.7</td>
+<td>1.10x</td>
+<td class="negative">-11.82%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="CD">
+<td>289</td>
+<td class="ticker">EXPE</td>
+<td>$226.30</td>
+<td class="positive">+0.22%</td>
+<td class="score">371</td>
+<td><div class="grade grade-D">D</div></td>
+<td>60.5</td>
+<td>40.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>0.94x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IT">
+<td>290</td>
+<td class="ticker">KEYS</td>
+<td>$268.04</td>
+<td class="negative">-3.95%</td>
+<td class="score">370</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>48.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.92x</td>
+<td class="positive">+31.66%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>291</td>
+<td class="ticker">ACGL</td>
+<td>$95.67</td>
+<td class="positive">+2.40%</td>
+<td class="score">368</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>32.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>16.1</td>
+<td>1.04x</td>
+<td class="negative">-28.44%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>292</td>
+<td class="ticker">IR</td>
+<td>$77.04</td>
+<td class="negative">-3.03%</td>
+<td class="score">368</td>
+<td><div class="grade grade-D">D</div></td>
+<td>54.0</td>
+<td>28.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>20.0</td>
+<td>1.07x</td>
+<td class="negative">-17.89%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CS">
+<td>293</td>
+<td class="ticker">SPOT</td>
+<td>$595.61</td>
+<td class="negative">-0.19%</td>
+<td class="score">368</td>
+<td><div class="grade grade-D">D</div></td>
+<td>61.5</td>
+<td>52.1</td>
+<td>84.0</td>
+<td>58.0</td>
+<td class="risk">7.2%</td>
+<td>55.0</td>
+<td>71.7</td>
+<td>61.5</td>
+<td>0.85x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="CD">
+<td>294</td>
+<td class="ticker">HD</td>
+<td>$323.43</td>
+<td class="positive">+0.55%</td>
+<td class="score">367</td>
+<td><div class="grade grade-D">D</div></td>
+<td>70.0</td>
+<td>42.9</td>
+<td>54.0</td>
+<td>55.0</td>
+<td class="risk">8.1%</td>
+<td>56.7</td>
+<td>56.7</td>
+<td>40.2</td>
+<td>0.90x</td>
+<td class="negative">-13.08%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>295</td>
+<td class="ticker">JBHT</td>
+<td>$139.30</td>
+<td class="negative">-0.99%</td>
+<td class="score">366</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.5</td>
+<td>38.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>1.00x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CS">
+<td>296</td>
+<td class="ticker">TKO</td>
+<td>$194.54</td>
+<td class="positive">+2.82%</td>
+<td class="score">365</td>
+<td><div class="grade grade-D">D</div></td>
+<td>57.0</td>
+<td>42.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>61.5</td>
+<td>0.96x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="IND">
+<td>297</td>
+<td class="ticker">GEV</td>
+<td>$819.08</td>
+<td class="negative">-3.99%</td>
+<td class="score">364</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.0</td>
+<td>47.0</td>
+<td>76.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>75.0</td>
+<td>84.6</td>
+<td>0.85x</td>
+<td class="positive">+25.18%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="HC">
+<td>298</td>
+<td class="ticker">TECH</td>
+<td>$186.71</td>
+<td class="negative">-3.16%</td>
+<td class="score">362</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.0</td>
+<td>36.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.6</td>
+<td>0.96x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CD">
+<td>299</td>
+<td class="ticker">TSLA</td>
+<td>$353.59</td>
+<td class="negative">-2.28%</td>
+<td class="score">357</td>
+<td><div class="grade grade-D">D</div></td>
+<td>72.5</td>
+<td>58.0</td>
+<td>55.0</td>
+<td>75.0</td>
+<td class="risk">12.5%</td>
+<td>45.0</td>
+<td>48.3</td>
+<td>24.5</td>
+<td>0.89x</td>
+<td class="negative">-23.54%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CD">
+<td>300</td>
+<td class="ticker">DRI</td>
+<td>$194.29</td>
+<td class="positive">+0.93%</td>
+<td class="score">355</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.0</td>
+<td>45.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>64.2</td>
+<td>0.96x</td>
+<td class="positive">+2.87%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="FIN">
+<td>301</td>
+<td class="ticker">CINF</td>
+<td>$156.62</td>
+<td class="positive">+1.91%</td>
+<td class="score">354</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>38.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>48.5</td>
+<td>0.98x</td>
+<td class="negative">-6.88%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="MAT">
+<td>302</td>
+<td class="ticker">PPG</td>
+<td>$103.57</td>
+<td class="negative">-0.24%</td>
+<td class="score">354</td>
+<td><div class="grade grade-D">D</div></td>
+<td>51.0</td>
+<td>39.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>34.6</td>
+<td>1.03x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IT">
+<td>303</td>
+<td class="ticker">Q</td>
+<td>$106.78</td>
+<td class="negative">-4.45%</td>
+<td class="score">353</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42.0</td>
+<td>47.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>1.03x</td>
+<td class="positive">+30.54%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="STAP">
+<td>304</td>
+<td class="ticker">BG</td>
+<td>$126.42</td>
+<td class="negative">-1.79%</td>
+<td class="score">348</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42.5</td>
+<td>51.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>1.01x</td>
+<td class="positive">+41.86%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="UTIL">
+<td>305</td>
+<td class="ticker">PEG</td>
+<td>$81.44</td>
+<td class="positive">+0.90%</td>
+<td class="score">348</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48.0</td>
+<td>41.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.9%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>39.3</td>
+<td>1.06x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IND">
+<td>306</td>
+<td class="ticker">GD</td>
+<td>$338.12</td>
+<td class="negative">-2.49%</td>
+<td class="score">347</td>
+<td><div class="grade grade-D">D</div></td>
+<td>61.5</td>
+<td>41.0</td>
+<td>50.0</td>
+<td>66.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>58.3</td>
+<td>53.6</td>
+<td>0.90x</td>
+<td class="positive">+4.53%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>307</td>
+<td class="ticker">NXPI</td>
+<td>$186.06</td>
+<td class="negative">-2.92%</td>
+<td class="score">343</td>
+<td><div class="grade grade-D">D</div></td>
+<td>58.0</td>
+<td>34.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>50.5</td>
+<td>0.96x</td>
+<td class="negative">-4.72%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>308</td>
+<td class="ticker">FICO</td>
+<td>$1041.47</td>
+<td class="positive">+3.01%</td>
+<td class="score">342</td>
+<td><div class="grade grade-D">D</div></td>
+<td>73.5</td>
+<td>37.9</td>
+<td>73.0</td>
+<td>50.0</td>
+<td class="risk">9.4%</td>
+<td>61.7</td>
+<td>66.7</td>
+<td>42.5</td>
+<td>0.85x</td>
+<td class="negative">-10.06%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>309</td>
+<td class="ticker">LHX</td>
+<td>$337.68</td>
+<td class="negative">-1.55%</td>
+<td class="score">341</td>
+<td><div class="grade grade-D">D</div></td>
+<td>61.0</td>
+<td>47.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>69.6</td>
+<td>0.90x</td>
+<td class="positive">+15.15%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CS">
+<td>310</td>
+<td class="ticker">TTWO</td>
+<td>$192.93</td>
+<td class="positive">+1.71%</td>
+<td class="score">341</td>
+<td><div class="grade grade-D">D</div></td>
+<td>57.0</td>
+<td>38.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>52.2</td>
+<td>0.96x</td>
+<td class="negative">-6.26%</td>
+<td class="sector-cell">CS</td>
+</tr>
+<tr data-sector="UTIL">
+<td>311</td>
+<td class="ticker">CEG</td>
+<td>$297.83</td>
+<td class="negative">-1.21%</td>
+<td class="score">341</td>
+<td><div class="grade grade-D">D</div></td>
+<td>58.5</td>
+<td>36.6</td>
+<td>76.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>75.0</td>
+<td>15.4</td>
+<td>0.91x</td>
+<td class="negative">-15.94%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="RE">
+<td>312</td>
+<td class="ticker">EQIX</td>
+<td>$961.31</td>
+<td class="negative">-0.18%</td>
+<td class="score">339</td>
+<td><div class="grade grade-D">D</div></td>
+<td>60.5</td>
+<td>50.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>66.7</td>
+<td>96.7</td>
+<td>0.85x</td>
+<td class="positive">+25.51%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="RE">
+<td>313</td>
+<td class="ticker">AMT</td>
+<td>$170.37</td>
+<td class="positive">+0.50%</td>
+<td class="score">339</td>
+<td><div class="grade grade-D">D</div></td>
+<td>58.0</td>
+<td>34.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>51.7</td>
+<td>38.4</td>
+<td>0.97x</td>
+<td class="negative">-13.38%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="FIN">
+<td>314</td>
+<td class="ticker">CFG</td>
+<td>$57.30</td>
+<td class="negative">-0.84%</td>
+<td class="score">339</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46.0</td>
+<td>31.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>36.6</td>
+<td>1.11x</td>
+<td class="negative">-14.76%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>315</td>
+<td class="ticker">BX</td>
+<td>$149.84</td>
+<td class="negative">-0.73%</td>
+<td class="score">339</td>
+<td><div class="grade grade-D">D</div></td>
+<td>66.0</td>
+<td>29.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.9%</td>
+<td>53.3</td>
+<td>65.0</td>
+<td>25.3</td>
+<td>0.99x</td>
+<td class="negative">-22.34%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="MAT">
+<td>316</td>
+<td class="ticker">LIN</td>
+<td>$502.12</td>
+<td class="positive">+2.24%</td>
+<td class="score">338</td>
+<td><div class="grade grade-D">D</div></td>
+<td>65.0</td>
+<td>49.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>61.7</td>
+<td>61.0</td>
+<td>0.86x</td>
+<td class="positive">+17.64%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="MAT">
+<td>317</td>
+<td class="ticker">SHW</td>
+<td>$315.53</td>
+<td class="positive">+0.05%</td>
+<td class="score">338</td>
+<td><div class="grade grade-D">D</div></td>
+<td>63.5</td>
+<td>40.7</td>
+<td>50.0</td>
+<td>59.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>58.3</td>
+<td>34.6</td>
+<td>0.90x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IT">
+<td>318</td>
+<td class="ticker">TER</td>
+<td>$274.36</td>
+<td class="negative">-7.19%</td>
+<td class="score">336</td>
+<td><div class="grade grade-D">D</div></td>
+<td>53.5</td>
+<td>49.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.92x</td>
+<td class="positive">+41.20%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>319</td>
+<td class="ticker">FDX</td>
+<td>$342.11</td>
+<td class="negative">-0.54%</td>
+<td class="score">336</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.5</td>
+<td>48.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>56.7</td>
+<td>74.6</td>
+<td>0.90x</td>
+<td class="positive">+18.48%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>320</td>
+<td class="ticker">MSI</td>
+<td>$370.04</td>
+<td class="positive">+1.29%</td>
+<td class="score">336</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.5</td>
+<td>50.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>66.7</td>
+<td>63.8</td>
+<td>0.89x</td>
+<td class="positive">+11.32%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="FIN">
+<td>321</td>
+<td class="ticker">ARES</td>
+<td>$107.23</td>
+<td class="positive">+0.90%</td>
+<td class="score">335</td>
+<td><div class="grade grade-D">D</div></td>
+<td>47.5</td>
+<td>41.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.8</td>
+<td>1.03x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>322</td>
+<td class="ticker">DOV</td>
+<td>$202.34</td>
+<td class="negative">-2.06%</td>
+<td class="score">333</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.0</td>
+<td>43.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>60.7</td>
+<td>0.95x</td>
+<td class="positive">+9.25%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="MAT">
+<td>323</td>
+<td class="ticker">CRH</td>
+<td>$101.30</td>
+<td class="negative">-0.43%</td>
+<td class="score">331</td>
+<td><div class="grade grade-D">D</div></td>
+<td>50.0</td>
+<td>38.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>34.6</td>
+<td>1.04x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="STAP">
+<td>324</td>
+<td class="ticker">SYY</td>
+<td>$68.99</td>
+<td class="negative">-15.65%</td>
+<td class="score">330</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>25.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">8.4%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>10.7</td>
+<td>1.09x</td>
+<td class="negative">-25.24%</td>
+<td class="sector-cell">STAP</td>
+</tr>
+<tr data-sector="UTIL">
+<td>325</td>
+<td class="ticker">PNW</td>
+<td>$148.20</td>
+<td class="positive">+0.98%</td>
+<td class="score">329</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48.0</td>
+<td>51.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.7</td>
+<td>0.99x</td>
+<td class="positive">+13.57%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IND">
+<td>326</td>
+<td class="ticker">ROK</td>
+<td>$348.62</td>
+<td class="negative">-0.82%</td>
+<td class="score">325</td>
+<td><div class="grade grade-D">D</div></td>
+<td>63.5</td>
+<td>42.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.1</td>
+<td>0.89x</td>
+<td class="positive">+4.82%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>327</td>
+<td class="ticker">ROP</td>
+<td>$349.82</td>
+<td class="positive">+1.57%</td>
+<td class="score">324</td>
+<td><div class="grade grade-D">D</div></td>
+<td>64.5</td>
+<td>41.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.6</td>
+<td>0.89x</td>
+<td class="negative">-0.13%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>328</td>
+<td class="ticker">LDOS</td>
+<td>$111.36</td>
+<td class="positive">+0.41%</td>
+<td class="score">320</td>
+<td><div class="grade grade-D">D</div></td>
+<td>49.0</td>
+<td>40.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>44.0</td>
+<td>1.03x</td>
+<td class="negative">-1.87%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>329</td>
+<td class="ticker">CTAS</td>
+<td>$168.81</td>
+<td class="positive">+1.87%</td>
+<td class="score">318</td>
+<td><div class="grade grade-D">D</div></td>
+<td>57.5</td>
+<td>34.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>60.0</td>
+<td>22.0</td>
+<td>0.98x</td>
+<td class="negative">-16.58%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="MAT">
+<td>330</td>
+<td class="ticker">BALL</td>
+<td>$57.87</td>
+<td class="negative">-2.36%</td>
+<td class="score">316</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42.5</td>
+<td>37.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>34.6</td>
+<td>1.11x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="RE">
+<td>331</td>
+<td class="ticker">SBAC</td>
+<td>$169.94</td>
+<td class="positive">+1.73%</td>
+<td class="score">314</td>
+<td><div class="grade grade-D">D</div></td>
+<td>50.0</td>
+<td>46.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>63.0</td>
+<td>0.97x</td>
+<td class="positive">+3.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>332</td>
+<td class="ticker">NOC</td>
+<td>$672.62</td>
+<td class="negative">-1.15%</td>
+<td class="score">309</td>
+<td><div class="grade grade-D">D</div></td>
+<td>61.5</td>
+<td>49.1</td>
+<td>50.0</td>
+<td>62.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>58.3</td>
+<td>72.0</td>
+<td>0.85x</td>
+<td class="positive">+16.78%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="RE">
+<td>333</td>
+<td class="ticker">BXP</td>
+<td>$50.28</td>
+<td class="negative">-1.03%</td>
+<td class="score">307</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43.0</td>
+<td>30.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>31.4</td>
+<td>1.13x</td>
+<td class="negative">-18.06%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>334</td>
+<td class="ticker">PWR</td>
+<td>$533.42</td>
+<td class="negative">-3.01%</td>
+<td class="score">307</td>
+<td><div class="grade grade-D">D</div></td>
+<td>57.0</td>
+<td>48.0</td>
+<td>77.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>86.4</td>
+<td>0.85x</td>
+<td class="positive">+26.36%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>335</td>
+<td class="ticker">EPAM</td>
+<td>$176.36</td>
+<td class="positive">+2.16%</td>
+<td class="score">306</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.5</td>
+<td>32.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>18.4</td>
+<td>0.97x</td>
+<td class="negative">-26.14%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>336</td>
+<td class="ticker">ANET</td>
+<td>$445.31</td>
+<td class="negative">-7.36%</td>
+<td class="score">302</td>
+<td><div class="grade grade-D">D</div></td>
+<td>58.0</td>
+<td>24.2</td>
+<td>86.0</td>
+<td>83.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>75.0</td>
+<td>7.7</td>
+<td>0.87x</td>
+<td class="negative">-33.26%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>337</td>
+<td class="ticker">CIEN</td>
+<td>$365.00</td>
+<td class="negative">-9.11%</td>
+<td class="score">302</td>
+<td><div class="grade grade-D">D</div></td>
+<td>50.5</td>
+<td>51.2</td>
+<td>67.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.89x</td>
+<td class="positive">+56.31%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="MAT">
+<td>338</td>
+<td class="ticker">NUE</td>
+<td>$164.92</td>
+<td class="positive">+0.95%</td>
+<td class="score">300</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48.0</td>
+<td>49.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>58.3</td>
+<td>49.6</td>
+<td>0.98x</td>
+<td class="positive">+10.03%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IND">
+<td>339</td>
+<td class="ticker">WAB</td>
+<td>$237.37</td>
+<td class="negative">-1.55%</td>
+<td class="score">300</td>
+<td><div class="grade grade-D">D</div></td>
+<td>54.0</td>
+<td>45.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>63.5</td>
+<td>0.94x</td>
+<td class="positive">+11.09%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>340</td>
+<td class="ticker">NSC</td>
+<td>$283.66</td>
+<td class="positive">+0.15%</td>
+<td class="score">298</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.5</td>
+<td>48.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>61.2</td>
+<td>0.92x</td>
+<td class="positive">+9.57%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="HC">
+<td>341</td>
+<td class="ticker">BIIB</td>
+<td>$187.39</td>
+<td class="positive">+1.93%</td>
+<td class="score">294</td>
+<td><div class="grade grade-D">D</div></td>
+<td>60.5</td>
+<td>33.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">6.6%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>23.8</td>
+<td>0.96x</td>
+<td class="negative">-20.52%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="RE">
+<td>342</td>
+<td class="ticker">REG</td>
+<td>$74.77</td>
+<td class="positive">+0.63%</td>
+<td class="score">290</td>
+<td><div class="grade grade-D">D</div></td>
+<td>40.0</td>
+<td>41.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.5</td>
+<td>1.08x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>343</td>
+<td class="ticker">AME</td>
+<td>$208.03</td>
+<td class="negative">-0.58%</td>
+<td class="score">289</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>37.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.7</td>
+<td>0.95x</td>
+<td class="negative">-2.11%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="EN">
+<td>344</td>
+<td class="ticker">FANG</td>
+<td>$105.08</td>
+<td class="positive">+0.71%</td>
+<td class="score">283</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41.5</td>
+<td>54.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>37.4</td>
+<td>1.03x</td>
+<td class="positive">+32.23%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="FIN">
+<td>345</td>
+<td class="ticker">SYF</td>
+<td>$65.75</td>
+<td class="positive">+0.60%</td>
+<td class="score">278</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41.5</td>
+<td>35.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>53.3</td>
+<td>55.0</td>
+<td>42.7</td>
+<td>1.09x</td>
+<td class="negative">-10.74%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="RE">
+<td>346</td>
+<td class="ticker">EXR</td>
+<td>$127.86</td>
+<td class="negative">-0.85%</td>
+<td class="score">278</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48.0</td>
+<td>36.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>52.9</td>
+<td>1.01x</td>
+<td class="negative">-3.69%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="CD">
+<td>347</td>
+<td class="ticker">GM</td>
+<td>$72.62</td>
+<td class="negative">-0.48%</td>
+<td class="score">276</td>
+<td><div class="grade grade-D">D</div></td>
+<td>52.5</td>
+<td>31.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">11.6%</td>
+<td>55.0</td>
+<td>50.0</td>
+<td>38.6</td>
+<td>1.08x</td>
+<td class="negative">-14.20%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="FIN">
+<td>348</td>
+<td class="ticker">AON</td>
+<td>$409.10</td>
+<td class="positive">+3.69%</td>
+<td class="score">273</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.0</td>
+<td>46.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>56.7</td>
+<td>59.0</td>
+<td>0.88x</td>
+<td class="positive">+0.18%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="MAT">
+<td>349</td>
+<td class="ticker">NEM</td>
+<td>$62.93</td>
+<td class="negative">-4.84%</td>
+<td class="score">273</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43.5</td>
+<td>32.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>25.2</td>
+<td>1.10x</td>
+<td class="negative">-6.27%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="CD">
+<td>350</td>
+<td class="ticker">DG</td>
+<td>$117.80</td>
+<td class="positive">+0.54%</td>
+<td class="score">269</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41.5</td>
+<td>46.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>67.2</td>
+<td>1.02x</td>
+<td class="positive">+4.90%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>351</td>
+<td class="ticker">HWM</td>
+<td>$221.51</td>
+<td class="negative">-2.80%</td>
+<td class="score">266</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.0</td>
+<td>37.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.94x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="FIN">
+<td>352</td>
+<td class="ticker">MSCI</td>
+<td>$531.25</td>
+<td class="positive">+1.50%</td>
+<td class="score">265</td>
+<td><div class="grade grade-D">D</div></td>
+<td>65.5</td>
+<td>39.7</td>
+<td>69.0</td>
+<td>55.0</td>
+<td class="risk">8.8%</td>
+<td>65.0</td>
+<td>55.0</td>
+<td>52.5</td>
+<td>0.85x</td>
+<td class="negative">-4.20%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>353</td>
+<td class="ticker">FI</td>
+<td>$198.28</td>
+<td class="negative">-0.36%</td>
+<td class="score">263</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.5</td>
+<td>31.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>36.8</td>
+<td>0.96x</td>
+<td class="negative">-14.62%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IT">
+<td>354</td>
+<td class="ticker">LITE</td>
+<td>$650.14</td>
+<td class="negative">-7.48%</td>
+<td class="score">260</td>
+<td><div class="grade grade-D">D</div></td>
+<td>56.0</td>
+<td>52.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.85x</td>
+<td class="positive">+75.87%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="RE">
+<td>355</td>
+<td class="ticker">MAA</td>
+<td>$121.47</td>
+<td class="positive">+0.75%</td>
+<td class="score">259</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48.0</td>
+<td>35.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>40.2</td>
+<td>1.01x</td>
+<td class="negative">-12.20%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="EN">
+<td>356</td>
+<td class="ticker">VLO</td>
+<td>$249.99</td>
+<td class="negative">-1.70%</td>
+<td class="score">257</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48.0</td>
+<td>53.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>69.4</td>
+<td>0.93x</td>
+<td class="positive">+53.52%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="MAT">
+<td>357</td>
+<td class="ticker">AMCR</td>
+<td>$38.06</td>
+<td class="negative">-1.45%</td>
+<td class="score">253</td>
+<td><div class="grade grade-D">D</div></td>
+<td>33.5</td>
+<td>38.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>34.6</td>
+<td>1.17x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="MAT">
+<td>358</td>
+<td class="ticker">FCX</td>
+<td>$54.58</td>
+<td class="negative">-2.95%</td>
+<td class="score">253</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43.5</td>
+<td>27.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>63.3</td>
+<td>0.0</td>
+<td>1.12x</td>
+<td class="negative">-25.68%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IND">
+<td>359</td>
+<td class="ticker">GE</td>
+<td>$272.36</td>
+<td class="negative">-3.70%</td>
+<td class="score">252</td>
+<td><div class="grade grade-D">D</div></td>
+<td>59.5</td>
+<td>37.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>21.5</td>
+<td>0.92x</td>
+<td class="negative">-16.87%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CD">
+<td>360</td>
+<td class="ticker">TPR</td>
+<td>$137.01</td>
+<td class="negative">-1.32%</td>
+<td class="score">252</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55.5</td>
+<td>26.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>6.9</td>
+<td>1.00x</td>
+<td class="negative">-35.30%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CD">
+<td>361</td>
+<td class="ticker">PHM</td>
+<td>$90.94</td>
+<td class="negative">-0.27%</td>
+<td class="score">252</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46.0</td>
+<td>30.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>33.9</td>
+<td>1.05x</td>
+<td class="negative">-17.33%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>362</td>
+<td class="ticker">TXT</td>
+<td>$85.68</td>
+<td class="negative">-2.05%</td>
+<td class="score">251</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41.5</td>
+<td>37.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>1.06x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="HC">
+<td>363</td>
+<td class="ticker">DVA</td>
+<td>$279.68</td>
+<td class="positive">+2.40%</td>
+<td class="score">250</td>
+<td><div class="grade grade-D">D</div></td>
+<td>49.0</td>
+<td>56.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">8.4%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.92x</td>
+<td class="positive">+34.05%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="UTIL">
+<td>364</td>
+<td class="ticker">NRG</td>
+<td>$140.70</td>
+<td class="negative">-4.76%</td>
+<td class="score">250</td>
+<td><div class="grade grade-E">E</div></td>
+<td>49.0</td>
+<td>41.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">8.1%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.2</td>
+<td>1.00x</td>
+<td class="positive">+9.90%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IND">
+<td>365</td>
+<td class="ticker">SNA</td>
+<td>$267.59</td>
+<td class="positive">+0.73%</td>
+<td class="score">249</td>
+<td><div class="grade grade-E">E</div></td>
+<td>52.5</td>
+<td>46.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>53.7</td>
+<td>0.92x</td>
+<td class="positive">+4.56%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="HC">
+<td>366</td>
+<td class="ticker">ELV</td>
+<td>$284.73</td>
+<td class="negative">-0.59%</td>
+<td class="score">247</td>
+<td><div class="grade grade-E">E</div></td>
+<td>54.0</td>
+<td>38.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>58.3</td>
+<td>54.6</td>
+<td>0.92x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="EN">
+<td>367</td>
+<td class="ticker">MPC</td>
+<td>$255.02</td>
+<td class="negative">-2.36%</td>
+<td class="score">246</td>
+<td><div class="grade grade-E">E</div></td>
+<td>48.0</td>
+<td>52.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>65.9</td>
+<td>0.93x</td>
+<td class="positive">+51.18%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="FIN">
+<td>368</td>
+<td class="ticker">WTW</td>
+<td>$289.86</td>
+<td class="positive">+2.72%</td>
+<td class="score">243</td>
+<td><div class="grade grade-E">E</div></td>
+<td>54.0</td>
+<td>42.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.7</td>
+<td>0.91x</td>
+<td class="negative">-0.71%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="MAT">
+<td>369</td>
+<td class="ticker">CE</td>
+<td>$97.36</td>
+<td class="positive">+1.74%</td>
+<td class="score">240</td>
+<td><div class="grade grade-E">E</div></td>
+<td>42.5</td>
+<td>41.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>33.2</td>
+<td>1.04x</td>
+<td class="negative">-0.93%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="CD">
+<td>370</td>
+<td class="ticker">BLDR</td>
+<td>$134.49</td>
+<td class="negative">-3.73%</td>
+<td class="score">239</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>35.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>56.7</td>
+<td>1.00x</td>
+<td class="negative">-2.08%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>371</td>
+<td class="ticker">DAL</td>
+<td>$63.04</td>
+<td class="negative">-2.76%</td>
+<td class="score">234</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>31.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>30.5</td>
+<td>1.10x</td>
+<td class="negative">-10.87%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>372</td>
+<td class="ticker">FFIV</td>
+<td>$279.82</td>
+<td class="negative">-0.77%</td>
+<td class="score">233</td>
+<td><div class="grade grade-E">E</div></td>
+<td>54.0</td>
+<td>38.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>0.92x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="CD">
+<td>373</td>
+<td class="ticker">DHI</td>
+<td>$132.82</td>
+<td class="negative">-1.01%</td>
+<td class="score">233</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>35.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>50.8</td>
+<td>1.00x</td>
+<td class="negative">-6.06%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="FIN">
+<td>374</td>
+<td class="ticker">AJG</td>
+<td>$416.24</td>
+<td class="positive">+2.47%</td>
+<td class="score">229</td>
+<td><div class="grade grade-E">E</div></td>
+<td>54.0</td>
+<td>49.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>69.3</td>
+<td>0.88x</td>
+<td class="positive">+7.01%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="RE">
+<td>375</td>
+<td class="ticker">VTR</td>
+<td>$81.82</td>
+<td class="negative">-0.11%</td>
+<td class="score">228</td>
+<td><div class="grade grade-E">E</div></td>
+<td>41.0</td>
+<td>34.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.5</td>
+<td>1.06x</td>
+<td class="negative">-10.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="HC">
+<td>376</td>
+<td class="ticker">IDXX</td>
+<td>$557.32</td>
+<td class="negative">-0.18%</td>
+<td class="score">228</td>
+<td><div class="grade grade-E">E</div></td>
+<td>68.5</td>
+<td>29.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>20.2</td>
+<td>0.85x</td>
+<td class="negative">-22.92%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IT">
+<td>377</td>
+<td class="ticker">APP</td>
+<td>$272.49</td>
+<td class="negative">-8.62%</td>
+<td class="score">225</td>
+<td><div class="grade grade-E">E</div></td>
+<td>58.5</td>
+<td>36.0</td>
+<td>93.0</td>
+<td>48.0</td>
+<td class="risk">11.2%</td>
+<td>53.3</td>
+<td>66.7</td>
+<td>0.0</td>
+<td>0.92x</td>
+<td class="negative">-44.79%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>378</td>
+<td class="ticker">MTB</td>
+<td>$200.55</td>
+<td class="negative">-0.19%</td>
+<td class="score">222</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>42.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>63.7</td>
+<td>0.96x</td>
+<td class="positive">+3.30%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>379</td>
+<td class="ticker">TDG</td>
+<td>$1130.76</td>
+<td class="negative">-0.81%</td>
+<td class="score">221</td>
+<td><div class="grade grade-E">E</div></td>
+<td>64.0</td>
+<td>42.8</td>
+<td>68.0</td>
+<td>48.0</td>
+<td class="risk">10.0%</td>
+<td>55.0</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>0.85x</td>
+<td class="positive">+5.41%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>380</td>
+<td class="ticker">JBL</td>
+<td>$247.32</td>
+<td class="negative">-5.28%</td>
+<td class="score">221</td>
+<td><div class="grade grade-E">E</div></td>
+<td>52.5</td>
+<td>35.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>0.93x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IND">
+<td>381</td>
+<td class="ticker">ETN</td>
+<td>$426.06</td>
+<td class="negative">-5.47%</td>
+<td class="score">220</td>
+<td><div class="grade grade-E">E</div></td>
+<td>64.0</td>
+<td>28.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>66.7</td>
+<td>17.5</td>
+<td>0.87x</td>
+<td class="negative">-19.55%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>382</td>
+<td class="ticker">UAL</td>
+<td>$84.96</td>
+<td class="negative">-3.94%</td>
+<td class="score">219</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>36.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.6%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>1.06x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="RE">
+<td>383</td>
+<td class="ticker">AVB</td>
+<td>$161.59</td>
+<td class="positive">+0.49%</td>
+<td class="score">218</td>
+<td><div class="grade grade-E">E</div></td>
+<td>48.0</td>
+<td>36.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.9</td>
+<td>0.98x</td>
+<td class="negative">-9.71%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="MAT">
+<td>384</td>
+<td class="ticker">VMC</td>
+<td>$266.35</td>
+<td class="positive">+1.87%</td>
+<td class="score">216</td>
+<td><div class="grade grade-E">E</div></td>
+<td>50.5</td>
+<td>48.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.4</td>
+<td>0.92x</td>
+<td class="positive">+5.88%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IND">
+<td>385</td>
+<td class="ticker">TT</td>
+<td>$403.99</td>
+<td class="negative">-1.52%</td>
+<td class="score">214</td>
+<td><div class="grade grade-E">E</div></td>
+<td>59.0</td>
+<td>38.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.88x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CD">
+<td>386</td>
+<td class="ticker">ULTA</td>
+<td>$507.65</td>
+<td class="negative">-0.53%</td>
+<td class="score">212</td>
+<td><div class="grade grade-E">E</div></td>
+<td>60.5</td>
+<td>38.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>0.85x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IT">
+<td>387</td>
+<td class="ticker">KLAC</td>
+<td>$1378.55</td>
+<td class="negative">-4.48%</td>
+<td class="score">210</td>
+<td><div class="grade grade-E">E</div></td>
+<td>68.0</td>
+<td>26.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>21.9</td>
+<td>0.85x</td>
+<td class="negative">-23.81%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>388</td>
+<td class="ticker">CPAY</td>
+<td>$409.57</td>
+<td class="positive">+0.70%</td>
+<td class="score">208</td>
+<td><div class="grade grade-E">E</div></td>
+<td>58.5</td>
+<td>36.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>46.0</td>
+<td>0.88x</td>
+<td class="negative">-8.52%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IT">
+<td>389</td>
+<td class="ticker">TYL</td>
+<td>$341.91</td>
+<td class="positive">+2.36%</td>
+<td class="score">208</td>
+<td><div class="grade grade-E">E</div></td>
+<td>53.5</td>
+<td>42.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>0.90x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="RE">
+<td>390</td>
+<td class="ticker">FRT</td>
+<td>$134.04</td>
+<td class="positive">+1.27%</td>
+<td class="score">207</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>34.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>37.7</td>
+<td>1.00x</td>
+<td class="negative">-13.85%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>391</td>
+<td class="ticker">BA</td>
+<td>$162.04</td>
+<td class="negative">-0.15%</td>
+<td class="score">205</td>
+<td><div class="grade grade-E">E</div></td>
+<td>65.0</td>
+<td>55.1</td>
+<td>47.0</td>
+<td>25.0</td>
+<td class="risk">16.2%</td>
+<td>48.3</td>
+<td>46.7</td>
+<td>41.5</td>
+<td>0.98x</td>
+<td class="negative">-3.53%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>392</td>
+<td class="ticker">TEL</td>
+<td>$198.32</td>
+<td class="negative">-1.88%</td>
+<td class="score">202</td>
+<td><div class="grade grade-E">E</div></td>
+<td>52.5</td>
+<td>31.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>29.4</td>
+<td>0.96x</td>
+<td class="negative">-11.65%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="MAT">
+<td>393</td>
+<td class="ticker">STLD</td>
+<td>$171.58</td>
+<td class="positive">+0.36%</td>
+<td class="score">201</td>
+<td><div class="grade grade-E">E</div></td>
+<td>43.0</td>
+<td>40.9</td>
+<td>63.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>61.7</td>
+<td>55.0</td>
+<td>34.6</td>
+<td>0.97x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="HC">
+<td>394</td>
+<td class="ticker">PODD</td>
+<td>$207.71</td>
+<td class="negative">-0.24%</td>
+<td class="score">200</td>
+<td><div class="grade grade-E">E</div></td>
+<td>58.0</td>
+<td>29.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">7.5%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>13.5</td>
+<td>0.95x</td>
+<td class="negative">-27.37%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="HC">
+<td>395</td>
+<td class="ticker">MCK</td>
+<td>$587.95</td>
+<td class="positive">+0.57%</td>
+<td class="score">197</td>
+<td><div class="grade grade-E">E</div></td>
+<td>64.0</td>
+<td>40.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">8.1%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>53.7</td>
+<td>0.85x</td>
+<td class="negative">-0.61%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="UTIL">
+<td>396</td>
+<td class="ticker">VST</td>
+<td>$147.60</td>
+<td class="negative">-5.07%</td>
+<td class="score">197</td>
+<td><div class="grade grade-E">E</div></td>
+<td>52.0</td>
+<td>26.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>11.2</td>
+<td>0.99x</td>
+<td class="negative">-18.71%</td>
+<td class="sector-cell">UTIL</td>
+</tr>
+<tr data-sector="IT">
+<td>397</td>
+<td class="ticker">STX</td>
+<td>$359.74</td>
+<td class="negative">-5.35%</td>
+<td class="score">196</td>
+<td><div class="grade grade-E">E</div></td>
+<td>47.0</td>
+<td>47.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.89x</td>
+<td class="positive">+30.33%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>398</td>
+<td class="ticker">IT</td>
+<td>$440.72</td>
+<td class="negative">-0.59%</td>
+<td class="score">196</td>
+<td><div class="grade grade-E">E</div></td>
+<td>60.5</td>
+<td>32.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>40.1</td>
+<td>0.87x</td>
+<td class="negative">-11.65%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="FIN">
+<td>399</td>
+<td class="ticker">PNC</td>
+<td>$201.50</td>
+<td class="negative">-0.44%</td>
+<td class="score">193</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>38.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>57.0</td>
+<td>0.95x</td>
+<td class="negative">-1.21%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="FIN">
+<td>400</td>
+<td class="ticker">ERIE</td>
+<td>$249.43</td>
+<td class="positive">+3.55%</td>
+<td class="score">191</td>
+<td><div class="grade grade-E">E</div></td>
+<td>51.0</td>
+<td>38.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.1</td>
+<td>0.93x</td>
+<td class="negative">-10.42%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="IND">
+<td>401</td>
+<td class="ticker">ALLE</td>
+<td>$164.23</td>
+<td class="positive">+0.25%</td>
+<td class="score">187</td>
+<td><div class="grade grade-E">E</div></td>
+<td>44.0</td>
+<td>40.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.98x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="MAT">
+<td>402</td>
+<td class="ticker">WRK</td>
+<td>$42.74</td>
+<td class="negative">-0.12%</td>
+<td class="score">186</td>
+<td><div class="grade grade-E">E</div></td>
+<td>33.0</td>
+<td>35.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>22.6</td>
+<td>1.15x</td>
+<td class="negative">-8.00%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="IT">
+<td>403</td>
+<td class="ticker">SNDK</td>
+<td>$569.25</td>
+<td class="negative">-7.56%</td>
+<td class="score">185</td>
+<td><div class="grade grade-E">E</div></td>
+<td>48.0</td>
+<td>58.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.85x</td>
+<td class="positive">+139.16%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="HC">
+<td>404</td>
+<td class="ticker">HCA</td>
+<td>$469.44</td>
+<td class="negative">-0.51%</td>
+<td class="score">182</td>
+<td><div class="grade grade-E">E</div></td>
+<td>59.5</td>
+<td>33.3</td>
+<td>66.0</td>
+<td>55.0</td>
+<td class="risk">8.8%</td>
+<td>60.0</td>
+<td>63.3</td>
+<td>44.1</td>
+<td>0.86x</td>
+<td class="negative">-6.99%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="CD">
+<td>405</td>
+<td class="ticker">RCL</td>
+<td>$174.56</td>
+<td class="negative">-0.29%</td>
+<td class="score">182</td>
+<td><div class="grade grade-E">E</div></td>
+<td>51.5</td>
+<td>37.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>45.6</td>
+<td>0.97x</td>
+<td class="negative">-9.48%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>406</td>
+<td class="ticker">J</td>
+<td>$124.45</td>
+<td class="negative">-1.14%</td>
+<td class="score">177</td>
+<td><div class="grade grade-E">E</div></td>
+<td>41.5</td>
+<td>37.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>43.3</td>
+<td>1.01x</td>
+<td class="negative">-2.35%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>407</td>
+<td class="ticker">FIX</td>
+<td>$1268.28</td>
+<td class="negative">-7.21%</td>
+<td class="score">171</td>
+<td><div class="grade grade-E">E</div></td>
+<td>45.0</td>
+<td>48.2</td>
+<td>73.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>100.0</td>
+<td>0.85x</td>
+<td class="positive">+36.16%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>408</td>
+<td class="ticker">NDSN</td>
+<td>$255.16</td>
+<td class="negative">-1.94%</td>
+<td class="score">171</td>
+<td><div class="grade grade-E">E</div></td>
+<td>49.5</td>
+<td>37.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.93x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>409</td>
+<td class="ticker">EXE</td>
+<td>$111.09</td>
+<td class="negative">-2.12%</td>
+<td class="score">168</td>
+<td><div class="grade grade-E">E</div></td>
+<td>39.0</td>
+<td>37.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>1.03x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>410</td>
+<td class="ticker">DDG</td>
+<td>$115.06</td>
+<td class="positive">+0.51%</td>
+<td class="score">167</td>
+<td><div class="grade grade-E">E</div></td>
+<td>37.0</td>
+<td>41.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>57.6</td>
+<td>1.02x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="IT">
+<td>411</td>
+<td class="ticker">NTAP</td>
+<td>$121.61</td>
+<td class="negative">-1.08%</td>
+<td class="score">166</td>
+<td><div class="grade grade-E">E</div></td>
+<td>45.0</td>
+<td>29.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>25.6</td>
+<td>1.01x</td>
+<td class="negative">-21.36%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="RE">
+<td>412</td>
+<td class="ticker">ESS</td>
+<td>$241.93</td>
+<td class="positive">+0.97%</td>
+<td class="score">166</td>
+<td><div class="grade grade-E">E</div></td>
+<td>48.0</td>
+<td>38.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>49.2</td>
+<td>0.93x</td>
+<td class="negative">-6.19%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>413</td>
+<td class="ticker">BR</td>
+<td>$162.33</td>
+<td class="negative">-0.69%</td>
+<td class="score">160</td>
+<td><div class="grade grade-E">E</div></td>
+<td>49.5</td>
+<td>29.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>12.3</td>
+<td>0.98x</td>
+<td class="negative">-23.06%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="RE">
+<td>414</td>
+<td class="ticker">SPG</td>
+<td>$182.63</td>
+<td class="positive">+1.34%</td>
+<td class="score">151</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>40.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">9.1%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>53.7</td>
+<td>0.97x</td>
+<td class="negative">-3.21%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>415</td>
+<td class="ticker">PH</td>
+<td>$859.76</td>
+<td class="negative">-3.23%</td>
+<td class="score">148</td>
+<td><div class="grade grade-E">E</div></td>
+<td>59.0</td>
+<td>35.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>42.2</td>
+<td>0.85x</td>
+<td class="negative">-3.11%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="RE">
+<td>416</td>
+<td class="ticker">PSA</td>
+<td>$264.66</td>
+<td class="negative">-0.51%</td>
+<td class="score">143</td>
+<td><div class="grade grade-E">E</div></td>
+<td>48.0</td>
+<td>35.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>58.3</td>
+<td>55.0</td>
+<td>48.0</td>
+<td>0.92x</td>
+<td class="negative">-7.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="HC">
+<td>417</td>
+<td class="ticker">STE</td>
+<td>$201.65</td>
+<td class="negative">-0.63%</td>
+<td class="score">139</td>
+<td><div class="grade grade-E">E</div></td>
+<td>49.5</td>
+<td>29.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>21.8</td>
+<td>0.95x</td>
+<td class="negative">-21.88%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IND">
+<td>418</td>
+<td class="ticker">HUBB</td>
+<td>$470.99</td>
+<td class="negative">-2.07%</td>
+<td class="score">136</td>
+<td><div class="grade grade-E">E</div></td>
+<td>55.0</td>
+<td>37.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.86x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>419</td>
+<td class="ticker">EME</td>
+<td>$700.89</td>
+<td class="negative">-4.37%</td>
+<td class="score">130</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>44.6</td>
+<td>74.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>68.7</td>
+<td>0.85x</td>
+<td class="positive">+14.55%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="CD">
+<td>420</td>
+<td class="ticker">POOL</td>
+<td>$316.09</td>
+<td class="positive">+0.73%</td>
+<td class="score">129</td>
+<td><div class="grade grade-E">E</div></td>
+<td>51.5</td>
+<td>33.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>37.4</td>
+<td>0.90x</td>
+<td class="negative">-15.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="IND">
+<td>421</td>
+<td class="ticker">HII</td>
+<td>$367.33</td>
+<td class="negative">-3.79%</td>
+<td class="score">129</td>
+<td><div class="grade grade-E">E</div></td>
+<td>51.5</td>
+<td>36.2</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.89x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="EN">
+<td>422</td>
+<td class="ticker">TPL</td>
+<td>$471.89</td>
+<td class="negative">-7.79%</td>
+<td class="score">118</td>
+<td><div class="grade grade-E">E</div></td>
+<td>44.5</td>
+<td>51.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>85.0</td>
+<td>0.86x</td>
+<td class="positive">+63.93%</td>
+<td class="sector-cell">EN</td>
+</tr>
+<tr data-sector="HC">
+<td>423</td>
+<td class="ticker">COR</td>
+<td>$310.02</td>
+<td class="negative">-0.77%</td>
+<td class="score">108</td>
+<td><div class="grade grade-E">E</div></td>
+<td>46.0</td>
+<td>38.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>54.6</td>
+<td>0.91x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="RE">
+<td>424</td>
+<td class="ticker">MRSH</td>
+<td>$175.17</td>
+<td class="positive">+3.55%</td>
+<td class="score">103</td>
+<td><div class="grade grade-E">E</div></td>
+<td>36.5</td>
+<td>43.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>58.5</td>
+<td>0.97x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="MAT">
+<td>425</td>
+<td class="ticker">MLM</td>
+<td>$573.66</td>
+<td class="positive">+0.48%</td>
+<td class="score">97</td>
+<td><div class="grade grade-F">F</div></td>
+<td>50.5</td>
+<td>47.1</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>44.1</td>
+<td>0.85x</td>
+<td class="positive">+6.33%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="FIN">
+<td>426</td>
+<td class="ticker">AMP</td>
+<td>$437.98</td>
+<td class="positive">+0.27%</td>
+<td class="score">95</td>
+<td><div class="grade grade-F">F</div></td>
+<td>55.5</td>
+<td>31.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>21.7</td>
+<td>0.87x</td>
+<td class="negative">-24.74%</td>
+<td class="sector-cell">FIN</td>
+</tr>
+<tr data-sector="RE">
+<td>427</td>
+<td class="ticker">WELL</td>
+<td>$193.85</td>
+<td class="positive">+0.53%</td>
+<td class="score">94</td>
+<td><div class="grade grade-F">F</div></td>
+<td>46.0</td>
+<td>30.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>15.9</td>
+<td>0.96x</td>
+<td class="negative">-28.40%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>428</td>
+<td class="ticker">IEX</td>
+<td>$183.74</td>
+<td class="negative">-1.51%</td>
+<td class="score">92</td>
+<td><div class="grade grade-F">F</div></td>
+<td>47.5</td>
+<td>27.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>4.0</td>
+<td>0.97x</td>
+<td class="negative">-28.56%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="HC">
+<td>429</td>
+<td class="ticker">MTD</td>
+<td>$1250.08</td>
+<td class="positive">+1.46%</td>
+<td class="score">91</td>
+<td><div class="grade grade-F">F</div></td>
+<td>57.5</td>
+<td>32.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>60.0</td>
+<td>55.0</td>
+<td>14.9</td>
+<td>0.85x</td>
+<td class="negative">-26.49%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IT">
+<td>430</td>
+<td class="ticker">CDW</td>
+<td>$118.29</td>
+<td class="positive">+0.10%</td>
+<td class="score">90</td>
+<td><div class="grade grade-F">F</div></td>
+<td>37.5</td>
+<td>32.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>32.8</td>
+<td>1.02x</td>
+<td class="negative">-16.55%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="RE">
+<td>431</td>
+<td class="ticker">ARE</td>
+<td>$174.38</td>
+<td class="negative">-0.41%</td>
+<td class="score">90</td>
+<td><div class="grade grade-F">F</div></td>
+<td>42.0</td>
+<td>31.3</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>36.3</td>
+<td>0.97x</td>
+<td class="negative">-14.77%</td>
+<td class="sector-cell">RE</td>
+</tr>
+<tr data-sector="IND">
+<td>432</td>
+<td class="ticker">GWW</td>
+<td>$1057.26</td>
+<td class="positive">+0.02%</td>
+<td class="score">74</td>
+<td><div class="grade grade-F">F</div></td>
+<td>59.5</td>
+<td>29.0</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>0.0</td>
+<td>0.85x</td>
+<td class="negative">-36.58%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IT">
+<td>433</td>
+<td class="ticker">MPWR</td>
+<td>$1000.22</td>
+<td class="negative">-5.01%</td>
+<td class="score">71</td>
+<td><div class="grade grade-F">F</div></td>
+<td>58.0</td>
+<td>24.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>63.3</td>
+<td>55.0</td>
+<td>12.2</td>
+<td>0.85x</td>
+<td class="negative">-30.27%</td>
+<td class="sector-cell">IT</td>
+</tr>
+<tr data-sector="MAT">
+<td>434</td>
+<td class="ticker">AVY</td>
+<td>$168.36</td>
+<td class="positive">+0.35%</td>
+<td class="score">67</td>
+<td><div class="grade grade-F">F</div></td>
+<td>41.0</td>
+<td>34.7</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>16.4</td>
+<td>0.98x</td>
+<td class="negative">-12.12%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="HC">
+<td>435</td>
+<td class="ticker">RVTY</td>
+<td>$237.15</td>
+<td class="negative">-3.38%</td>
+<td class="score">62</td>
+<td><div class="grade grade-F">F</div></td>
+<td>49.0</td>
+<td>25.5</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>4.8</td>
+<td>0.94x</td>
+<td class="negative">-33.21%</td>
+<td class="sector-cell">HC</td>
+</tr>
+<tr data-sector="IND">
+<td>436</td>
+<td class="ticker">URI</td>
+<td>$713.81</td>
+<td class="negative">-2.79%</td>
+<td class="score">50</td>
+<td><div class="grade grade-F">F</div></td>
+<td>55.5</td>
+<td>28.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>18.9</td>
+<td>0.85x</td>
+<td class="negative">-18.64%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>437</td>
+<td class="ticker">LII</td>
+<td>$442.88</td>
+<td class="positive">+1.14%</td>
+<td class="score">47</td>
+<td><div class="grade grade-F">F</div></td>
+<td>45.5</td>
+<td>41.6</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.87x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="IND">
+<td>438</td>
+<td class="ticker">EG</td>
+<td>$322.86</td>
+<td class="positive">+1.55%</td>
+<td class="score">35</td>
+<td><div class="grade grade-F">F</div></td>
+<td>40.5</td>
+<td>41.9</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>46.8</td>
+<td>0.90x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">IND</td>
+</tr>
+<tr data-sector="MAT">
+<td>439</td>
+<td class="ticker">PKG</td>
+<td>$281.40</td>
+<td class="negative">-1.79%</td>
+<td class="score">30</td>
+<td><div class="grade grade-F">F</div></td>
+<td>39.0</td>
+<td>41.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>42.2</td>
+<td>0.92x</td>
+<td class="positive">+5.08%</td>
+<td class="sector-cell">MAT</td>
+</tr>
+<tr data-sector="CD">
+<td>440</td>
+<td class="ticker">CVNA</td>
+<td>$287.80</td>
+<td class="negative">-4.72%</td>
+<td class="score">15</td>
+<td><div class="grade grade-F">F</div></td>
+<td>41.5</td>
+<td>44.4</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">10.6%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>59.9</td>
+<td>0.91x</td>
+<td class="positive">+0.00%</td>
+<td class="sector-cell">CD</td>
+</tr>
+<tr data-sector="CD">
+<td>441</td>
+<td class="ticker">NVR</td>
+<td>$6479.53</td>
+<td class="positive">+0.45%</td>
+<td class="score">1</td>
+<td><div class="grade grade-F">F</div></td>
+<td>48.5</td>
+<td>32.8</td>
+<td>50.0</td>
+<td>55.0</td>
+<td class="risk">5.0%</td>
+<td>55.0</td>
+<td>55.0</td>
+<td>33.0</td>
+<td>0.85x</td>
+<td class="negative">-17.89%</td>
+<td class="sector-cell">CD</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<div class="footer">
+<strong>TrendScore V5 Deep Algorithm</strong> — Company Soul Over Price<br>
+<div class="formula">Score = (<span class="highlight">Moat×45%</span> + Trend×15% + Growth×10% + Financial×10% + SmartMoney×7% + Forward×8% + SectorRel×5%) × (1 − RiskPenalty) × PriceBoost(max 1.3x)</div>
+<br>Data: S&P 500 as of March 31, 2026 | Moat = 20 sub-factors | Each dimension scored 0-100 from granular sub-factors | Normalized 1-1000
+</div>
+
+</div>
+
+<script>
+// Column sorting
+const table = document.getElementById('tbl');
+const headers = table.querySelectorAll('th');
+let sortCol = -1, sortAsc = true;
+
+headers.forEach(th => {
+  th.addEventListener('click', () => {
+    const col = parseInt(th.dataset.col);
+    const type = th.dataset.type;
+    if (sortCol === col) sortAsc = !sortAsc;
+    else { sortCol = col; sortAsc = (type === 'num') ? false : true; }
+    headers.forEach(h => h.classList.remove('sorted'));
+    th.classList.add('sorted');
+    const rows = Array.from(table.tBodies[0].rows);
+    rows.sort((a, b) => {
+      let av = a.cells[col].textContent.replace(/[$%,x+]/g, '').trim();
+      let bv = b.cells[col].textContent.replace(/[$%,x+]/g, '').trim();
+      if (type === 'num') { av = parseFloat(av) || 0; bv = parseFloat(bv) || 0; }
+      if (av < bv) return sortAsc ? -1 : 1;
+      if (av > bv) return sortAsc ? 1 : -1;
+      return 0;
+    });
+    const tbody = table.tBodies[0];
+    rows.forEach(r => tbody.appendChild(r));
+  });
+});
+
+// Filtering
+function filterTable() {
+  const sector = document.getElementById('sectorFilter').value;
+  const search = document.getElementById('searchBox').value.toUpperCase();
+  const gradeMin = document.getElementById('gradeFilter').value;
+  const gradeOrder = {'S':5,'A':4,'B':3,'C':2,'D':1,'E':0,'F':-1};
+  const minGrade = gradeMin === 'all' ? -2 : gradeOrder[gradeMin] || -2;
+  const rows = table.tBodies[0].rows;
+  let count = 0;
+  for (let r of rows) {
+    const rowSector = r.dataset.sector;
+    const ticker = r.cells[1].textContent;
+    const grade = r.cells[5].textContent.trim();
+    const sectorMatch = sector === 'all' || rowSector === sector;
+    const searchMatch = !search || ticker.includes(search);
+    const gradeMatch = (gradeOrder[grade] || -1) >= minGrade;
+    const show = sectorMatch && searchMatch && gradeMatch;
+    r.style.display = show ? '' : 'none';
+    if (show) count++;
+  }
+  document.getElementById('countDisplay').textContent = 'Showing ' + count + ' stocks';
+}
+</script>
+</body>
+</html>

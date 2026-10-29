@@ -1,0 +1,192 @@
+{
+  "date": "2026-03-29T18:40:23.412958",
+  "final_value": 100745.00665,
+  "starting_value": 100000,
+  "pnl": 745.0066499999957,
+  "trades": [
+    {
+      "time": "2026-03-29T18:40:23.411022",
+      "action": "BUY",
+      "symbol": "NVDA",
+      "shares": 11,
+      "price": 882.35,
+      "value": 9705.85,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411080",
+      "action": "BUY",
+      "symbol": "TSLA",
+      "shares": 34,
+      "price": 261.45,
+      "value": 8889.3,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411089",
+      "action": "BUY",
+      "symbol": "META",
+      "shares": 13,
+      "price": 582.14,
+      "value": 7567.82,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411095",
+      "action": "BUY",
+      "symbol": "AAPL",
+      "shares": 33,
+      "price": 218.27,
+      "value": 7202.91,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411102",
+      "action": "BUY",
+      "symbol": "AMZN",
+      "shares": 34,
+      "price": 194.6,
+      "value": 6616.4,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411109",
+      "action": "BUY",
+      "symbol": "MSFT",
+      "shares": 14,
+      "price": 421.5,
+      "value": 5901.0,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411115",
+      "action": "BUY",
+      "symbol": "AVGO",
+      "shares": 28,
+      "price": 186.7,
+      "value": 5227.6,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411121",
+      "action": "BUY",
+      "symbol": "JPM",
+      "shares": 21,
+      "price": 232.8,
+      "value": 4888.8,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411127",
+      "action": "BUY",
+      "symbol": "GOOGL",
+      "shares": 25,
+      "price": 171.82,
+      "value": 4295.5,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411134",
+      "action": "BUY",
+      "symbol": "BRK.B",
+      "shares": 8,
+      "price": 462.3,
+      "value": 3698.4,
+      "reason": "Price up 50% rule"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411677",
+      "action": "SELL",
+      "symbol": "TSLA",
+      "shares": 17,
+      "price": 252.3282,
+      "value": 4289.58,
+      "profit": -155.07,
+      "reason": "Down -3.5% from open (threshold: -3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411720",
+      "action": "SELL",
+      "symbol": "TSLA",
+      "shares": 8,
+      "price": 251.9,
+      "value": 2015.2,
+      "profit": -76.4,
+      "reason": "Down -3.7% from open (threshold: -3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411798",
+      "action": "SELL",
+      "symbol": "TSLA",
+      "shares": 4,
+      "price": 252.71,
+      "value": 1010.84,
+      "profit": -34.96,
+      "reason": "Down -3.3% from open (threshold: -3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411826",
+      "action": "SELL",
+      "symbol": "TSLA",
+      "shares": 2,
+      "price": 252.79,
+      "value": 505.58,
+      "profit": -17.32,
+      "reason": "Down -3.3% from open (threshold: -3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411913",
+      "action": "BUY",
+      "symbol": "NVDA",
+      "shares": 5,
+      "price": 918.3865499999999,
+      "value": 4591.93,
+      "reason": "Up 4.1% from open (threshold: +3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411942",
+      "action": "BUY",
+      "symbol": "NVDA",
+      "shares": 8,
+      "price": 921.78,
+      "value": 7374.24,
+      "reason": "Up 4.5% from open (threshold: +3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411966",
+      "action": "BUY",
+      "symbol": "NVDA",
+      "shares": 12,
+      "price": 924.54,
+      "value": 11094.48,
+      "reason": "Up 4.8% from open (threshold: +3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.411997",
+      "action": "BUY",
+      "symbol": "NVDA",
+      "shares": 18,
+      "price": 922.33,
+      "value": 16601.94,
+      "reason": "Up 4.5% from open (threshold: +3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.412094",
+      "action": "BUY",
+      "symbol": "MSFT",
+      "shares": 7,
+      "price": 435.13,
+      "value": 3045.91,
+      "reason": "Up 3.2% from open (threshold: +3.0%)"
+    },
+    {
+      "time": "2026-03-29T18:40:23.412132",
+      "action": "BUY",
+      "symbol": "MSFT",
+      "shares": 2,
+      "price": 435.2,
+      "value": 870.4,
+      "reason": "Up 3.3% from open (threshold: +3.0%)"
+    }
+  ]
+}

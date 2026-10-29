@@ -1,0 +1,45 @@
+{
+  "reddit": {
+    "client_id": "",
+    "client_secret": "",
+    "user_agent": "TrendScore/2.0",
+    "_signup_url": "https://www.reddit.com/prefs/apps \u2192 Create App \u2192 Script type",
+    "_free": true
+  },
+  "newsapi": {
+    "api_key": "",
+    "_signup_url": "https://newsapi.org/register",
+    "_free_limit": "500 requests/day",
+    "_free": true
+  },
+  "marketaux": {
+    "api_key": "",
+    "_signup_url": "https://www.marketaux.com/register",
+    "_free_limit": "100 requests/day",
+    "_free": true
+  },
+  "finnhub": {
+    "api_key": "",
+    "_signup_url": "https://finnhub.io/register",
+    "_free_limit": "60 requests/min",
+    "_free": true
+  },
+  "alpha_vantage": {
+    "api_key": "",
+    "_signup_url": "https://www.alphavantage.co/support/#api-key",
+    "_free_limit": "25 requests/day",
+    "_free": true
+  },
+  "fmp": {
+    "api_key": "",
+    "_signup_url": "https://site.financialmodelingprep.com/developer/docs",
+    "_free_limit": "250 requests/day",
+    "_free": true
+  },
+  "polygon": {
+    "api_key": "",
+    "_signup_url": "https://polygon.io/dashboard/signup",
+    "_free_limit": "5 requests/min",
+    "_free": true
+  }
+}

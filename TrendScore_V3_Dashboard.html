@@ -1,0 +1,6306 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TrendScore V3 Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,sans-serif;background:#0a0e17;color:#e0e0e0;line-height:1.6}
+.container{max-width:1600px;margin:0 auto;padding:20px}
+.header{background:linear-gradient(135deg,#1a2a4a 0%,#0f1b33 100%);border-radius:12px;padding:40px;margin-bottom:30px;border:1px solid #2a3a5a}
+.header h1{font-size:2.5em;font-weight:700;margin-bottom:10px;color:#ffd700}
+.header p{color:#a0a0a0;font-size:0.95em}
+.badge{display:inline-block;background:#00e676;color:#0a0e17;padding:4px 12px;border-radius:20px;font-size:0.8em;font-weight:600;margin-left:10px}
+.table-container{background:#1a2035;border:1px solid #2a3a5a;border-radius:8px;overflow-x:auto;margin-bottom:30px}
+table{width:100%;border-collapse:collapse;font-size:0.95em}
+thead{background:#0f1b33;border-bottom:2px solid #2a3a5a}
+th{padding:15px;text-align:left;font-weight:600;color:#ffd700;cursor:pointer}
+td{padding:12px 15px;border-bottom:1px solid #2a3a5a}
+tbody tr{transition:all 0.2s}
+tbody tr:hover{background:#242d45}
+.ticker{color:#00e676;font-weight:600;font-family:'JetBrains Mono',monospace}
+.grade{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;font-weight:700;color:white}
+.grade-S{background:#ffd700;color:#0a0e17}
+.grade-A{background:#00e676;color:#0a0e17}
+.grade-B{background:#4caf50}
+.grade-C{background:#ffc107;color:#0a0e17}
+.grade-D{background:#ff9800}
+.grade-E{background:#ff5722}
+.grade-F{background:#f44336}
+.score{color:#00e676;font-weight:600}
+.positive{color:#00e676}
+.negative{color:#ff6b6b}
+.footer{background:#1a2035;border-top:1px solid #2a3a5a;padding:20px;text-align:center;color:#666;font-size:0.85em;margin-top:30px;border-radius:8px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>TrendScore ETF <span class="badge">LIVE</span></h1>
+<p>S&P 500 Intelligence Engine v3 — 4-Pillar Stock Scoring System</p>
+<p style="color:#999;font-size:0.85em;margin-top:10px;">Last updated: March 30, 2026</p>
+</div>
+
+<div class="table-container">
+<table id="tbl">
+<thead>
+<tr>
+<th>Rank</th>
+<th>Ticker</th>
+<th>Price</th>
+<th>Daily Chg</th>
+<th>Score</th>
+<th>Grade</th>
+<th>P1</th>
+<th>P2</th>
+<th>P3</th>
+<th>P4</th>
+<th>Boost</th>
+<th>YTD</th>
+<th>Sector</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td class="ticker">BAC</td>
+<td>$47.16</td>
+<td class="positive">+0.40</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>72</td>
+<td>55</td>
+<td>72</td>
+<td>1.81x</td>
+<td class="negative">-9.59%</td>
+<td>Financial</td>
+</tr><tr>
+<td>2</td>
+<td class="ticker">T</td>
+<td>$28.93</td>
+<td class="negative">-0.60</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>60</td>
+<td>50</td>
+<td>55</td>
+<td>2.36x</td>
+<td class="positive">+16.29%</td>
+<td>Comm</td>
+</tr><tr>
+<td>3</td>
+<td class="ticker">PFE</td>
+<td>$41.72</td>
+<td class="positive">+0.02</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>60</td>
+<td>40</td>
+<td>65</td>
+<td>1.93x</td>
+<td class="positive">+11.31%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>4</td>
+<td class="ticker">UBER</td>
+<td>$57.62</td>
+<td class="negative">-0.64</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>75</td>
+<td>78</td>
+<td>62</td>
+<td>1.62x</td>
+<td class="negative">-10.12%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>5</td>
+<td class="ticker">SLB</td>
+<td>$51.35</td>
+<td class="negative">-4.02</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>44</td>
+<td>72</td>
+<td>62</td>
+<td>68</td>
+<td>1.72x</td>
+<td class="positive">+34.01%</td>
+<td>Energy</td>
+</tr><tr>
+<td>6</td>
+<td class="ticker">SCHW</td>
+<td>$58.32</td>
+<td class="positive">+1.65</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>75</td>
+<td>60</td>
+<td>72</td>
+<td>1.61x</td>
+<td class="positive">+0.00%</td>
+<td>Financial</td>
+</tr><tr>
+<td>7</td>
+<td class="ticker">CMCSA</td>
+<td>$28.88</td>
+<td class="positive">+1.92</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>68</td>
+<td>52</td>
+<td>68</td>
+<td>2.37x</td>
+<td class="positive">+0.00%</td>
+<td>Comm</td>
+</tr><tr>
+<td>8</td>
+<td class="ticker">NKE</td>
+<td>$51.24</td>
+<td class="negative">-0.26</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>42</td>
+<td>75</td>
+<td>48</td>
+<td>68</td>
+<td>1.73x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>9</td>
+<td class="ticker">KMI</td>
+<td>$33.53</td>
+<td class="negative">-1.45</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>68</td>
+<td>58</td>
+<td>65</td>
+<td>2.18x</td>
+<td class="positive">+22.18%</td>
+<td>Energy</td>
+</tr><tr>
+<td>10</td>
+<td class="ticker">OXY</td>
+<td>$49.93</td>
+<td class="negative">-0.26</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>55</td>
+<td>65</td>
+<td>60</td>
+<td>60</td>
+<td>1.75x</td>
+<td class="positive">+61.04%</td>
+<td>Energy</td>
+</tr><tr>
+<td>11</td>
+<td class="ticker">CMG</td>
+<td>$31.10</td>
+<td class="positive">+0.78</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>72</td>
+<td>62</td>
+<td>68</td>
+<td>2.27x</td>
+<td class="negative">-17.37%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>12</td>
+<td class="ticker">CNC</td>
+<td>$31.86</td>
+<td class="negative">-0.44</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>39</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>2.24x</td>
+<td class="negative">-16.14%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>13</td>
+<td class="ticker">FAST</td>
+<td>$45.06</td>
+<td class="positive">+0.26</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>68</td>
+<td>52</td>
+<td>72</td>
+<td>1.85x</td>
+<td class="positive">+12.37%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>14</td>
+<td class="ticker">EXC</td>
+<td>$49.21</td>
+<td class="positive">+1.84</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>48</td>
+<td>68</td>
+<td>48</td>
+<td>65</td>
+<td>1.77x</td>
+<td class="positive">+12.88%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>15</td>
+<td class="ticker">F</td>
+<td>$11.18</td>
+<td class="negative">-1.64</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>39</td>
+<td>55</td>
+<td>42</td>
+<td>55</td>
+<td>3.99x</td>
+<td class="negative">-7.30%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>16</td>
+<td class="ticker">PCG</td>
+<td>$17.46</td>
+<td class="positive">+1.71</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>46</td>
+<td>55</td>
+<td>50</td>
+<td>55</td>
+<td>3.12x</td>
+<td class="positive">+6.48%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>17</td>
+<td class="ticker">KDP</td>
+<td>$26.55</td>
+<td class="positive">+1.20</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>68</td>
+<td>52</td>
+<td>60</td>
+<td>2.48x</td>
+<td class="positive">+4.67%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>18</td>
+<td class="ticker">KVUE</td>
+<td>$17.27</td>
+<td class="negative">-1.45</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>55</td>
+<td>45</td>
+<td>55</td>
+<td>3.14x</td>
+<td class="negative">-1.66%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>19</td>
+<td class="ticker">CCL</td>
+<td>$23.86</td>
+<td class="negative">-1.36</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>45</td>
+<td>58</td>
+<td>45</td>
+<td>2.63x</td>
+<td class="negative">-2.76%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>20</td>
+<td class="ticker">HAL</td>
+<td>$39.47</td>
+<td class="negative">-2.34</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>48</td>
+<td>65</td>
+<td>60</td>
+<td>62</td>
+<td>1.99x</td>
+<td class="positive">+39.40%</td>
+<td>Energy</td>
+</tr><tr>
+<td>21</td>
+<td class="ticker">GEN</td>
+<td>$23.45</td>
+<td class="positive">+1.87</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>2.65x</td>
+<td class="negative">-26.63%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>22</td>
+<td class="ticker">MO</td>
+<td>$44.82</td>
+<td class="positive">+0.47</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>46</td>
+<td>68</td>
+<td>45</td>
+<td>65</td>
+<td>1.86x</td>
+<td class="positive">+15.90%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>23</td>
+<td class="ticker">DOW</td>
+<td>$41.53</td>
+<td class="positive">+1.75</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>61</td>
+<td>55</td>
+<td>50</td>
+<td>55</td>
+<td>1.94x</td>
+<td class="positive">+77.71%</td>
+<td>Materials</td>
+</tr><tr>
+<td>24</td>
+<td class="ticker">HBAN</td>
+<td>$14.98</td>
+<td class="negative">-0.60</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>42</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>3.40x</td>
+<td class="positive">+1.02%</td>
+<td>Financial</td>
+</tr><tr>
+<td>25</td>
+<td class="ticker">HPE</td>
+<td>$22.44</td>
+<td class="negative">-6.27</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>32</td>
+<td>55</td>
+<td>42</td>
+<td>55</td>
+<td>2.72x</td>
+<td class="negative">-9.66%</td>
+<td>Tech</td>
+</tr><tr>
+<td>26</td>
+<td class="ticker">VICI</td>
+<td>$27.11</td>
+<td class="positive">+1.88</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>47</td>
+<td>70</td>
+<td>55</td>
+<td>68</td>
+<td>2.45x</td>
+<td class="positive">+7.35%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>27</td>
+<td class="ticker">PPL</td>
+<td>$38.01</td>
+<td class="positive">+0.95</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>46</td>
+<td>62</td>
+<td>48</td>
+<td>55</td>
+<td>2.03x</td>
+<td class="positive">+10.89%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>28</td>
+<td class="ticker">CNP</td>
+<td>$42.89</td>
+<td class="positive">+1.21</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>47</td>
+<td>62</td>
+<td>48</td>
+<td>55</td>
+<td>1.90x</td>
+<td class="positive">+11.83%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>29</td>
+<td class="ticker">CTRA</td>
+<td>$35.89</td>
+<td class="negative">-1.16</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>49</td>
+<td>60</td>
+<td>60</td>
+<td>62</td>
+<td>2.10x</td>
+<td class="positive">+36.53%</td>
+<td>Energy</td>
+</tr><tr>
+<td>30</td>
+<td class="ticker">KHC</td>
+<td>$22.36</td>
+<td class="positive">+1.43</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>55</td>
+<td>40</td>
+<td>55</td>
+<td>2.72x</td>
+<td class="negative">-17.24%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>31</td>
+<td class="ticker">DVN</td>
+<td>$51.44</td>
+<td class="negative">-1.20</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>49</td>
+<td>62</td>
+<td>62</td>
+<td>65</td>
+<td>1.72x</td>
+<td class="positive">+40.51%</td>
+<td>Energy</td>
+</tr><tr>
+<td>32</td>
+<td class="ticker">SW</td>
+<td>$22.24</td>
+<td class="negative">-7.45</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>27</td>
+<td>50</td>
+<td>42</td>
+<td>55</td>
+<td>2.73x</td>
+<td class="negative">-26.37%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>33</td>
+<td class="ticker">KEY</td>
+<td>$20.32</td>
+<td class="negative">-2.19</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>36</td>
+<td>50</td>
+<td>45</td>
+<td>55</td>
+<td>2.87x</td>
+<td class="negative">-17.54%</td>
+<td>Financial</td>
+</tr><tr>
+<td>34</td>
+<td class="ticker">JNPR</td>
+<td>$25.05</td>
+<td class="negative">-1.20</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>2.56x</td>
+<td class="positive">+1.18%</td>
+<td>Tech</td>
+</tr><tr>
+<td>35</td>
+<td class="ticker">WBA</td>
+<td>$9.33</td>
+<td class="negative">-4.67</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>32</td>
+<td>45</td>
+<td>30</td>
+<td>55</td>
+<td>4.41x</td>
+<td class="negative">-21.56%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>36</td>
+<td class="ticker">CPB</td>
+<td>$29.40</td>
+<td class="negative">-1.72</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>36</td>
+<td>55</td>
+<td>40</td>
+<td>55</td>
+<td>2.34x</td>
+<td class="negative">-21.25%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>37</td>
+<td class="ticker">WY</td>
+<td>$24.30</td>
+<td class="positive">+1.82</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>50</td>
+<td>40</td>
+<td>55</td>
+<td>2.60x</td>
+<td class="positive">+0.00%</td>
+<td>Materials</td>
+</tr><tr>
+<td>38</td>
+<td class="ticker">HPQ</td>
+<td>$18.89</td>
+<td class="negative">-2.85</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>35</td>
+<td>50</td>
+<td>40</td>
+<td>52</td>
+<td>2.99x</td>
+<td class="negative">-19.29%</td>
+<td>Tech</td>
+</tr><tr>
+<td>39</td>
+<td class="ticker">CSGP</td>
+<td>$40.81</td>
+<td class="positive">+2.60</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>38</td>
+<td>72</td>
+<td>58</td>
+<td>65</td>
+<td>1.96x</td>
+<td class="negative">-39.34%</td>
+<td>Tech</td>
+</tr><tr>
+<td>40</td>
+<td class="ticker">APA</td>
+<td>$43.54</td>
+<td class="negative">-1.91</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>56</td>
+<td>55</td>
+<td>55</td>
+<td>55</td>
+<td>1.89x</td>
+<td class="positive">+78.21%</td>
+<td>Energy</td>
+</tr><tr>
+<td>41</td>
+<td class="ticker">INVH</td>
+<td>$24.70</td>
+<td class="positive">+0.96</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>44</td>
+<td>60</td>
+<td>50</td>
+<td>55</td>
+<td>2.58x</td>
+<td class="positive">+0.00%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>42</td>
+<td class="ticker">KIM</td>
+<td>$22.27</td>
+<td class="positive">+0.25</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>43</td>
+<td>55</td>
+<td>48</td>
+<td>55</td>
+<td>2.73x</td>
+<td class="positive">+0.00%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>43</td>
+<td class="ticker">VTRS</td>
+<td>$12.88</td>
+<td class="negative">-1.26</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>45</td>
+<td>35</td>
+<td>55</td>
+<td>3.69x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>44</td>
+<td class="ticker">HST</td>
+<td>$18.91</td>
+<td class="positive">+0.39</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>43</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>2.99x</td>
+<td class="positive">+0.00%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>45</td>
+<td class="ticker">HRL</td>
+<td>$23.09</td>
+<td class="positive">+0.07</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>44</td>
+<td>55</td>
+<td>42</td>
+<td>55</td>
+<td>2.68x</td>
+<td class="positive">+8.04%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>46</td>
+<td class="ticker">SMCI</td>
+<td>$20.91</td>
+<td class="negative">-4.84</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>32</td>
+<td>60</td>
+<td>75</td>
+<td>55</td>
+<td>2.83x</td>
+<td class="negative">-19.81%</td>
+<td>Tech</td>
+</tr><tr>
+<td>47</td>
+<td class="ticker">AES</td>
+<td>$16.57</td>
+<td class="positive">+0.59</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>50</td>
+<td>45</td>
+<td>55</td>
+<td>3.21x</td>
+<td class="negative">-13.63%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>48</td>
+<td class="ticker">CAG</td>
+<td>$24.58</td>
+<td class="positive">+0.38</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>38</td>
+<td>55</td>
+<td>42</td>
+<td>55</td>
+<td>2.59x</td>
+<td class="negative">-23.18%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>49</td>
+<td class="ticker">NWSA</td>
+<td>$28.27</td>
+<td class="positive">+1.65</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>46</td>
+<td>50</td>
+<td>45</td>
+<td>55</td>
+<td>2.39x</td>
+<td class="positive">+5.54%</td>
+<td>Comm</td>
+</tr><tr>
+<td>50</td>
+<td class="ticker">NWS</td>
+<td>$28.27</td>
+<td class="positive">+1.71</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>46</td>
+<td>50</td>
+<td>45</td>
+<td>55</td>
+<td>2.39x</td>
+<td class="positive">+5.54%</td>
+<td>Comm</td>
+</tr><tr>
+<td>51</td>
+<td class="ticker">CPRT</td>
+<td>$32.61</td>
+<td class="positive">+0.55</td>
+<td class="score">1000</td>
+<td><div class="grade grade-S">S</div></td>
+<td>37</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>2.21x</td>
+<td class="negative">-28.28%</td>
+<td>Other</td>
+</tr><tr>
+<td>52</td>
+<td class="ticker">TSCO</td>
+<td>$45.33</td>
+<td class="positive">+1.02</td>
+<td class="score">984</td>
+<td><div class="grade grade-S">S</div></td>
+<td>42</td>
+<td>62</td>
+<td>50</td>
+<td>55</td>
+<td>1.85x</td>
+<td class="negative">-7.51%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>53</td>
+<td class="ticker">MRNA</td>
+<td>$47.38</td>
+<td class="negative">-4.41</td>
+<td class="score">975</td>
+<td><div class="grade grade-S">S</div></td>
+<td>49</td>
+<td>55</td>
+<td>60</td>
+<td>55</td>
+<td>1.80x</td>
+<td class="positive">+62.29%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>54</td>
+<td class="ticker">LUV</td>
+<td>$36.31</td>
+<td class="negative">-2.81</td>
+<td class="score">964</td>
+<td><div class="grade grade-S">S</div></td>
+<td>39</td>
+<td>50</td>
+<td>42</td>
+<td>55</td>
+<td>2.09x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>55</td>
+<td class="ticker">NI</td>
+<td>$46.49</td>
+<td class="positive">+1.14</td>
+<td class="score">964</td>
+<td><div class="grade grade-S">S</div></td>
+<td>46</td>
+<td>60</td>
+<td>45</td>
+<td>55</td>
+<td>1.82x</td>
+<td class="positive">+11.31%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>56</td>
+<td class="ticker">VZ</td>
+<td>$50.41</td>
+<td class="positive">+0.19</td>
+<td class="score">963</td>
+<td><div class="grade grade-S">S</div></td>
+<td>48</td>
+<td>62</td>
+<td>48</td>
+<td>60</td>
+<td>1.74x</td>
+<td class="positive">+23.47%</td>
+<td>Comm</td>
+</tr><tr>
+<td>57</td>
+<td class="ticker">KO</td>
+<td>$76.31</td>
+<td class="positive">+0.79</td>
+<td class="score">951</td>
+<td><div class="grade grade-S">S</div></td>
+<td>44</td>
+<td>88</td>
+<td>52</td>
+<td>82</td>
+<td>1.39x</td>
+<td class="positive">+3.17%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>58</td>
+<td class="ticker">AMCR</td>
+<td>$38.06</td>
+<td class="negative">-1.45</td>
+<td class="score">950</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>50</td>
+<td>42</td>
+<td>55</td>
+<td>2.03x</td>
+<td class="positive">+0.00%</td>
+<td>Materials</td>
+</tr><tr>
+<td>59</td>
+<td class="ticker">MDLZ</td>
+<td>$58.37</td>
+<td class="positive">+0.17</td>
+<td class="score">946</td>
+<td><div class="grade grade-S">S</div></td>
+<td>43</td>
+<td>70</td>
+<td>52</td>
+<td>68</td>
+<td>1.61x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>60</td>
+<td class="ticker">FIS</td>
+<td>$47.44</td>
+<td class="positive">+1.16</td>
+<td class="score">941</td>
+<td><div class="grade grade-S">S</div></td>
+<td>44</td>
+<td>60</td>
+<td>45</td>
+<td>55</td>
+<td>1.80x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>61</td>
+<td class="ticker">FE</td>
+<td>$50.45</td>
+<td class="positive">+0.83</td>
+<td class="score">935</td>
+<td><div class="grade grade-S">S</div></td>
+<td>46</td>
+<td>62</td>
+<td>45</td>
+<td>55</td>
+<td>1.74x</td>
+<td class="positive">+12.59%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>62</td>
+<td class="ticker">FISV</td>
+<td>$54.51</td>
+<td class="positive">+1.14</td>
+<td class="score">934</td>
+<td><div class="grade grade-S">S</div></td>
+<td>43</td>
+<td>68</td>
+<td>50</td>
+<td>55</td>
+<td>1.67x</td>
+<td class="negative">-3.73%</td>
+<td>Tech</td>
+</tr><tr>
+<td>63</td>
+<td class="ticker">MKC</td>
+<td>$53.56</td>
+<td class="positive">+0.92</td>
+<td class="score">924</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>65</td>
+<td>48</td>
+<td>55</td>
+<td>1.68x</td>
+<td class="positive">+3.69%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>64</td>
+<td class="ticker">LVS</td>
+<td>$51.64</td>
+<td class="negative">-0.10</td>
+<td class="score">922</td>
+<td><div class="grade grade-S">S</div></td>
+<td>39</td>
+<td>65</td>
+<td>52</td>
+<td>55</td>
+<td>1.72x</td>
+<td class="negative">-18.36%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>65</td>
+<td class="ticker">CARR</td>
+<td>$54.45</td>
+<td class="positive">+0.37</td>
+<td class="score">917</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>65</td>
+<td>50</td>
+<td>62</td>
+<td>1.67x</td>
+<td class="negative">-12.67%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>66</td>
+<td class="ticker">ON</td>
+<td>$48.56</td>
+<td class="negative">-3.54</td>
+<td class="score">914</td>
+<td><div class="grade grade-S">S</div></td>
+<td>32</td>
+<td>65</td>
+<td>50</td>
+<td>55</td>
+<td>1.78x</td>
+<td class="negative">-27.22%</td>
+<td>Tech</td>
+</tr><tr>
+<td>67</td>
+<td class="ticker">DXCM</td>
+<td>$61.72</td>
+<td class="negative">-0.85</td>
+<td class="score">909</td>
+<td><div class="grade grade-S">S</div></td>
+<td>38</td>
+<td>75</td>
+<td>58</td>
+<td>55</td>
+<td>1.56x</td>
+<td class="negative">-17.56%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>68</td>
+<td class="ticker">FOX</td>
+<td>$42.25</td>
+<td class="positive">+0.84</td>
+<td class="score">905</td>
+<td><div class="grade grade-S">S</div></td>
+<td>39</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.92x</td>
+<td class="negative">-22.71%</td>
+<td>Comm</td>
+</tr><tr>
+<td>69</td>
+<td class="ticker">D</td>
+<td>$61.95</td>
+<td class="positive">+1.76</td>
+<td class="score">904</td>
+<td><div class="grade grade-S">S</div></td>
+<td>47</td>
+<td>68</td>
+<td>48</td>
+<td>65</td>
+<td>1.56x</td>
+<td class="positive">+8.18%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>70</td>
+<td class="ticker">WRK</td>
+<td>$42.74</td>
+<td class="negative">-0.12</td>
+<td class="score">902</td>
+<td><div class="grade grade-S">S</div></td>
+<td>42</td>
+<td>50</td>
+<td>42</td>
+<td>55</td>
+<td>1.91x</td>
+<td class="positive">+0.00%</td>
+<td>Other</td>
+</tr><tr>
+<td>71</td>
+<td class="ticker">IFF</td>
+<td>$55.34</td>
+<td class="negative">-0.34</td>
+<td class="score">899</td>
+<td><div class="grade grade-S">S</div></td>
+<td>43</td>
+<td>65</td>
+<td>48</td>
+<td>55</td>
+<td>1.65x</td>
+<td class="positive">+3.76%</td>
+<td>Materials</td>
+</tr><tr>
+<td>72</td>
+<td class="ticker">O</td>
+<td>$61.06</td>
+<td class="positive">+0.61</td>
+<td class="score">896</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>68</td>
+<td>48</td>
+<td>70</td>
+<td>1.57x</td>
+<td class="negative">-11.82%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>73</td>
+<td class="ticker">DD</td>
+<td>$56.71</td>
+<td class="positive">+2.34</td>
+<td class="score">889</td>
+<td><div class="grade grade-S">S</div></td>
+<td>47</td>
+<td>62</td>
+<td>48</td>
+<td>55</td>
+<td>1.63x</td>
+<td class="positive">+7.93%</td>
+<td>Materials</td>
+</tr><tr>
+<td>74</td>
+<td class="ticker">FITB</td>
+<td>$44.59</td>
+<td class="positive">+0.11</td>
+<td class="score">887</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.86x</td>
+<td class="negative">-15.44%</td>
+<td>Financial</td>
+</tr><tr>
+<td>75</td>
+<td class="ticker">BKR</td>
+<td>$60.82</td>
+<td class="negative">-3.80</td>
+<td class="score">886</td>
+<td><div class="grade grade-S">S</div></td>
+<td>44</td>
+<td>62</td>
+<td>60</td>
+<td>62</td>
+<td>1.57x</td>
+<td class="positive">+33.25%</td>
+<td>Energy</td>
+</tr><tr>
+<td>76</td>
+<td class="ticker">FOXA</td>
+<td>$44.32</td>
+<td class="positive">+1.30</td>
+<td class="score">886</td>
+<td><div class="grade grade-S">S</div></td>
+<td>40</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.87x</td>
+<td class="negative">-22.43%</td>
+<td>Comm</td>
+</tr><tr>
+<td>77</td>
+<td class="ticker">WMB</td>
+<td>$72.56</td>
+<td class="negative">-1.39</td>
+<td class="score">885</td>
+<td><div class="grade grade-S">S</div></td>
+<td>45</td>
+<td>72</td>
+<td>62</td>
+<td>70</td>
+<td>1.43x</td>
+<td class="positive">+20.80%</td>
+<td>Energy</td>
+</tr><tr>
+<td>78</td>
+<td class="ticker">CTLT</td>
+<td>$46.28</td>
+<td class="positive">+0.57</td>
+<td class="score">885</td>
+<td><div class="grade grade-S">S</div></td>
+<td>43</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.83x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>79</td>
+<td class="ticker">IP</td>
+<td>$47.95</td>
+<td class="negative">-1.93</td>
+<td class="score">877</td>
+<td><div class="grade grade-S">S</div></td>
+<td>41</td>
+<td>55</td>
+<td>42</td>
+<td>55</td>
+<td>1.79x</td>
+<td class="positive">+6.96%</td>
+<td>Materials</td>
+</tr><tr>
+<td>80</td>
+<td class="ticker">FCX</td>
+<td>$54.58</td>
+<td class="negative">-2.95</td>
+<td class="score">876</td>
+<td><div class="grade grade-S">S</div></td>
+<td>33</td>
+<td>65</td>
+<td>50</td>
+<td>60</td>
+<td>1.67x</td>
+<td class="negative">-25.68%</td>
+<td>Materials</td>
+</tr><tr>
+<td>81</td>
+<td class="ticker">INTC</td>
+<td>$40.93</td>
+<td class="negative">-5.11</td>
+<td class="score">875</td>
+<td><div class="grade grade-S">S</div></td>
+<td>31</td>
+<td>55</td>
+<td>35</td>
+<td>55</td>
+<td>1.95x</td>
+<td class="negative">-23.67%</td>
+<td>Tech</td>
+</tr><tr>
+<td>82</td>
+<td class="ticker">PYPL</td>
+<td>$60.53</td>
+<td class="positive">+2.19</td>
+<td class="score">871</td>
+<td><div class="grade grade-S">S</div></td>
+<td>43</td>
+<td>60</td>
+<td>55</td>
+<td>68</td>
+<td>1.58x</td>
+<td class="negative">-12.73%</td>
+<td>Financial</td>
+</tr><tr>
+<td>83</td>
+<td class="ticker">MCHP</td>
+<td>$59.55</td>
+<td class="negative">-3.95</td>
+<td class="score">860</td>
+<td><div class="grade grade-S">S</div></td>
+<td>37</td>
+<td>68</td>
+<td>50</td>
+<td>55</td>
+<td>1.59x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>84</td>
+<td class="ticker">EQT</td>
+<td>$64.27</td>
+<td class="negative">-4.85</td>
+<td class="score">850</td>
+<td><div class="grade grade-A">A</div></td>
+<td>40</td>
+<td>65</td>
+<td>58</td>
+<td>60</td>
+<td>1.52x</td>
+<td class="positive">+20.03%</td>
+<td>Energy</td>
+</tr><tr>
+<td>85</td>
+<td class="ticker">FTNT</td>
+<td>$79.19</td>
+<td class="positive">+1.28</td>
+<td class="score">837</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>68</td>
+<td>75</td>
+<td>70</td>
+<td>1.36x</td>
+<td class="negative">-33.96%</td>
+<td>Tech</td>
+</tr><tr>
+<td>86</td>
+<td class="ticker">USB</td>
+<td>$50.68</td>
+<td class="negative">-0.34</td>
+<td class="score">836</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.74x</td>
+<td class="positive">+0.60%</td>
+<td>Financial</td>
+</tr><tr>
+<td>87</td>
+<td class="ticker">KKR</td>
+<td>$90.30</td>
+<td class="positive">+2.03</td>
+<td class="score">832</td>
+<td><div class="grade grade-A">A</div></td>
+<td>45</td>
+<td>78</td>
+<td>72</td>
+<td>68</td>
+<td>1.26x</td>
+<td class="positive">+0.00%</td>
+<td>Financial</td>
+</tr><tr>
+<td>88</td>
+<td class="ticker">ROL</td>
+<td>$53.00</td>
+<td class="positive">+1.02</td>
+<td class="score">829</td>
+<td><div class="grade grade-A">A</div></td>
+<td>44</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.69x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>89</td>
+<td class="ticker">BSX</td>
+<td>$62.89</td>
+<td class="negative">-9.08</td>
+<td class="score">823</td>
+<td><div class="grade grade-A">A</div></td>
+<td>28</td>
+<td>70</td>
+<td>58</td>
+<td>55</td>
+<td>1.54x</td>
+<td class="negative">-11.34%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>90</td>
+<td class="ticker">BALL</td>
+<td>$57.87</td>
+<td class="negative">-2.36</td>
+<td class="score">821</td>
+<td><div class="grade grade-A">A</div></td>
+<td>39</td>
+<td>60</td>
+<td>45</td>
+<td>55</td>
+<td>1.61x</td>
+<td class="positive">+0.00%</td>
+<td>Materials</td>
+</tr><tr>
+<td>91</td>
+<td class="ticker">PLD</td>
+<td>$83.60</td>
+<td class="negative">-0.95</td>
+<td class="score">813</td>
+<td><div class="grade grade-A">A</div></td>
+<td>39</td>
+<td>78</td>
+<td>58</td>
+<td>68</td>
+<td>1.32x</td>
+<td class="negative">-13.32%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>92</td>
+<td class="ticker">FTV</td>
+<td>$53.52</td>
+<td class="negative">-0.74</td>
+<td class="score">811</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.69x</td>
+<td class="positive">+2.92%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>93</td>
+<td class="ticker">NDAQ</td>
+<td>$83.16</td>
+<td class="positive">+2.06</td>
+<td class="score">810</td>
+<td><div class="grade grade-A">A</div></td>
+<td>45</td>
+<td>75</td>
+<td>50</td>
+<td>68</td>
+<td>1.32x</td>
+<td class="negative">-0.39%</td>
+<td>Financial</td>
+</tr><tr>
+<td>94</td>
+<td class="ticker">NEE</td>
+<td>$92.01</td>
+<td class="positive">+0.66</td>
+<td class="score">809</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>78</td>
+<td>62</td>
+<td>68</td>
+<td>1.25x</td>
+<td class="positive">+14.55%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>95</td>
+<td class="ticker">EQR</td>
+<td>$58.31</td>
+<td class="negative">-0.74</td>
+<td class="score">805</td>
+<td><div class="grade grade-A">A</div></td>
+<td>40</td>
+<td>58</td>
+<td>45</td>
+<td>55</td>
+<td>1.61x</td>
+<td class="negative">-9.70%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>96</td>
+<td class="ticker">CSCO</td>
+<td>$76.91</td>
+<td class="negative">-3.77</td>
+<td class="score">796</td>
+<td><div class="grade grade-A">A</div></td>
+<td>36</td>
+<td>70</td>
+<td>50</td>
+<td>75</td>
+<td>1.38x</td>
+<td class="negative">-5.63%</td>
+<td>Tech</td>
+</tr><tr>
+<td>97</td>
+<td class="ticker">OTIS</td>
+<td>$76.23</td>
+<td class="positive">+0.37</td>
+<td class="score">794</td>
+<td><div class="grade grade-A">A</div></td>
+<td>43</td>
+<td>68</td>
+<td>50</td>
+<td>65</td>
+<td>1.39x</td>
+<td class="negative">-1.78%</td>
+<td>Other</td>
+</tr><tr>
+<td>98</td>
+<td class="ticker">BXP</td>
+<td>$50.28</td>
+<td class="negative">-1.03</td>
+<td class="score">794</td>
+<td><div class="grade grade-A">A</div></td>
+<td>37</td>
+<td>50</td>
+<td>40</td>
+<td>55</td>
+<td>1.74x</td>
+<td class="negative">-18.06%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>99</td>
+<td class="ticker">TSN</td>
+<td>$63.71</td>
+<td class="negative">-0.33</td>
+<td class="score">793</td>
+<td><div class="grade grade-A">A</div></td>
+<td>43</td>
+<td>60</td>
+<td>45</td>
+<td>55</td>
+<td>1.53x</td>
+<td class="positive">+2.51%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>100</td>
+<td class="ticker">KR</td>
+<td>$73.59</td>
+<td class="positive">+0.51</td>
+<td class="score">790</td>
+<td><div class="grade grade-A">A</div></td>
+<td>47</td>
+<td>65</td>
+<td>50</td>
+<td>55</td>
+<td>1.41x</td>
+<td class="positive">+17.69%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>101</td>
+<td class="ticker">WFC</td>
+<td>$76.66</td>
+<td class="negative">-0.69</td>
+<td class="score">787</td>
+<td><div class="grade grade-A">A</div></td>
+<td>39</td>
+<td>68</td>
+<td>52</td>
+<td>68</td>
+<td>1.38x</td>
+<td class="negative">-12.43%</td>
+<td>Financial</td>
+</tr><tr>
+<td>102</td>
+<td class="ticker">MNST</td>
+<td>$85.88</td>
+<td class="positive">+3.01</td>
+<td class="score">785</td>
+<td><div class="grade grade-A">A</div></td>
+<td>41</td>
+<td>70</td>
+<td>55</td>
+<td>78</td>
+<td>1.30x</td>
+<td class="negative">-25.22%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>103</td>
+<td class="ticker">BBY</td>
+<td>$63.92</td>
+<td class="positive">+1.49</td>
+<td class="score">779</td>
+<td><div class="grade grade-A">A</div></td>
+<td>47</td>
+<td>55</td>
+<td>45</td>
+<td>55</td>
+<td>1.53x</td>
+<td class="positive">+9.83%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>104</td>
+<td class="ticker">EW</td>
+<td>$79.40</td>
+<td class="positive">+0.08</td>
+<td class="score">779</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>72</td>
+<td>52</td>
+<td>55</td>
+<td>1.36x</td>
+<td class="negative">-4.29%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>105</td>
+<td class="ticker">GIS</td>
+<td>$71.05</td>
+<td class="negative">-1.74</td>
+<td class="score">778</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>65</td>
+<td>48</td>
+<td>55</td>
+<td>1.44x</td>
+<td class="positive">+7.17%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>106</td>
+<td class="ticker">CTSH</td>
+<td>$60.82</td>
+<td class="positive">+1.82</td>
+<td class="score">777</td>
+<td><div class="grade grade-A">A</div></td>
+<td>45</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.57x</td>
+<td class="negative">-1.56%</td>
+<td>Tech</td>
+</tr><tr>
+<td>107</td>
+<td class="ticker">BMY</td>
+<td>$75.88</td>
+<td class="positive">+0.72</td>
+<td class="score">776</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>65</td>
+<td>45</td>
+<td>62</td>
+<td>1.39x</td>
+<td class="positive">+11.24%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>108</td>
+<td class="ticker">NFLX</td>
+<td>$92.82</td>
+<td class="negative">-0.65</td>
+<td class="score">776</td>
+<td><div class="grade grade-A">A</div></td>
+<td>37</td>
+<td>75</td>
+<td>70</td>
+<td>72</td>
+<td>1.25x</td>
+<td class="negative">-24.46%</td>
+<td>Comm</td>
+</tr><tr>
+<td>109</td>
+<td class="ticker">CCI</td>
+<td>$79.75</td>
+<td class="positive">+1.48</td>
+<td class="score">773</td>
+<td><div class="grade grade-A">A</div></td>
+<td>41</td>
+<td>72</td>
+<td>52</td>
+<td>55</td>
+<td>1.35x</td>
+<td class="negative">-18.15%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>110</td>
+<td class="ticker">LNT</td>
+<td>$69.14</td>
+<td class="positive">+1.29</td>
+<td class="score">772</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>60</td>
+<td>45</td>
+<td>55</td>
+<td>1.46x</td>
+<td class="positive">+7.14%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>111</td>
+<td class="ticker">MAS</td>
+<td>$56.60</td>
+<td class="negative">-1.20</td>
+<td class="score">770</td>
+<td><div class="grade grade-A">A</div></td>
+<td>40</td>
+<td>50</td>
+<td>45</td>
+<td>55</td>
+<td>1.63x</td>
+<td class="negative">-2.53%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>112</td>
+<td class="ticker">OKE</td>
+<td>$92.75</td>
+<td class="negative">-1.29</td>
+<td class="score">770</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>70</td>
+<td>65</td>
+<td>68</td>
+<td>1.25x</td>
+<td class="positive">+26.33%</td>
+<td>Energy</td>
+</tr><tr>
+<td>113</td>
+<td class="ticker">NEM</td>
+<td>$62.93</td>
+<td class="negative">-4.84</td>
+<td class="score">769</td>
+<td><div class="grade grade-A">A</div></td>
+<td>35</td>
+<td>60</td>
+<td>48</td>
+<td>55</td>
+<td>1.54x</td>
+<td class="negative">-6.27%</td>
+<td>Materials</td>
+</tr><tr>
+<td>114</td>
+<td class="ticker">LYB</td>
+<td>$82.31</td>
+<td class="positive">+2.32</td>
+<td class="score">768</td>
+<td><div class="grade grade-A">A</div></td>
+<td>64</td>
+<td>55</td>
+<td>55</td>
+<td>55</td>
+<td>1.33x</td>
+<td class="positive">+89.43%</td>
+<td>Materials</td>
+</tr><tr>
+<td>115</td>
+<td class="ticker">SYF</td>
+<td>$65.75</td>
+<td class="positive">+0.60</td>
+<td class="score">759</td>
+<td><div class="grade grade-A">A</div></td>
+<td>41</td>
+<td>55</td>
+<td>52</td>
+<td>55</td>
+<td>1.51x</td>
+<td class="negative">-10.74%</td>
+<td>Financial</td>
+</tr><tr>
+<td>116</td>
+<td class="ticker">BRO</td>
+<td>$65.33</td>
+<td class="positive">+3.00</td>
+<td class="score">758</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>1.51x</td>
+<td class="negative">-4.50%</td>
+<td>Financial</td>
+</tr><tr>
+<td>117</td>
+<td class="ticker">NVDA</td>
+<td>$164.81</td>
+<td class="negative">-1.62</td>
+<td class="score">757</td>
+<td><div class="grade grade-A">A</div></td>
+<td>54</td>
+<td>97</td>
+<td>98</td>
+<td>90</td>
+<td>0.91x</td>
+<td class="negative">-19.28%</td>
+<td>Tech</td>
+</tr><tr>
+<td>118</td>
+<td class="ticker">CFG</td>
+<td>$57.30</td>
+<td class="negative">-0.84</td>
+<td class="score">755</td>
+<td><div class="grade grade-A">A</div></td>
+<td>38</td>
+<td>50</td>
+<td>45</td>
+<td>55</td>
+<td>1.62x</td>
+<td class="negative">-14.76%</td>
+<td>Financial</td>
+</tr><tr>
+<td>119</td>
+<td class="ticker">IBKR</td>
+<td>$63.48</td>
+<td class="negative">-1.12</td>
+<td class="score">752</td>
+<td><div class="grade grade-A">A</div></td>
+<td>34</td>
+<td>50</td>
+<td>70</td>
+<td>55</td>
+<td>1.53x</td>
+<td class="negative">-33.62%</td>
+<td>Financial</td>
+</tr><tr>
+<td>120</td>
+<td class="ticker">WRB</td>
+<td>$66.30</td>
+<td class="positive">+2.41</td>
+<td class="score">749</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.50x</td>
+<td class="positive">+3.42%</td>
+<td>Financial</td>
+</tr><tr>
+<td>121</td>
+<td class="ticker">DAL</td>
+<td>$63.04</td>
+<td class="negative">-2.76</td>
+<td class="score">748</td>
+<td><div class="grade grade-A">A</div></td>
+<td>37</td>
+<td>50</td>
+<td>62</td>
+<td>55</td>
+<td>1.54x</td>
+<td class="negative">-10.87%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>122</td>
+<td class="ticker">XEL</td>
+<td>$79.12</td>
+<td class="positive">+1.32</td>
+<td class="score">744</td>
+<td><div class="grade grade-A">A</div></td>
+<td>44</td>
+<td>65</td>
+<td>48</td>
+<td>55</td>
+<td>1.36x</td>
+<td class="positive">+0.00%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>123</td>
+<td class="ticker">TTD</td>
+<td>$60.31</td>
+<td class="negative">-3.63</td>
+<td class="score">737</td>
+<td><div class="grade grade-A">A</div></td>
+<td>29</td>
+<td>50</td>
+<td>65</td>
+<td>55</td>
+<td>1.58x</td>
+<td class="negative">-42.11%</td>
+<td>Tech</td>
+</tr><tr>
+<td>124</td>
+<td class="ticker">SBUX</td>
+<td>$86.80</td>
+<td class="negative">-0.01</td>
+<td class="score">737</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>72</td>
+<td>50</td>
+<td>55</td>
+<td>1.29x</td>
+<td class="negative">-4.22%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>125</td>
+<td class="ticker">EL</td>
+<td>$67.34</td>
+<td class="positive">+0.17</td>
+<td class="score">736</td>
+<td><div class="grade grade-A">A</div></td>
+<td>39</td>
+<td>60</td>
+<td>38</td>
+<td>55</td>
+<td>1.49x</td>
+<td class="negative">-20.05%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>126</td>
+<td class="ticker">SO</td>
+<td>$97.96</td>
+<td class="positive">+0.82</td>
+<td class="score">736</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>72</td>
+<td>50</td>
+<td>72</td>
+<td>1.21x</td>
+<td class="positive">+11.34%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>127</td>
+<td class="ticker">FANG</td>
+<td>$105.08</td>
+<td class="positive">+0.71</td>
+<td class="score">735</td>
+<td><div class="grade grade-A">A</div></td>
+<td>50</td>
+<td>68</td>
+<td>68</td>
+<td>72</td>
+<td>1.16x</td>
+<td class="positive">+32.23%</td>
+<td>Energy</td>
+</tr><tr>
+<td>128</td>
+<td class="ticker">MDT</td>
+<td>$96.83</td>
+<td class="positive">+2.38</td>
+<td class="score">735</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>72</td>
+<td>50</td>
+<td>68</td>
+<td>1.22x</td>
+<td class="positive">+2.67%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>129</td>
+<td class="ticker">HOOD</td>
+<td>$64.53</td>
+<td class="negative">-2.25</td>
+<td class="score">734</td>
+<td><div class="grade grade-A">A</div></td>
+<td>31</td>
+<td>50</td>
+<td>72</td>
+<td>55</td>
+<td>1.52x</td>
+<td class="negative">-42.98%</td>
+<td>Financial</td>
+</tr><tr>
+<td>130</td>
+<td class="ticker">IRM</td>
+<td>$97.07</td>
+<td class="negative">-1.25</td>
+<td class="score">734</td>
+<td><div class="grade grade-A">A</div></td>
+<td>44</td>
+<td>72</td>
+<td>60</td>
+<td>62</td>
+<td>1.21x</td>
+<td class="positive">+17.03%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>131</td>
+<td class="ticker">ES</td>
+<td>$68.51</td>
+<td class="positive">+1.36</td>
+<td class="score">730</td>
+<td><div class="grade grade-A">A</div></td>
+<td>46</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.47x</td>
+<td class="positive">+8.81%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>132</td>
+<td class="ticker">SYY</td>
+<td>$68.99</td>
+<td class="negative">-15.65</td>
+<td class="score">729</td>
+<td><div class="grade grade-A">A</div></td>
+<td>24</td>
+<td>65</td>
+<td>48</td>
+<td>62</td>
+<td>1.47x</td>
+<td class="negative">-25.24%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>133</td>
+<td class="ticker">TRMB</td>
+<td>$62.30</td>
+<td class="negative">-1.06</td>
+<td class="score">728</td>
+<td><div class="grade grade-A">A</div></td>
+<td>36</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.55x</td>
+<td class="negative">-23.11%</td>
+<td>Tech</td>
+</tr><tr>
+<td>134</td>
+<td class="ticker">ABT</td>
+<td>$102.12</td>
+<td class="negative">-1.80</td>
+<td class="score">727</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>75</td>
+<td>55</td>
+<td>72</td>
+<td>1.18x</td>
+<td class="positive">+7.52%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>135</td>
+<td class="ticker">ORLY</td>
+<td>$92.02</td>
+<td class="positive">+2.12</td>
+<td class="score">727</td>
+<td><div class="grade grade-A">A</div></td>
+<td>43</td>
+<td>72</td>
+<td>55</td>
+<td>55</td>
+<td>1.25x</td>
+<td class="negative">-13.45%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>136</td>
+<td class="ticker">WMT</td>
+<td>$123.65</td>
+<td class="positive">+0.62</td>
+<td class="score">727</td>
+<td><div class="grade grade-A">A</div></td>
+<td>44</td>
+<td>82</td>
+<td>68</td>
+<td>80</td>
+<td>1.06x</td>
+<td class="positive">+5.04%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>137</td>
+<td class="ticker">MET</td>
+<td>$68.00</td>
+<td class="positive">+0.45</td>
+<td class="score">726</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>50</td>
+<td>48</td>
+<td>62</td>
+<td>1.48x</td>
+<td class="negative">-4.68%</td>
+<td>Financial</td>
+</tr><tr>
+<td>138</td>
+<td class="ticker">EIX</td>
+<td>$71.87</td>
+<td class="positive">+2.23</td>
+<td class="score">726</td>
+<td><div class="grade grade-A">A</div></td>
+<td>50</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.43x</td>
+<td class="positive">+19.70%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>139</td>
+<td class="ticker">UPS</td>
+<td>$94.95</td>
+<td class="positive">+0.16</td>
+<td class="score">722</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>72</td>
+<td>48</td>
+<td>68</td>
+<td>1.23x</td>
+<td class="negative">-5.10%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>140</td>
+<td class="ticker">GM</td>
+<td>$72.62</td>
+<td class="negative">-0.48</td>
+<td class="score">722</td>
+<td><div class="grade grade-A">A</div></td>
+<td>39</td>
+<td>58</td>
+<td>50</td>
+<td>55</td>
+<td>1.43x</td>
+<td class="negative">-14.20%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>141</td>
+<td class="ticker">SWK</td>
+<td>$68.66</td>
+<td class="negative">-0.04</td>
+<td class="score">721</td>
+<td><div class="grade grade-A">A</div></td>
+<td>43</td>
+<td>55</td>
+<td>40</td>
+<td>55</td>
+<td>1.47x</td>
+<td class="positive">+0.38%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>142</td>
+<td class="ticker">ALB</td>
+<td>$82.73</td>
+<td class="positive">+0.65</td>
+<td class="score">720</td>
+<td><div class="grade grade-A">A</div></td>
+<td>48</td>
+<td>60</td>
+<td>50</td>
+<td>55</td>
+<td>1.33x</td>
+<td class="positive">+24.55%</td>
+<td>Materials</td>
+</tr><tr>
+<td>143</td>
+<td class="ticker">APTV</td>
+<td>$66.33</td>
+<td class="negative">-1.07</td>
+<td class="score">716</td>
+<td><div class="grade grade-A">A</div></td>
+<td>41</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.50x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>144</td>
+<td class="ticker">APO</td>
+<td>$109.55</td>
+<td class="positive">+1.04</td>
+<td class="score">714</td>
+<td><div class="grade grade-A">A</div></td>
+<td>43</td>
+<td>75</td>
+<td>68</td>
+<td>65</td>
+<td>1.14x</td>
+<td class="negative">-5.76%</td>
+<td>Financial</td>
+</tr><tr>
+<td>145</td>
+<td class="ticker">CHD</td>
+<td>$94.11</td>
+<td class="negative">-0.61</td>
+<td class="score">708</td>
+<td><div class="grade grade-A">A</div></td>
+<td>44</td>
+<td>65</td>
+<td>52</td>
+<td>68</td>
+<td>1.24x</td>
+<td class="positive">+12.22%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>146</td>
+<td class="ticker">COO</td>
+<td>$69.21</td>
+<td class="negative">-0.80</td>
+<td class="score">706</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.46x</td>
+<td class="positive">+0.46%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>147</td>
+<td class="ticker">CVS</td>
+<td>$69.99</td>
+<td class="negative">-0.13</td>
+<td class="score">705</td>
+<td><div class="grade grade-A">A</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.45x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>148</td>
+<td class="ticker">AIG</td>
+<td>$74.15</td>
+<td class="positive">+1.64</td>
+<td class="score">698</td>
+<td><div class="grade grade-B">B</div></td>
+<td>44</td>
+<td>50</td>
+<td>48</td>
+<td>60</td>
+<td>1.41x</td>
+<td class="negative">-1.50%</td>
+<td>Financial</td>
+</tr><tr>
+<td>149</td>
+<td class="ticker">APH</td>
+<td>$80.68</td>
+<td class="negative">-3.03</td>
+<td class="score">696</td>
+<td><div class="grade grade-B">B</div></td>
+<td>33</td>
+<td>65</td>
+<td>50</td>
+<td>55</td>
+<td>1.34x</td>
+<td class="negative">-24.84%</td>
+<td>Tech</td>
+</tr><tr>
+<td>150</td>
+<td class="ticker">VTR</td>
+<td>$81.82</td>
+<td class="negative">-0.11</td>
+<td class="score">696</td>
+<td><div class="grade grade-B">B</div></td>
+<td>42</td>
+<td>60</td>
+<td>48</td>
+<td>55</td>
+<td>1.33x</td>
+<td class="positive">+0.00%</td>
+<td>Other</td>
+</tr><tr>
+<td>151</td>
+<td class="ticker">MRVL</td>
+<td>$91.84</td>
+<td class="negative">-4.04</td>
+<td class="score">695</td>
+<td><div class="grade grade-B">B</div></td>
+<td>32</td>
+<td>68</td>
+<td>70</td>
+<td>55</td>
+<td>1.25x</td>
+<td class="negative">-26.67%</td>
+<td>Tech</td>
+</tr><tr>
+<td>152</td>
+<td class="ticker">MRK</td>
+<td>$117.91</td>
+<td class="negative">-1.44</td>
+<td class="score">690</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>78</td>
+<td>55</td>
+<td>72</td>
+<td>1.09x</td>
+<td class="positive">+12.01%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>153</td>
+<td class="ticker">SRE</td>
+<td>$96.57</td>
+<td class="positive">+0.72</td>
+<td class="score">689</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>68</td>
+<td>50</td>
+<td>55</td>
+<td>1.22x</td>
+<td class="positive">+9.41%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>154</td>
+<td class="ticker">PLTR</td>
+<td>$137.48</td>
+<td class="negative">-3.90</td>
+<td class="score">689</td>
+<td><div class="grade grade-B">B</div></td>
+<td>40</td>
+<td>82</td>
+<td>85</td>
+<td>75</td>
+<td>1.00x</td>
+<td class="negative">-31.59%</td>
+<td>Tech</td>
+</tr><tr>
+<td>155</td>
+<td class="ticker">CDNS</td>
+<td>$128.20</td>
+<td class="negative">-3.51</td>
+<td class="score">686</td>
+<td><div class="grade grade-B">B</div></td>
+<td>31</td>
+<td>90</td>
+<td>65</td>
+<td>72</td>
+<td>1.04x</td>
+<td class="negative">-34.13%</td>
+<td>Tech</td>
+</tr><tr>
+<td>156</td>
+<td class="ticker">REG</td>
+<td>$74.77</td>
+<td class="positive">+0.63</td>
+<td class="score">683</td>
+<td><div class="grade grade-B">B</div></td>
+<td>39</td>
+<td>55</td>
+<td>45</td>
+<td>55</td>
+<td>1.40x</td>
+<td class="negative">-21.01%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>157</td>
+<td class="ticker">GEHC</td>
+<td>$68.68</td>
+<td class="negative">-0.79</td>
+<td class="score">683</td>
+<td><div class="grade grade-B">B</div></td>
+<td>36</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.47x</td>
+<td class="negative">-27.65%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>158</td>
+<td class="ticker">CMS</td>
+<td>$77.17</td>
+<td class="positive">+1.26</td>
+<td class="score">681</td>
+<td><div class="grade grade-B">B</div></td>
+<td>46</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.38x</td>
+<td class="positive">+6.82%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>159</td>
+<td class="ticker">ED</td>
+<td>$113.72</td>
+<td class="positive">+1.82</td>
+<td class="score">681</td>
+<td><div class="grade grade-B">B</div></td>
+<td>48</td>
+<td>72</td>
+<td>48</td>
+<td>72</td>
+<td>1.11x</td>
+<td class="positive">+14.33%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>160</td>
+<td class="ticker">HOLX</td>
+<td>$75.58</td>
+<td class="negative">-0.13</td>
+<td class="score">681</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.39x</td>
+<td class="positive">+1.42%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>161</td>
+<td class="ticker">DECK</td>
+<td>$94.75</td>
+<td class="positive">+0.74</td>
+<td class="score">676</td>
+<td><div class="grade grade-B">B</div></td>
+<td>38</td>
+<td>65</td>
+<td>62</td>
+<td>55</td>
+<td>1.23x</td>
+<td class="negative">-28.14%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>162</td>
+<td class="ticker">CRH</td>
+<td>$101.30</td>
+<td class="negative">-0.43</td>
+<td class="score">668</td>
+<td><div class="grade grade-B">B</div></td>
+<td>42</td>
+<td>68</td>
+<td>55</td>
+<td>55</td>
+<td>1.19x</td>
+<td class="positive">+0.00%</td>
+<td>Materials</td>
+</tr><tr>
+<td>163</td>
+<td class="ticker">EMR</td>
+<td>$103.56</td>
+<td class="positive">+0.46</td>
+<td class="score">663</td>
+<td><div class="grade grade-B">B</div></td>
+<td>40</td>
+<td>68</td>
+<td>60</td>
+<td>55</td>
+<td>1.17x</td>
+<td class="negative">-14.04%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>164</td>
+<td class="ticker">PG</td>
+<td>$145.14</td>
+<td class="positive">+1.70</td>
+<td class="score">656</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>82</td>
+<td>55</td>
+<td>85</td>
+<td>0.97x</td>
+<td class="positive">+2.55%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>165</td>
+<td class="ticker">PEG</td>
+<td>$81.44</td>
+<td class="positive">+0.90</td>
+<td class="score">654</td>
+<td><div class="grade grade-B">B</div></td>
+<td>44</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.34x</td>
+<td class="positive">+0.00%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>166</td>
+<td class="ticker">SQ</td>
+<td>$90.63</td>
+<td class="negative">-3.29</td>
+<td class="score">652</td>
+<td><div class="grade grade-B">B</div></td>
+<td>37</td>
+<td>58</td>
+<td>58</td>
+<td>58</td>
+<td>1.26x</td>
+<td class="negative">-6.52%</td>
+<td>Financial</td>
+</tr><tr>
+<td>167</td>
+<td class="ticker">WDAY</td>
+<td>$128.48</td>
+<td class="positive">+3.46</td>
+<td class="score">651</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>72</td>
+<td>70</td>
+<td>65</td>
+<td>1.04x</td>
+<td class="negative">-40.19%</td>
+<td>Tech</td>
+</tr><tr>
+<td>168</td>
+<td class="ticker">KMB</td>
+<td>$96.59</td>
+<td class="negative">-2.10</td>
+<td class="score">650</td>
+<td><div class="grade grade-B">B</div></td>
+<td>40</td>
+<td>65</td>
+<td>48</td>
+<td>55</td>
+<td>1.22x</td>
+<td class="negative">-0.07%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>169</td>
+<td class="ticker">IR</td>
+<td>$77.04</td>
+<td class="negative">-3.03</td>
+<td class="score">648</td>
+<td><div class="grade grade-B">B</div></td>
+<td>35</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>1.38x</td>
+<td class="negative">-17.89%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>170</td>
+<td class="ticker">EBAY</td>
+<td>$87.78</td>
+<td class="negative">-0.23</td>
+<td class="score">647</td>
+<td><div class="grade grade-B">B</div></td>
+<td>42</td>
+<td>55</td>
+<td>50</td>
+<td>55</td>
+<td>1.28x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>171</td>
+<td class="ticker">LDOS</td>
+<td>$111.36</td>
+<td class="positive">+0.41</td>
+<td class="score">646</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>70</td>
+<td>55</td>
+<td>55</td>
+<td>1.13x</td>
+<td class="negative">-1.87%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>172</td>
+<td class="ticker">PNR</td>
+<td>$84.07</td>
+<td class="negative">-1.00</td>
+<td class="score">640</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.31x</td>
+<td class="positive">+8.59%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>173</td>
+<td class="ticker">PCAR</td>
+<td>$112.41</td>
+<td class="negative">-0.30</td>
+<td class="score">638</td>
+<td><div class="grade grade-B">B</div></td>
+<td>44</td>
+<td>68</td>
+<td>55</td>
+<td>55</td>
+<td>1.12x</td>
+<td class="positive">+9.56%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>174</td>
+<td class="ticker">ETR</td>
+<td>$110.96</td>
+<td class="positive">+0.99</td>
+<td class="score">637</td>
+<td><div class="grade grade-B">B</div></td>
+<td>48</td>
+<td>65</td>
+<td>52</td>
+<td>55</td>
+<td>1.13x</td>
+<td class="positive">+19.98%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>175</td>
+<td class="ticker">C</td>
+<td>$107.03</td>
+<td class="negative">-0.32</td>
+<td class="score">636</td>
+<td><div class="grade grade-B">B</div></td>
+<td>40</td>
+<td>65</td>
+<td>50</td>
+<td>65</td>
+<td>1.15x</td>
+<td class="negative">-10.68%</td>
+<td>Financial</td>
+</tr><tr>
+<td>176</td>
+<td class="ticker">UAL</td>
+<td>$84.96</td>
+<td class="negative">-3.94</td>
+<td class="score">633</td>
+<td><div class="grade grade-B">B</div></td>
+<td>37</td>
+<td>50</td>
+<td>60</td>
+<td>55</td>
+<td>1.31x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>177</td>
+<td class="ticker">SATS</td>
+<td>$112.37</td>
+<td class="negative">-2.47</td>
+<td class="score">631</td>
+<td><div class="grade grade-B">B</div></td>
+<td>39</td>
+<td>72</td>
+<td>50</td>
+<td>55</td>
+<td>1.12x</td>
+<td class="positive">+0.00%</td>
+<td>Comm</td>
+</tr><tr>
+<td>178</td>
+<td class="ticker">ICE</td>
+<td>$157.07</td>
+<td class="positive">+2.88</td>
+<td class="score">631</td>
+<td><div class="grade grade-B">B</div></td>
+<td>46</td>
+<td>82</td>
+<td>65</td>
+<td>75</td>
+<td>0.93x</td>
+<td class="negative">-0.22%</td>
+<td>Financial</td>
+</tr><tr>
+<td>179</td>
+<td class="ticker">DIS</td>
+<td>$116.15</td>
+<td class="negative">-4.68</td>
+<td class="score">629</td>
+<td><div class="grade grade-B">B</div></td>
+<td>32</td>
+<td>75</td>
+<td>55</td>
+<td>62</td>
+<td>1.10x</td>
+<td class="negative">-20.72%</td>
+<td>Comm</td>
+</tr><tr>
+<td>180</td>
+<td class="ticker">DUK</td>
+<td>$131.83</td>
+<td class="positive">+1.42</td>
+<td class="score">628</td>
+<td><div class="grade grade-B">B</div></td>
+<td>47</td>
+<td>72</td>
+<td>50</td>
+<td>72</td>
+<td>1.03x</td>
+<td class="positive">+12.42%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>181</td>
+<td class="ticker">CF</td>
+<td>$128.29</td>
+<td class="positive">+1.01</td>
+<td class="score">628</td>
+<td><div class="grade grade-B">B</div></td>
+<td>60</td>
+<td>62</td>
+<td>62</td>
+<td>55</td>
+<td>1.04x</td>
+<td class="positive">+76.86%</td>
+<td>Materials</td>
+</tr><tr>
+<td>182</td>
+<td class="ticker">AEE</td>
+<td>$109.75</td>
+<td class="positive">+0.94</td>
+<td class="score">626</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>65</td>
+<td>48</td>
+<td>55</td>
+<td>1.14x</td>
+<td class="positive">+8.18%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>183</td>
+<td class="ticker">EOG</td>
+<td>$149.89</td>
+<td class="positive">+0.22</td>
+<td class="score">624</td>
+<td><div class="grade grade-B">B</div></td>
+<td>52</td>
+<td>70</td>
+<td>65</td>
+<td>80</td>
+<td>0.96x</td>
+<td class="positive">+42.74%</td>
+<td>Energy</td>
+</tr><tr>
+<td>184</td>
+<td class="ticker">Q</td>
+<td>$106.78</td>
+<td class="negative">-4.45</td>
+<td class="score">624</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>60</td>
+<td>60</td>
+<td>55</td>
+<td>1.15x</td>
+<td class="positive">+30.54%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>185</td>
+<td class="ticker">XOM</td>
+<td>$171.53</td>
+<td class="positive">+0.32</td>
+<td class="score">622</td>
+<td><div class="grade grade-B">B</div></td>
+<td>52</td>
+<td>80</td>
+<td>65</td>
+<td>85</td>
+<td>0.89x</td>
+<td class="positive">+42.96%</td>
+<td>Energy</td>
+</tr><tr>
+<td>186</td>
+<td class="ticker">BX</td>
+<td>$149.84</td>
+<td class="negative">-0.73</td>
+<td class="score">621</td>
+<td><div class="grade grade-B">B</div></td>
+<td>37</td>
+<td>82</td>
+<td>70</td>
+<td>70</td>
+<td>0.96x</td>
+<td class="negative">-22.34%</td>
+<td>Financial</td>
+</tr><tr>
+<td>187</td>
+<td class="ticker">TXT</td>
+<td>$85.68</td>
+<td class="negative">-2.05</td>
+<td class="score">621</td>
+<td><div class="grade grade-B">B</div></td>
+<td>40</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.30x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>188</td>
+<td class="ticker">WEC</td>
+<td>$115.58</td>
+<td class="positive">+1.06</td>
+<td class="score">620</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>68</td>
+<td>48</td>
+<td>55</td>
+<td>1.10x</td>
+<td class="positive">+4.94%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>189</td>
+<td class="ticker">AMZN</td>
+<td>$200.54</td>
+<td class="positive">+0.60</td>
+<td class="score">618</td>
+<td><div class="grade grade-B">B</div></td>
+<td>53</td>
+<td>88</td>
+<td>78</td>
+<td>88</td>
+<td>0.82x</td>
+<td class="negative">-13.48%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>190</td>
+<td class="ticker">PEP</td>
+<td>$157.23</td>
+<td class="positive">+2.74</td>
+<td class="score">617</td>
+<td><div class="grade grade-B">B</div></td>
+<td>47</td>
+<td>80</td>
+<td>55</td>
+<td>78</td>
+<td>0.93x</td>
+<td class="positive">+5.85%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>191</td>
+<td class="ticker">PRU</td>
+<td>$94.24</td>
+<td class="positive">+1.01</td>
+<td class="score">616</td>
+<td><div class="grade grade-B">B</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>65</td>
+<td>1.23x</td>
+<td class="negative">-8.42%</td>
+<td>Financial</td>
+</tr><tr>
+<td>192</td>
+<td class="ticker">GPC</td>
+<td>$104.14</td>
+<td class="negative">-0.84</td>
+<td class="score">616</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>62</td>
+<td>45</td>
+<td>55</td>
+<td>1.17x</td>
+<td class="positive">+7.92%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>193</td>
+<td class="ticker">MS</td>
+<td>$157.78</td>
+<td class="negative">-0.38</td>
+<td class="score">614</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>78</td>
+<td>65</td>
+<td>82</td>
+<td>0.93x</td>
+<td class="positive">+2.47%</td>
+<td>Financial</td>
+</tr><tr>
+<td>194</td>
+<td class="ticker">PAYX</td>
+<td>$93.05</td>
+<td class="positive">+1.50</td>
+<td class="score">613</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.24x</td>
+<td class="positive">+3.34%</td>
+<td>Tech</td>
+</tr><tr>
+<td>195</td>
+<td class="ticker">INCY</td>
+<td>$90.28</td>
+<td class="negative">-0.02</td>
+<td class="score">611</td>
+<td><div class="grade grade-B">B</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.26x</td>
+<td class="negative">-2.58%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>196</td>
+<td class="ticker">HAS</td>
+<td>$88.97</td>
+<td class="positive">+0.43</td>
+<td class="score">611</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>50</td>
+<td>45</td>
+<td>55</td>
+<td>1.27x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>197</td>
+<td class="ticker">GILD</td>
+<td>$136.64</td>
+<td class="positive">+1.78</td>
+<td class="score">611</td>
+<td><div class="grade grade-B">B</div></td>
+<td>44</td>
+<td>70</td>
+<td>55</td>
+<td>75</td>
+<td>1.01x</td>
+<td class="negative">-4.78%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>198</td>
+<td class="ticker">GLW</td>
+<td>$127.14</td>
+<td class="negative">-7.06</td>
+<td class="score">606</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>65</td>
+<td>72</td>
+<td>55</td>
+<td>1.05x</td>
+<td class="positive">+46.01%</td>
+<td>Tech</td>
+</tr><tr>
+<td>199</td>
+<td class="ticker">CE</td>
+<td>$97.36</td>
+<td class="positive">+1.74</td>
+<td class="score">602</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>55</td>
+<td>40</td>
+<td>55</td>
+<td>1.21x</td>
+<td class="negative">-0.93%</td>
+<td>Materials</td>
+</tr><tr>
+<td>200</td>
+<td class="ticker">ORCL</td>
+<td>$138.28</td>
+<td class="negative">-0.99</td>
+<td class="score">602</td>
+<td><div class="grade grade-B">B</div></td>
+<td>35</td>
+<td>78</td>
+<td>62</td>
+<td>62</td>
+<td>1.00x</td>
+<td class="negative">-31.65%</td>
+<td>Tech</td>
+</tr><tr>
+<td>201</td>
+<td class="ticker">ZBH</td>
+<td>$88.73</td>
+<td class="positive">+0.18</td>
+<td class="score">601</td>
+<td><div class="grade grade-B">B</div></td>
+<td>39</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.28x</td>
+<td class="negative">-19.06%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>202</td>
+<td class="ticker">GPN</td>
+<td>$112.47</td>
+<td class="positive">+2.37</td>
+<td class="score">597</td>
+<td><div class="grade grade-B">B</div></td>
+<td>44</td>
+<td>62</td>
+<td>48</td>
+<td>55</td>
+<td>1.12x</td>
+<td class="negative">-10.38%</td>
+<td>Financial</td>
+</tr><tr>
+<td>203</td>
+<td class="ticker">PHM</td>
+<td>$90.94</td>
+<td class="negative">-0.27</td>
+<td class="score">596</td>
+<td><div class="grade grade-B">B</div></td>
+<td>39</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.26x</td>
+<td class="negative">-17.33%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>204</td>
+<td class="ticker">AWK</td>
+<td>$138.78</td>
+<td class="positive">+1.40</td>
+<td class="score">596</td>
+<td><div class="grade grade-B">B</div></td>
+<td>47</td>
+<td>75</td>
+<td>50</td>
+<td>55</td>
+<td>1.00x</td>
+<td class="positive">+10.11%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>205</td>
+<td class="ticker">ACGL</td>
+<td>$95.67</td>
+<td class="positive">+2.40</td>
+<td class="score">594</td>
+<td><div class="grade grade-B">B</div></td>
+<td>40</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>1.22x</td>
+<td class="negative">-28.44%</td>
+<td>Financial</td>
+</tr><tr>
+<td>206</td>
+<td class="ticker">DDOG</td>
+<td>$115.06</td>
+<td class="positive">+0.51</td>
+<td class="score">592</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>50</td>
+<td>75</td>
+<td>62</td>
+<td>1.11x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>207</td>
+<td class="ticker">ARES</td>
+<td>$107.23</td>
+<td class="positive">+0.90</td>
+<td class="score">588</td>
+<td><div class="grade grade-B">B</div></td>
+<td>44</td>
+<td>50</td>
+<td>65</td>
+<td>55</td>
+<td>1.15x</td>
+<td class="positive">+0.00%</td>
+<td>Financial</td>
+</tr><tr>
+<td>208</td>
+<td class="ticker">ABNB</td>
+<td>$150.14</td>
+<td class="positive">+0.92</td>
+<td class="score">586</td>
+<td><div class="grade grade-B">B</div></td>
+<td>40</td>
+<td>72</td>
+<td>68</td>
+<td>68</td>
+<td>0.96x</td>
+<td class="negative">-16.06%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>209</td>
+<td class="ticker">TGT</td>
+<td>$118.32</td>
+<td class="negative">-1.27</td>
+<td class="score">586</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>62</td>
+<td>48</td>
+<td>55</td>
+<td>1.09x</td>
+<td class="positive">+20.95%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>210</td>
+<td class="ticker">DG</td>
+<td>$117.80</td>
+<td class="positive">+0.54</td>
+<td class="score">583</td>
+<td><div class="grade grade-B">B</div></td>
+<td>44</td>
+<td>60</td>
+<td>52</td>
+<td>55</td>
+<td>1.09x</td>
+<td class="positive">+4.90%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>211</td>
+<td class="ticker">DASH</td>
+<td>$146.56</td>
+<td class="negative">-0.03</td>
+<td class="score">573</td>
+<td><div class="grade grade-B">B</div></td>
+<td>39</td>
+<td>68</td>
+<td>75</td>
+<td>60</td>
+<td>0.97x</td>
+<td class="negative">-17.42%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>212</td>
+<td class="ticker">TJX</td>
+<td>$155.70</td>
+<td class="positive">+0.38</td>
+<td class="score">571</td>
+<td><div class="grade grade-B">B</div></td>
+<td>41</td>
+<td>72</td>
+<td>60</td>
+<td>72</td>
+<td>0.94x</td>
+<td class="negative">-8.53%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>213</td>
+<td class="ticker">BG</td>
+<td>$126.42</td>
+<td class="negative">-1.79</td>
+<td class="score">571</td>
+<td><div class="grade grade-B">B</div></td>
+<td>49</td>
+<td>60</td>
+<td>50</td>
+<td>55</td>
+<td>1.05x</td>
+<td class="positive">+41.86%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>214</td>
+<td class="ticker">PPG</td>
+<td>$103.57</td>
+<td class="negative">-0.24</td>
+<td class="score">568</td>
+<td><div class="grade grade-B">B</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.17x</td>
+<td class="positive">+0.00%</td>
+<td>Materials</td>
+</tr><tr>
+<td>215</td>
+<td class="ticker">EXR</td>
+<td>$127.86</td>
+<td class="negative">-0.85</td>
+<td class="score">566</td>
+<td><div class="grade grade-B">B</div></td>
+<td>41</td>
+<td>65</td>
+<td>52</td>
+<td>55</td>
+<td>1.04x</td>
+<td class="negative">-3.69%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>216</td>
+<td class="ticker">LULU</td>
+<td>$145.87</td>
+<td class="positive">+0.01</td>
+<td class="score">563</td>
+<td><div class="grade grade-B">B</div></td>
+<td>36</td>
+<td>70</td>
+<td>55</td>
+<td>72</td>
+<td>0.97x</td>
+<td class="negative">-30.66%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>217</td>
+<td class="ticker">L</td>
+<td>$105.73</td>
+<td class="positive">+1.61</td>
+<td class="score">562</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.16x</td>
+<td class="negative">-5.94%</td>
+<td>Financial</td>
+</tr><tr>
+<td>218</td>
+<td class="ticker">DELL</td>
+<td>$163.77</td>
+<td class="negative">-4.68</td>
+<td class="score">555</td>
+<td><div class="grade grade-B">B</div></td>
+<td>52</td>
+<td>62</td>
+<td>78</td>
+<td>58</td>
+<td>0.91x</td>
+<td class="positive">+29.92%</td>
+<td>Tech</td>
+</tr><tr>
+<td>219</td>
+<td class="ticker">STZ</td>
+<td>$151.06</td>
+<td class="negative">-0.22</td>
+<td class="score">554</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>68</td>
+<td>55</td>
+<td>65</td>
+<td>0.95x</td>
+<td class="positive">+4.49%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>220</td>
+<td class="ticker">CRM</td>
+<td>$184.50</td>
+<td class="positive">+2.89</td>
+<td class="score">554</td>
+<td><div class="grade grade-B">B</div></td>
+<td>48</td>
+<td>75</td>
+<td>65</td>
+<td>72</td>
+<td>0.85x</td>
+<td class="negative">-31.94%</td>
+<td>Tech</td>
+</tr><tr>
+<td>221</td>
+<td class="ticker">DLR</td>
+<td>$175.02</td>
+<td class="negative">-0.23</td>
+<td class="score">553</td>
+<td><div class="grade grade-B">B</div></td>
+<td>45</td>
+<td>75</td>
+<td>68</td>
+<td>62</td>
+<td>0.88x</td>
+<td class="positive">+12.98%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>222</td>
+<td class="ticker">AKAM</td>
+<td>$109.93</td>
+<td class="negative">-3.99</td>
+<td class="score">551</td>
+<td><div class="grade grade-B">B</div></td>
+<td>43</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.13x</td>
+<td class="positive">+26.17%</td>
+<td>Tech</td>
+</tr><tr>
+<td>223</td>
+<td class="ticker">AAPL</td>
+<td>$246.23</td>
+<td class="negative">-1.03</td>
+<td class="score">546</td>
+<td><div class="grade grade-C">C</div></td>
+<td>51</td>
+<td>90</td>
+<td>65</td>
+<td>92</td>
+<td>0.73x</td>
+<td class="negative">-19.22%</td>
+<td>Tech</td>
+</tr><tr>
+<td>224</td>
+<td class="ticker">ZTS</td>
+<td>$116.41</td>
+<td class="positive">+2.70</td>
+<td class="score">545</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.10x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>225</td>
+<td class="ticker">AFL</td>
+<td>$125.90</td>
+<td class="positive">+0.65</td>
+<td class="score">544</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>50</td>
+<td>52</td>
+<td>72</td>
+<td>1.05x</td>
+<td class="positive">+1.14%</td>
+<td>Financial</td>
+</tr><tr>
+<td>226</td>
+<td class="ticker">TXN</td>
+<td>$185.71</td>
+<td class="negative">-1.87</td>
+<td class="score">544</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38</td>
+<td>80</td>
+<td>60</td>
+<td>78</td>
+<td>0.85x</td>
+<td class="negative">-11.70%</td>
+<td>Tech</td>
+</tr><tr>
+<td>227</td>
+<td class="ticker">VRSK</td>
+<td>$187.46</td>
+<td class="positive">+2.57</td>
+<td class="score">542</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46</td>
+<td>78</td>
+<td>55</td>
+<td>72</td>
+<td>0.85x</td>
+<td class="positive">+0.00%</td>
+<td>Financial</td>
+</tr><tr>
+<td>228</td>
+<td class="ticker">BK</td>
+<td>$115.39</td>
+<td class="positive">+0.63</td>
+<td class="score">542</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.10x</td>
+<td class="negative">-0.57%</td>
+<td>Financial</td>
+</tr><tr>
+<td>229</td>
+<td class="ticker">DTE</td>
+<td>$146.16</td>
+<td class="positive">+1.17</td>
+<td class="score">541</td>
+<td><div class="grade grade-C">C</div></td>
+<td>47</td>
+<td>65</td>
+<td>50</td>
+<td>55</td>
+<td>0.97x</td>
+<td class="positive">+13.27%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>230</td>
+<td class="ticker">YUM</td>
+<td>$154.67</td>
+<td class="positive">+0.46</td>
+<td class="score">540</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>70</td>
+<td>55</td>
+<td>55</td>
+<td>0.94x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>231</td>
+<td class="ticker">CVX</td>
+<td>$210.66</td>
+<td class="negative">-0.23</td>
+<td class="score">538</td>
+<td><div class="grade grade-C">C</div></td>
+<td>50</td>
+<td>78</td>
+<td>62</td>
+<td>82</td>
+<td>0.79x</td>
+<td class="positive">+38.34%</td>
+<td>Energy</td>
+</tr><tr>
+<td>232</td>
+<td class="ticker">EXE</td>
+<td>$111.09</td>
+<td class="negative">-2.12</td>
+<td class="score">538</td>
+<td><div class="grade grade-C">C</div></td>
+<td>40</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.13x</td>
+<td class="positive">+0.00%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>233</td>
+<td class="ticker">LRCX</td>
+<td>$199.82</td>
+<td class="negative">-5.48</td>
+<td class="score">536</td>
+<td><div class="grade grade-C">C</div></td>
+<td>39</td>
+<td>82</td>
+<td>70</td>
+<td>72</td>
+<td>0.82x</td>
+<td class="positive">+16.28%</td>
+<td>Tech</td>
+</tr><tr>
+<td>234</td>
+<td class="ticker">DHR</td>
+<td>$207.32</td>
+<td class="positive">+1.73</td>
+<td class="score">535</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>82</td>
+<td>62</td>
+<td>75</td>
+<td>0.80x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>235</td>
+<td class="ticker">VST</td>
+<td>$147.60</td>
+<td class="negative">-5.07</td>
+<td class="score">533</td>
+<td><div class="grade grade-C">C</div></td>
+<td>32</td>
+<td>68</td>
+<td>68</td>
+<td>55</td>
+<td>0.96x</td>
+<td class="negative">-18.71%</td>
+<td>Energy</td>
+</tr><tr>
+<td>236</td>
+<td class="ticker">GOOG</td>
+<td>$272.56</td>
+<td class="negative">-0.44</td>
+<td class="score">532</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49</td>
+<td>91</td>
+<td>80</td>
+<td>95</td>
+<td>0.69x</td>
+<td class="negative">-24.70%</td>
+<td>Comm</td>
+</tr><tr>
+<td>237</td>
+<td class="ticker">RTX</td>
+<td>$186.13</td>
+<td class="negative">-1.88</td>
+<td class="score">532</td>
+<td><div class="grade grade-C">C</div></td>
+<td>39</td>
+<td>78</td>
+<td>62</td>
+<td>70</td>
+<td>0.85x</td>
+<td class="negative">-5.53%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>238</td>
+<td class="ticker">AMT</td>
+<td>$170.37</td>
+<td class="positive">+0.50</td>
+<td class="score">532</td>
+<td><div class="grade grade-C">C</div></td>
+<td>40</td>
+<td>75</td>
+<td>55</td>
+<td>62</td>
+<td>0.89x</td>
+<td class="negative">-13.38%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>239</td>
+<td class="ticker">MMM</td>
+<td>$133.36</td>
+<td class="positive">+1.23</td>
+<td class="score">532</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>60</td>
+<td>42</td>
+<td>55</td>
+<td>1.02x</td>
+<td class="positive">+5.35%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>240</td>
+<td class="ticker">GOOGL</td>
+<td>$272.97</td>
+<td class="negative">-0.50</td>
+<td class="score">532</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49</td>
+<td>91</td>
+<td>80</td>
+<td>95</td>
+<td>0.69x</td>
+<td class="negative">-24.53%</td>
+<td>Comm</td>
+</tr><tr>
+<td>241</td>
+<td class="ticker">NUE</td>
+<td>$164.92</td>
+<td class="positive">+0.95</td>
+<td class="score">530</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46</td>
+<td>65</td>
+<td>52</td>
+<td>72</td>
+<td>0.91x</td>
+<td class="positive">+10.03%</td>
+<td>Materials</td>
+</tr><tr>
+<td>242</td>
+<td class="ticker">MAA</td>
+<td>$121.47</td>
+<td class="positive">+0.75</td>
+<td class="score">530</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>55</td>
+<td>45</td>
+<td>55</td>
+<td>1.07x</td>
+<td class="negative">-12.20%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>243</td>
+<td class="ticker">PM</td>
+<td>$165.02</td>
+<td class="positive">+0.91</td>
+<td class="score">529</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>72</td>
+<td>50</td>
+<td>62</td>
+<td>0.91x</td>
+<td class="negative">-6.62%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>244</td>
+<td class="ticker">PANW</td>
+<td>$182.28</td>
+<td class="negative">-2.27</td>
+<td class="score">527</td>
+<td><div class="grade grade-C">C</div></td>
+<td>35</td>
+<td>72</td>
+<td>78</td>
+<td>68</td>
+<td>0.86x</td>
+<td class="negative">-20.35%</td>
+<td>Tech</td>
+</tr><tr>
+<td>245</td>
+<td class="ticker">CHRW</td>
+<td>$118.73</td>
+<td class="negative">-0.77</td>
+<td class="score">525</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.09x</td>
+<td class="positive">+5.75%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>246</td>
+<td class="ticker">NRG</td>
+<td>$140.70</td>
+<td class="negative">-4.76</td>
+<td class="score">522</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38</td>
+<td>60</td>
+<td>60</td>
+<td>55</td>
+<td>0.99x</td>
+<td class="positive">+9.90%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>247</td>
+<td class="ticker">XYL</td>
+<td>$116.16</td>
+<td class="negative">-1.19</td>
+<td class="score">522</td>
+<td><div class="grade grade-C">C</div></td>
+<td>39</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.10x</td>
+<td class="negative">-10.22%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>248</td>
+<td class="ticker">VRT</td>
+<td>$233.68</td>
+<td class="negative">-6.93</td>
+<td class="score">521</td>
+<td><div class="grade grade-C">C</div></td>
+<td>56</td>
+<td>78</td>
+<td>88</td>
+<td>55</td>
+<td>0.75x</td>
+<td class="positive">+44.28%</td>
+<td>Tech</td>
+</tr><tr>
+<td>249</td>
+<td class="ticker">STT</td>
+<td>$123.43</td>
+<td class="positive">+0.74</td>
+<td class="score">521</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.06x</td>
+<td class="positive">+1.79%</td>
+<td>Financial</td>
+</tr><tr>
+<td>250</td>
+<td class="ticker">SBAC</td>
+<td>$169.94</td>
+<td class="positive">+1.73</td>
+<td class="score">521</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>72</td>
+<td>52</td>
+<td>55</td>
+<td>0.89x</td>
+<td class="positive">+0.00%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>251</td>
+<td class="ticker">FRT</td>
+<td>$134.04</td>
+<td class="positive">+1.27</td>
+<td class="score">520</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>58</td>
+<td>48</td>
+<td>55</td>
+<td>1.02x</td>
+<td class="negative">-13.85%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>252</td>
+<td class="ticker">CDW</td>
+<td>$118.29</td>
+<td class="positive">+0.10</td>
+<td class="score">518</td>
+<td><div class="grade grade-C">C</div></td>
+<td>39</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.09x</td>
+<td class="negative">-16.55%</td>
+<td>Tech</td>
+</tr><tr>
+<td>253</td>
+<td class="ticker">J</td>
+<td>$124.45</td>
+<td class="negative">-1.14</td>
+<td class="score">511</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.06x</td>
+<td class="negative">-2.35%</td>
+<td>Financial</td>
+</tr><tr>
+<td>254</td>
+<td class="ticker">AMD</td>
+<td>$194.58</td>
+<td class="negative">-3.67</td>
+<td class="score">511</td>
+<td><div class="grade grade-C">C</div></td>
+<td>34</td>
+<td>75</td>
+<td>72</td>
+<td>72</td>
+<td>0.83x</td>
+<td class="negative">-20.26%</td>
+<td>Tech</td>
+</tr><tr>
+<td>255</td>
+<td class="ticker">HIG</td>
+<td>$134.49</td>
+<td class="positive">+1.64</td>
+<td class="score">503</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>1.02x</td>
+<td class="negative">-6.41%</td>
+<td>Financial</td>
+</tr><tr>
+<td>256</td>
+<td class="ticker">NTAP</td>
+<td>$121.61</td>
+<td class="negative">-1.08</td>
+<td class="score">502</td>
+<td><div class="grade grade-C">C</div></td>
+<td>37</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.07x</td>
+<td class="negative">-21.36%</td>
+<td>Tech</td>
+</tr><tr>
+<td>257</td>
+<td class="ticker">JNJ</td>
+<td>$242.32</td>
+<td class="positive">+0.78</td>
+<td class="score">499</td>
+<td><div class="grade grade-C">C</div></td>
+<td>47</td>
+<td>82</td>
+<td>52</td>
+<td>88</td>
+<td>0.73x</td>
+<td class="positive">+17.01%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>258</td>
+<td class="ticker">TKO</td>
+<td>$194.54</td>
+<td class="positive">+2.82</td>
+<td class="score">499</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46</td>
+<td>70</td>
+<td>62</td>
+<td>60</td>
+<td>0.83x</td>
+<td class="positive">+0.00%</td>
+<td>Comm</td>
+</tr><tr>
+<td>259</td>
+<td class="ticker">WM</td>
+<td>$229.80</td>
+<td class="positive">+2.10</td>
+<td class="score">496</td>
+<td><div class="grade grade-C">C</div></td>
+<td>47</td>
+<td>80</td>
+<td>55</td>
+<td>75</td>
+<td>0.76x</td>
+<td class="positive">+8.30%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>260</td>
+<td class="ticker">NTRS</td>
+<td>$135.71</td>
+<td class="positive">+0.54</td>
+<td class="score">496</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.01x</td>
+<td class="positive">+10.06%</td>
+<td>Financial</td>
+</tr><tr>
+<td>261</td>
+<td class="ticker">PTC</td>
+<td>$139.11</td>
+<td class="positive">+1.09</td>
+<td class="score">495</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>1.00x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>262</td>
+<td class="ticker">GNRC</td>
+<td>$185.56</td>
+<td class="negative">-4.53</td>
+<td class="score">493</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>65</td>
+<td>65</td>
+<td>60</td>
+<td>0.85x</td>
+<td class="positive">+35.71%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>263</td>
+<td class="ticker">JCI</td>
+<td>$126.13</td>
+<td class="negative">-3.93</td>
+<td class="score">492</td>
+<td><div class="grade grade-C">C</div></td>
+<td>37</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>1.05x</td>
+<td class="negative">-2.49%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>264</td>
+<td class="ticker">ABBV</td>
+<td>$212.98</td>
+<td class="positive">+1.71</td>
+<td class="score">492</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>75</td>
+<td>58</td>
+<td>68</td>
+<td>0.79x</td>
+<td class="positive">+0.59%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>265</td>
+<td class="ticker">EA</td>
+<td>$202.61</td>
+<td class="positive">+0.30</td>
+<td class="score">492</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>70</td>
+<td>60</td>
+<td>72</td>
+<td>0.81x</td>
+<td class="positive">+0.00%</td>
+<td>Comm</td>
+</tr><tr>
+<td>266</td>
+<td class="ticker">DHI</td>
+<td>$132.82</td>
+<td class="negative">-1.01</td>
+<td class="score">491</td>
+<td><div class="grade grade-C">C</div></td>
+<td>40</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.02x</td>
+<td class="negative">-6.06%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>267</td>
+<td class="ticker">SPG</td>
+<td>$182.63</td>
+<td class="positive">+1.34</td>
+<td class="score">490</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>68</td>
+<td>50</td>
+<td>62</td>
+<td>0.86x</td>
+<td class="negative">-3.21%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>268</td>
+<td class="ticker">TMUS</td>
+<td>$213.98</td>
+<td class="positive">+1.50</td>
+<td class="score">490</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>72</td>
+<td>65</td>
+<td>68</td>
+<td>0.79x</td>
+<td class="positive">+2.86%</td>
+<td>Comm</td>
+</tr><tr>
+<td>269</td>
+<td class="ticker">RJF</td>
+<td>$141.06</td>
+<td class="negative">-0.18</td>
+<td class="score">487</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.99x</td>
+<td class="positive">+0.00%</td>
+<td>Financial</td>
+</tr><tr>
+<td>270</td>
+<td class="ticker">TTWO</td>
+<td>$192.93</td>
+<td class="positive">+1.71</td>
+<td class="score">485</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>68</td>
+<td>62</td>
+<td>58</td>
+<td>0.83x</td>
+<td class="negative">-6.26%</td>
+<td>Comm</td>
+</tr><tr>
+<td>271</td>
+<td class="ticker">BLDR</td>
+<td>$134.49</td>
+<td class="negative">-3.73</td>
+<td class="score">484</td>
+<td><div class="grade grade-C">C</div></td>
+<td>37</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>1.02x</td>
+<td class="negative">-2.08%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>272</td>
+<td class="ticker">STLD</td>
+<td>$171.58</td>
+<td class="positive">+0.36</td>
+<td class="score">481</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>62</td>
+<td>55</td>
+<td>55</td>
+<td>0.89x</td>
+<td class="positive">+0.00%</td>
+<td>Materials</td>
+</tr><tr>
+<td>273</td>
+<td class="ticker">JPM</td>
+<td>$283.41</td>
+<td class="positive">+0.20</td>
+<td class="score">481</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>88</td>
+<td>70</td>
+<td>90</td>
+<td>0.67x</td>
+<td class="negative">-10.95%</td>
+<td>Financial</td>
+</tr><tr>
+<td>274</td>
+<td class="ticker">ADBE</td>
+<td>$240.63</td>
+<td class="positive">+2.46</td>
+<td class="score">481</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>80</td>
+<td>60</td>
+<td>78</td>
+<td>0.74x</td>
+<td class="negative">-20.55%</td>
+<td>Tech</td>
+</tr><tr>
+<td>275</td>
+<td class="ticker">GL</td>
+<td>$146.36</td>
+<td class="positive">+2.08</td>
+<td class="score">478</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.97x</td>
+<td class="positive">+0.00%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>276</td>
+<td class="ticker">HSY</td>
+<td>$213.93</td>
+<td class="positive">+0.09</td>
+<td class="score">477</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46</td>
+<td>72</td>
+<td>50</td>
+<td>70</td>
+<td>0.79x</td>
+<td class="positive">+17.24%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>277</td>
+<td class="ticker">UNH</td>
+<td>$261.72</td>
+<td class="positive">+1.04</td>
+<td class="score">477</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>85</td>
+<td>60</td>
+<td>80</td>
+<td>0.70x</td>
+<td class="negative">-7.76%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>278</td>
+<td class="ticker">JBHT</td>
+<td>$139.30</td>
+<td class="negative">-0.99</td>
+<td class="score">476</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>1.00x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>279</td>
+<td class="ticker">PNW</td>
+<td>$148.20</td>
+<td class="positive">+0.98</td>
+<td class="score">476</td>
+<td><div class="grade grade-C">C</div></td>
+<td>47</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>0.96x</td>
+<td class="positive">+13.57%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>280</td>
+<td class="ticker">AVB</td>
+<td>$161.59</td>
+<td class="positive">+0.49</td>
+<td class="score">476</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>60</td>
+<td>48</td>
+<td>55</td>
+<td>0.92x</td>
+<td class="negative">-9.71%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>281</td>
+<td class="ticker">ROST</td>
+<td>$208.17</td>
+<td class="negative">-1.65</td>
+<td class="score">475</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>68</td>
+<td>58</td>
+<td>70</td>
+<td>0.80x</td>
+<td class="positive">+15.32%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>282</td>
+<td class="ticker">AVY</td>
+<td>$168.36</td>
+<td class="positive">+0.35</td>
+<td class="score">473</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>62</td>
+<td>50</td>
+<td>55</td>
+<td>0.90x</td>
+<td class="negative">-12.12%</td>
+<td>Materials</td>
+</tr><tr>
+<td>283</td>
+<td class="ticker">V</td>
+<td>$299.34</td>
+<td class="positive">+1.29</td>
+<td class="score">472</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>92</td>
+<td>68</td>
+<td>85</td>
+<td>0.65x</td>
+<td class="negative">-12.83%</td>
+<td>Financial</td>
+</tr><tr>
+<td>284</td>
+<td class="ticker">COIN</td>
+<td>$231.20</td>
+<td class="negative">-2.42</td>
+<td class="score">471</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>70</td>
+<td>80</td>
+<td>65</td>
+<td>0.75x</td>
+<td class="negative">-23.61%</td>
+<td>Financial</td>
+</tr><tr>
+<td>285</td>
+<td class="ticker">ARE</td>
+<td>$174.38</td>
+<td class="negative">-0.41</td>
+<td class="score">470</td>
+<td><div class="grade grade-C">C</div></td>
+<td>39</td>
+<td>68</td>
+<td>42</td>
+<td>55</td>
+<td>0.88x</td>
+<td class="negative">-14.77%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>286</td>
+<td class="ticker">SNPS</td>
+<td>$249.75</td>
+<td class="negative">-6.41</td>
+<td class="score">469</td>
+<td><div class="grade grade-C">C</div></td>
+<td>28</td>
+<td>90</td>
+<td>65</td>
+<td>72</td>
+<td>0.72x</td>
+<td class="negative">-30.41%</td>
+<td>Tech</td>
+</tr><tr>
+<td>287</td>
+<td class="ticker">NXPI</td>
+<td>$186.06</td>
+<td class="negative">-2.92</td>
+<td class="score">468</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38</td>
+<td>70</td>
+<td>50</td>
+<td>55</td>
+<td>0.85x</td>
+<td class="negative">-4.72%</td>
+<td>Tech</td>
+</tr><tr>
+<td>288</td>
+<td class="ticker">BA</td>
+<td>$162.04</td>
+<td class="negative">-0.15</td>
+<td class="score">465</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>60</td>
+<td>50</td>
+<td>45</td>
+<td>0.92x</td>
+<td class="negative">-3.53%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>289</td>
+<td class="ticker">TPR</td>
+<td>$137.01</td>
+<td class="negative">-1.32</td>
+<td class="score">464</td>
+<td><div class="grade grade-C">C</div></td>
+<td>34</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>1.01x</td>
+<td class="negative">-35.30%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>290</td>
+<td class="ticker">FI</td>
+<td>$198.28</td>
+<td class="negative">-0.36</td>
+<td class="score">462</td>
+<td><div class="grade grade-C">C</div></td>
+<td>39</td>
+<td>72</td>
+<td>50</td>
+<td>55</td>
+<td>0.82x</td>
+<td class="negative">-14.62%</td>
+<td>Financial</td>
+</tr><tr>
+<td>291</td>
+<td class="ticker">CME</td>
+<td>$297.50</td>
+<td class="positive">+1.27</td>
+<td class="score">461</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>88</td>
+<td>62</td>
+<td>82</td>
+<td>0.66x</td>
+<td class="positive">+2.43%</td>
+<td>Financial</td>
+</tr><tr>
+<td>292</td>
+<td class="ticker">GRMN</td>
+<td>$226.14</td>
+<td class="negative">-1.75</td>
+<td class="score">461</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>68</td>
+<td>58</td>
+<td>78</td>
+<td>0.76x</td>
+<td class="positive">+11.66%</td>
+<td>Tech</td>
+</tr><tr>
+<td>293</td>
+<td class="ticker">MSFT</td>
+<td>$358.83</td>
+<td class="positive">+0.58</td>
+<td class="score">460</td>
+<td><div class="grade grade-C">C</div></td>
+<td>53</td>
+<td>92</td>
+<td>72</td>
+<td>95</td>
+<td>0.59x</td>
+<td class="negative">-20.96%</td>
+<td>Tech</td>
+</tr><tr>
+<td>294</td>
+<td class="ticker">COF</td>
+<td>$207.66</td>
+<td class="positive">+0.99</td>
+<td class="score">458</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>65</td>
+<td>62</td>
+<td>65</td>
+<td>0.80x</td>
+<td class="negative">-14.88%</td>
+<td>Financial</td>
+</tr><tr>
+<td>295</td>
+<td class="ticker">BDX</td>
+<td>$154.26</td>
+<td class="negative">-0.16</td>
+<td class="score">457</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.94x</td>
+<td class="positive">+1.99%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>296</td>
+<td class="ticker">CINF</td>
+<td>$156.62</td>
+<td class="positive">+1.91</td>
+<td class="score">456</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.93x</td>
+<td class="negative">-6.88%</td>
+<td>Financial</td>
+</tr><tr>
+<td>297</td>
+<td class="ticker">CAH</td>
+<td>$206.29</td>
+<td class="negative">-0.14</td>
+<td class="score">451</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>68</td>
+<td>50</td>
+<td>55</td>
+<td>0.80x</td>
+<td class="positive">+9.10%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>298</td>
+<td class="ticker">AVGO</td>
+<td>$291.81</td>
+<td class="negative">-2.95</td>
+<td class="score">448</td>
+<td><div class="grade grade-C">C</div></td>
+<td>34</td>
+<td>85</td>
+<td>78</td>
+<td>78</td>
+<td>0.66x</td>
+<td class="negative">-22.21%</td>
+<td>Tech</td>
+</tr><tr>
+<td>299</td>
+<td class="ticker">TRGP</td>
+<td>$247.00</td>
+<td class="negative">-1.29</td>
+<td class="score">447</td>
+<td><div class="grade grade-C">C</div></td>
+<td>48</td>
+<td>68</td>
+<td>68</td>
+<td>65</td>
+<td>0.73x</td>
+<td class="positive">+34.23%</td>
+<td>Energy</td>
+</tr><tr>
+<td>300</td>
+<td class="ticker">DRI</td>
+<td>$194.29</td>
+<td class="positive">+0.93</td>
+<td class="score">447</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>62</td>
+<td>50</td>
+<td>55</td>
+<td>0.83x</td>
+<td class="positive">+2.87%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>301</td>
+<td class="ticker">IQV</td>
+<td>$165.80</td>
+<td class="positive">+1.19</td>
+<td class="score">447</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.90x</td>
+<td class="negative">-6.57%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>302</td>
+<td class="ticker">EPAM</td>
+<td>$176.36</td>
+<td class="positive">+2.16</td>
+<td class="score">446</td>
+<td><div class="grade grade-C">C</div></td>
+<td>40</td>
+<td>55</td>
+<td>45</td>
+<td>68</td>
+<td>0.87x</td>
+<td class="negative">-26.14%</td>
+<td>Tech</td>
+</tr><tr>
+<td>303</td>
+<td class="ticker">HLT</td>
+<td>$229.37</td>
+<td class="positive">+0.28</td>
+<td class="score">445</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>70</td>
+<td>62</td>
+<td>62</td>
+<td>0.76x</td>
+<td class="negative">-10.71%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>304</td>
+<td class="ticker">RCL</td>
+<td>$174.56</td>
+<td class="negative">-0.29</td>
+<td class="score">444</td>
+<td><div class="grade grade-C">C</div></td>
+<td>40</td>
+<td>50</td>
+<td>68</td>
+<td>55</td>
+<td>0.88x</td>
+<td class="negative">-9.48%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>305</td>
+<td class="ticker">WAB</td>
+<td>$237.37</td>
+<td class="negative">-1.55</td>
+<td class="score">443</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>72</td>
+<td>55</td>
+<td>65</td>
+<td>0.74x</td>
+<td class="positive">+11.09%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>306</td>
+<td class="ticker">ALLE</td>
+<td>$164.23</td>
+<td class="positive">+0.25</td>
+<td class="score">442</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.91x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>307</td>
+<td class="ticker">HON</td>
+<td>$277.60</td>
+<td class="positive">+2.33</td>
+<td class="score">441</td>
+<td><div class="grade grade-C">C</div></td>
+<td>49</td>
+<td>75</td>
+<td>62</td>
+<td>72</td>
+<td>0.68x</td>
+<td class="positive">+14.29%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>308</td>
+<td class="ticker">LOW</td>
+<td>$245.24</td>
+<td class="negative">-0.20</td>
+<td class="score">440</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>75</td>
+<td>50</td>
+<td>68</td>
+<td>0.73x</td>
+<td class="negative">-0.37%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>309</td>
+<td class="ticker">NSC</td>
+<td>$283.66</td>
+<td class="positive">+0.15</td>
+<td class="score">437</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>82</td>
+<td>52</td>
+<td>72</td>
+<td>0.67x</td>
+<td class="positive">+9.57%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>310</td>
+<td class="ticker">WELL</td>
+<td>$193.85</td>
+<td class="positive">+0.53</td>
+<td class="score">436</td>
+<td><div class="grade grade-C">C</div></td>
+<td>37</td>
+<td>62</td>
+<td>55</td>
+<td>55</td>
+<td>0.83x</td>
+<td class="negative">-28.40%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>311</td>
+<td class="ticker">TEL</td>
+<td>$198.32</td>
+<td class="negative">-1.88</td>
+<td class="score">435</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38</td>
+<td>65</td>
+<td>50</td>
+<td>55</td>
+<td>0.82x</td>
+<td class="negative">-11.65%</td>
+<td>Tech</td>
+</tr><tr>
+<td>312</td>
+<td class="ticker">MCD</td>
+<td>$308.91</td>
+<td class="positive">+0.98</td>
+<td class="score">435</td>
+<td><div class="grade grade-C">C</div></td>
+<td>45</td>
+<td>85</td>
+<td>55</td>
+<td>80</td>
+<td>0.64x</td>
+<td class="positive">+4.41%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>313</td>
+<td class="ticker">CTAS</td>
+<td>$168.81</td>
+<td class="positive">+1.87</td>
+<td class="score">432</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.90x</td>
+<td class="negative">-16.58%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>314</td>
+<td class="ticker">BR</td>
+<td>$162.33</td>
+<td class="negative">-0.69</td>
+<td class="score">431</td>
+<td><div class="grade grade-C">C</div></td>
+<td>37</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>0.92x</td>
+<td class="negative">-23.06%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>315</td>
+<td class="ticker">COHR</td>
+<td>$217.52</td>
+<td class="negative">-10.66</td>
+<td class="score">431</td>
+<td><div class="grade grade-C">C</div></td>
+<td>33</td>
+<td>65</td>
+<td>70</td>
+<td>60</td>
+<td>0.78x</td>
+<td class="positive">+17.60%</td>
+<td>Tech</td>
+</tr><tr>
+<td>316</td>
+<td class="ticker">CHTR</td>
+<td>$220.38</td>
+<td class="positive">+0.57</td>
+<td class="score">429</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>65</td>
+<td>55</td>
+<td>55</td>
+<td>0.77x</td>
+<td class="positive">+0.00%</td>
+<td>Comm</td>
+</tr><tr>
+<td>317</td>
+<td class="ticker">CB</td>
+<td>$204.30</td>
+<td class="positive">+0.87</td>
+<td class="score">429</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>50</td>
+<td>55</td>
+<td>78</td>
+<td>0.81x</td>
+<td class="positive">+1.27%</td>
+<td>Financial</td>
+</tr><tr>
+<td>318</td>
+<td class="ticker">ODFL</td>
+<td>$189.96</td>
+<td class="positive">+2.45</td>
+<td class="score">427</td>
+<td><div class="grade grade-C">C</div></td>
+<td>50</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.84x</td>
+<td class="positive">+21.48%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>319</td>
+<td class="ticker">AXP</td>
+<td>$297.68</td>
+<td class="positive">+1.84</td>
+<td class="score">425</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>78</td>
+<td>65</td>
+<td>72</td>
+<td>0.66x</td>
+<td class="negative">-6.50%</td>
+<td>Financial</td>
+</tr><tr>
+<td>320</td>
+<td class="ticker">MPC</td>
+<td>$255.02</td>
+<td class="negative">-2.36</td>
+<td class="score">425</td>
+<td><div class="grade grade-C">C</div></td>
+<td>50</td>
+<td>60</td>
+<td>65</td>
+<td>72</td>
+<td>0.71x</td>
+<td class="positive">+51.18%</td>
+<td>Energy</td>
+</tr><tr>
+<td>321</td>
+<td class="ticker">ALL</td>
+<td>$207.65</td>
+<td class="positive">+2.44</td>
+<td class="score">425</td>
+<td><div class="grade grade-C">C</div></td>
+<td>47</td>
+<td>50</td>
+<td>55</td>
+<td>72</td>
+<td>0.80x</td>
+<td class="positive">+5.41%</td>
+<td>Financial</td>
+</tr><tr>
+<td>322</td>
+<td class="ticker">VMC</td>
+<td>$266.35</td>
+<td class="positive">+1.87</td>
+<td class="score">423</td>
+<td><div class="grade grade-C">C</div></td>
+<td>46</td>
+<td>72</td>
+<td>55</td>
+<td>65</td>
+<td>0.70x</td>
+<td class="positive">+5.88%</td>
+<td>Materials</td>
+</tr><tr>
+<td>323</td>
+<td class="ticker">AMAT</td>
+<td>$322.50</td>
+<td class="negative">-4.35</td>
+<td class="score">420</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>82</td>
+<td>72</td>
+<td>72</td>
+<td>0.63x</td>
+<td class="positive">+25.12%</td>
+<td>Tech</td>
+</tr><tr>
+<td>324</td>
+<td class="ticker">PSA</td>
+<td>$264.66</td>
+<td class="negative">-0.51</td>
+<td class="score">418</td>
+<td><div class="grade grade-C">C</div></td>
+<td>40</td>
+<td>72</td>
+<td>50</td>
+<td>75</td>
+<td>0.70x</td>
+<td class="negative">-7.00%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>325</td>
+<td class="ticker">VRTX</td>
+<td>$373.41</td>
+<td class="positive">+1.10</td>
+<td class="score">417</td>
+<td><div class="grade grade-C">C</div></td>
+<td>44</td>
+<td>90</td>
+<td>72</td>
+<td>80</td>
+<td>0.58x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>326</td>
+<td class="ticker">ADI</td>
+<td>$215.32</td>
+<td class="negative">-2.15</td>
+<td class="score">417</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>50</td>
+<td>65</td>
+<td>72</td>
+<td>0.78x</td>
+<td class="positive">+11.06%</td>
+<td>Tech</td>
+</tr><tr>
+<td>327</td>
+<td class="ticker">BIIB</td>
+<td>$187.39</td>
+<td class="positive">+1.93</td>
+<td class="score">413</td>
+<td><div class="grade grade-C">C</div></td>
+<td>41</td>
+<td>55</td>
+<td>42</td>
+<td>55</td>
+<td>0.85x</td>
+<td class="negative">-20.52%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>328</td>
+<td class="ticker">VLO</td>
+<td>$249.99</td>
+<td class="negative">-1.70</td>
+<td class="score">411</td>
+<td><div class="grade grade-C">C</div></td>
+<td>51</td>
+<td>60</td>
+<td>62</td>
+<td>55</td>
+<td>0.72x</td>
+<td class="positive">+53.52%</td>
+<td>Energy</td>
+</tr><tr>
+<td>329</td>
+<td class="ticker">CEG</td>
+<td>$297.83</td>
+<td class="negative">-1.21</td>
+<td class="score">411</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38</td>
+<td>75</td>
+<td>72</td>
+<td>70</td>
+<td>0.66x</td>
+<td class="negative">-15.94%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>330</td>
+<td class="ticker">SHW</td>
+<td>$315.53</td>
+<td class="positive">+0.05</td>
+<td class="score">403</td>
+<td><div class="grade grade-C">C</div></td>
+<td>43</td>
+<td>78</td>
+<td>58</td>
+<td>72</td>
+<td>0.64x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>331</td>
+<td class="ticker">DOV</td>
+<td>$202.34</td>
+<td class="negative">-2.06</td>
+<td class="score">402</td>
+<td><div class="grade grade-C">C</div></td>
+<td>42</td>
+<td>50</td>
+<td>52</td>
+<td>62</td>
+<td>0.81x</td>
+<td class="positive">+9.25%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>332</td>
+<td class="ticker">TSLA</td>
+<td>$353.59</td>
+<td class="negative">-2.28</td>
+<td class="score">401</td>
+<td><div class="grade grade-C">C</div></td>
+<td>51</td>
+<td>80</td>
+<td>58</td>
+<td>75</td>
+<td>0.60x</td>
+<td class="negative">-23.54%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>333</td>
+<td class="ticker">TECH</td>
+<td>$186.71</td>
+<td class="negative">-3.16</td>
+<td class="score">401</td>
+<td><div class="grade grade-C">C</div></td>
+<td>38</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.85x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>334</td>
+<td class="ticker">MTB</td>
+<td>$200.55</td>
+<td class="negative">-0.19</td>
+<td class="score">399</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>0.82x</td>
+<td class="positive">+3.30%</td>
+<td>Financial</td>
+</tr><tr>
+<td>335</td>
+<td class="ticker">GE</td>
+<td>$272.36</td>
+<td class="negative">-3.70</td>
+<td class="score">398</td>
+<td><div class="grade grade-D">D</div></td>
+<td>34</td>
+<td>70</td>
+<td>65</td>
+<td>65</td>
+<td>0.69x</td>
+<td class="negative">-16.87%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>336</td>
+<td class="ticker">ELV</td>
+<td>$284.73</td>
+<td class="negative">-0.59</td>
+<td class="score">396</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>70</td>
+<td>55</td>
+<td>68</td>
+<td>0.67x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>337</td>
+<td class="ticker">CI</td>
+<td>$305.45</td>
+<td class="positive">+0.96</td>
+<td class="score">395</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>72</td>
+<td>58</td>
+<td>70</td>
+<td>0.65x</td>
+<td class="negative">-1.45%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>338</td>
+<td class="ticker">PNC</td>
+<td>$201.50</td>
+<td class="negative">-0.44</td>
+<td class="score">395</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>0.81x</td>
+<td class="negative">-1.21%</td>
+<td>Financial</td>
+</tr><tr>
+<td>339</td>
+<td class="ticker">IEX</td>
+<td>$183.74</td>
+<td class="negative">-1.51</td>
+<td class="score">395</td>
+<td><div class="grade grade-D">D</div></td>
+<td>35</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.86x</td>
+<td class="negative">-28.56%</td>
+<td>Utilities</td>
+</tr><tr>
+<td>340</td>
+<td class="ticker">CIEN</td>
+<td>$365.00</td>
+<td class="negative">-9.11</td>
+<td class="score">394</td>
+<td><div class="grade grade-D">D</div></td>
+<td>55</td>
+<td>72</td>
+<td>85</td>
+<td>62</td>
+<td>0.59x</td>
+<td class="positive">+56.31%</td>
+<td>Tech</td>
+</tr><tr>
+<td>341</td>
+<td class="ticker">AME</td>
+<td>$208.03</td>
+<td class="negative">-0.58</td>
+<td class="score">391</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.80x</td>
+<td class="negative">-2.11%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>342</td>
+<td class="ticker">HD</td>
+<td>$323.43</td>
+<td class="positive">+0.55</td>
+<td class="score">388</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41</td>
+<td>78</td>
+<td>52</td>
+<td>72</td>
+<td>0.63x</td>
+<td class="negative">-13.08%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>343</td>
+<td class="ticker">PODD</td>
+<td>$207.71</td>
+<td class="negative">-0.24</td>
+<td class="score">386</td>
+<td><div class="grade grade-D">D</div></td>
+<td>37</td>
+<td>50</td>
+<td>60</td>
+<td>55</td>
+<td>0.80x</td>
+<td class="negative">-27.37%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>344</td>
+<td class="ticker">GD</td>
+<td>$338.12</td>
+<td class="negative">-2.49</td>
+<td class="score">386</td>
+<td><div class="grade grade-D">D</div></td>
+<td>40</td>
+<td>78</td>
+<td>60</td>
+<td>72</td>
+<td>0.61x</td>
+<td class="positive">+4.53%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>345</td>
+<td class="ticker">MAR</td>
+<td>$320.05</td>
+<td class="positive">+0.79</td>
+<td class="score">382</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>72</td>
+<td>60</td>
+<td>65</td>
+<td>0.63x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>346</td>
+<td class="ticker">RMD</td>
+<td>$220.10</td>
+<td class="negative">-0.17</td>
+<td class="score">380</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.77x</td>
+<td class="negative">-1.65%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>347</td>
+<td class="ticker">PGR</td>
+<td>$202.66</td>
+<td class="positive">+0.04</td>
+<td class="score">380</td>
+<td><div class="grade grade-D">D</div></td>
+<td>37</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.81x</td>
+<td class="negative">-26.33%</td>
+<td>Financial</td>
+</tr><tr>
+<td>348</td>
+<td class="ticker">BRK.B</td>
+<td>$475.64</td>
+<td class="positive">+1.53</td>
+<td class="score">380</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>95</td>
+<td>60</td>
+<td>100</td>
+<td>0.51x</td>
+<td class="negative">-8.08%</td>
+<td>Financial</td>
+</tr><tr>
+<td>349</td>
+<td class="ticker">STE</td>
+<td>$201.65</td>
+<td class="negative">-0.63</td>
+<td class="score">379</td>
+<td><div class="grade grade-D">D</div></td>
+<td>37</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>0.81x</td>
+<td class="negative">-21.88%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>350</td>
+<td class="ticker">IBM</td>
+<td>$237.63</td>
+<td class="positive">+0.54</td>
+<td class="score">379</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>50</td>
+<td>55</td>
+<td>65</td>
+<td>0.74x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>351</td>
+<td class="ticker">MSI</td>
+<td>$370.04</td>
+<td class="positive">+1.29</td>
+<td class="score">378</td>
+<td><div class="grade grade-D">D</div></td>
+<td>47</td>
+<td>78</td>
+<td>60</td>
+<td>72</td>
+<td>0.58x</td>
+<td class="positive">+11.32%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>352</td>
+<td class="ticker">WDC</td>
+<td>$251.31</td>
+<td class="negative">-8.73</td>
+<td class="score">378</td>
+<td><div class="grade grade-D">D</div></td>
+<td>40</td>
+<td>55</td>
+<td>68</td>
+<td>55</td>
+<td>0.72x</td>
+<td class="positive">+45.42%</td>
+<td>Tech</td>
+</tr><tr>
+<td>353</td>
+<td class="ticker">MU</td>
+<td>$323.01</td>
+<td class="negative">-9.58</td>
+<td class="score">376</td>
+<td><div class="grade grade-D">D</div></td>
+<td>32</td>
+<td>72</td>
+<td>75</td>
+<td>68</td>
+<td>0.63x</td>
+<td class="positive">+12.89%</td>
+<td>Tech</td>
+</tr><tr>
+<td>354</td>
+<td class="ticker">MCO</td>
+<td>$432.37</td>
+<td class="positive">+1.77</td>
+<td class="score">374</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>88</td>
+<td>68</td>
+<td>78</td>
+<td>0.53x</td>
+<td class="negative">-9.33%</td>
+<td>Financial</td>
+</tr><tr>
+<td>355</td>
+<td class="ticker">MMC</td>
+<td>$260.32</td>
+<td class="positive">+2.38</td>
+<td class="score">373</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46</td>
+<td>50</td>
+<td>55</td>
+<td>72</td>
+<td>0.71x</td>
+<td class="positive">+1.27%</td>
+<td>Financial</td>
+</tr><tr>
+<td>356</td>
+<td class="ticker">EXPE</td>
+<td>$226.30</td>
+<td class="positive">+0.22</td>
+<td class="score">371</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.76x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>357</td>
+<td class="ticker">SYK</td>
+<td>$388.42</td>
+<td class="positive">+1.01</td>
+<td class="score">370</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>78</td>
+<td>68</td>
+<td>72</td>
+<td>0.57x</td>
+<td class="negative">-1.94%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>358</td>
+<td class="ticker">ADSK</td>
+<td>$235.28</td>
+<td class="positive">+2.37</td>
+<td class="score">369</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.75x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>359</td>
+<td class="ticker">CRWD</td>
+<td>$379.01</td>
+<td class="positive">+2.55</td>
+<td class="score">367</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46</td>
+<td>70</td>
+<td>82</td>
+<td>65</td>
+<td>0.57x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>360</td>
+<td class="ticker">ESS</td>
+<td>$241.93</td>
+<td class="positive">+0.97</td>
+<td class="score">366</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>55</td>
+<td>45</td>
+<td>55</td>
+<td>0.74x</td>
+<td class="negative">-6.19%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>361</td>
+<td class="ticker">HWM</td>
+<td>$221.51</td>
+<td class="negative">-2.80</td>
+<td class="score">366</td>
+<td><div class="grade grade-D">D</div></td>
+<td>39</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.77x</td>
+<td class="positive">+0.00%</td>
+<td>Financial</td>
+</tr><tr>
+<td>362</td>
+<td class="ticker">WST</td>
+<td>$244.98</td>
+<td class="positive">+0.67</td>
+<td class="score">363</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.73x</td>
+<td class="positive">+2.47%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>363</td>
+<td class="ticker">FDX</td>
+<td>$342.11</td>
+<td class="negative">-0.54</td>
+<td class="score">363</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46</td>
+<td>70</td>
+<td>55</td>
+<td>65</td>
+<td>0.61x</td>
+<td class="positive">+18.48%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>364</td>
+<td class="ticker">AMGN</td>
+<td>$349.47</td>
+<td class="positive">+0.21</td>
+<td class="score">362</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>72</td>
+<td>52</td>
+<td>70</td>
+<td>0.60x</td>
+<td class="positive">+5.98%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>365</td>
+<td class="ticker">SPGI</td>
+<td>$465.99</td>
+<td class="positive">+0.92</td>
+<td class="score">362</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41</td>
+<td>90</td>
+<td>68</td>
+<td>80</td>
+<td>0.51x</td>
+<td class="negative">-12.75%</td>
+<td>Financial</td>
+</tr><tr>
+<td>366</td>
+<td class="ticker">MA</td>
+<td>$493.26</td>
+<td class="positive">+1.86</td>
+<td class="score">360</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>92</td>
+<td>70</td>
+<td>85</td>
+<td>0.50x</td>
+<td class="negative">-16.37%</td>
+<td>Financial</td>
+</tr><tr>
+<td>367</td>
+<td class="ticker">ISRG</td>
+<td>$495.04</td>
+<td class="positive">+2.35</td>
+<td class="score">359</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>92</td>
+<td>72</td>
+<td>78</td>
+<td>0.50x</td>
+<td class="negative">-10.84%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>368</td>
+<td class="ticker">APP</td>
+<td>$272.49</td>
+<td class="negative">-8.62</td>
+<td class="score">356</td>
+<td><div class="grade grade-D">D</div></td>
+<td>36</td>
+<td>50</td>
+<td>85</td>
+<td>55</td>
+<td>0.69x</td>
+<td class="negative">-44.79%</td>
+<td>Tech</td>
+</tr><tr>
+<td>369</td>
+<td class="ticker">ERIE</td>
+<td>$249.43</td>
+<td class="positive">+3.55</td>
+<td class="score">356</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.72x</td>
+<td class="negative">-10.42%</td>
+<td>Financial</td>
+</tr><tr>
+<td>370</td>
+<td class="ticker">DVA</td>
+<td>$279.68</td>
+<td class="positive">+2.40</td>
+<td class="score">355</td>
+<td><div class="grade grade-D">D</div></td>
+<td>53</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.68x</td>
+<td class="positive">+34.05%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>371</td>
+<td class="ticker">TRV</td>
+<td>$290.63</td>
+<td class="positive">+1.88</td>
+<td class="score">355</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46</td>
+<td>50</td>
+<td>55</td>
+<td>75</td>
+<td>0.66x</td>
+<td class="positive">+6.79%</td>
+<td>Financial</td>
+</tr><tr>
+<td>372</td>
+<td class="ticker">COR</td>
+<td>$310.02</td>
+<td class="negative">-0.77</td>
+<td class="score">353</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>65</td>
+<td>55</td>
+<td>55</td>
+<td>0.64x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>373</td>
+<td class="ticker">VRSN</td>
+<td>$249.42</td>
+<td class="positive">+0.78</td>
+<td class="score">351</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.72x</td>
+<td class="negative">-4.18%</td>
+<td>Tech</td>
+</tr><tr>
+<td>374</td>
+<td class="ticker">META</td>
+<td>$535.02</td>
+<td class="positive">+1.77</td>
+<td class="score">350</td>
+<td><div class="grade grade-D">D</div></td>
+<td>50</td>
+<td>82</td>
+<td>82</td>
+<td>90</td>
+<td>0.48x</td>
+<td class="negative">-24.35%</td>
+<td>Comm</td>
+</tr><tr>
+<td>375</td>
+<td class="ticker">AXON</td>
+<td>$413.48</td>
+<td class="negative">-3.83</td>
+<td class="score">349</td>
+<td><div class="grade grade-D">D</div></td>
+<td>32</td>
+<td>80</td>
+<td>80</td>
+<td>68</td>
+<td>0.55x</td>
+<td class="negative">-27.42%</td>
+<td>Tech</td>
+</tr><tr>
+<td>376</td>
+<td class="ticker">LMT</td>
+<td>$473.56</td>
+<td class="negative">-0.51</td>
+<td class="score">349</td>
+<td><div class="grade grade-D">D</div></td>
+<td>47</td>
+<td>85</td>
+<td>60</td>
+<td>78</td>
+<td>0.51x</td>
+<td class="positive">+23.08%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>377</td>
+<td class="ticker">PKG</td>
+<td>$281.40</td>
+<td class="negative">-1.79</td>
+<td class="score">347</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41</td>
+<td>58</td>
+<td>50</td>
+<td>55</td>
+<td>0.68x</td>
+<td class="positive">+5.08%</td>
+<td>Materials</td>
+</tr><tr>
+<td>378</td>
+<td class="ticker">TMO</td>
+<td>$481.94</td>
+<td class="positive">+1.82</td>
+<td class="score">344</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>85</td>
+<td>65</td>
+<td>78</td>
+<td>0.50x</td>
+<td class="negative">-9.35%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>379</td>
+<td class="ticker">CBOE</td>
+<td>$281.68</td>
+<td class="positive">+3.18</td>
+<td class="score">342</td>
+<td><div class="grade grade-D">D</div></td>
+<td>49</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.68x</td>
+<td class="positive">+12.05%</td>
+<td>Financial</td>
+</tr><tr>
+<td>380</td>
+<td class="ticker">SNA</td>
+<td>$267.59</td>
+<td class="positive">+0.73</td>
+<td class="score">341</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.70x</td>
+<td class="positive">+4.56%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>381</td>
+<td class="ticker">TPL</td>
+<td>$471.89</td>
+<td class="negative">-7.79</td>
+<td class="score">340</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>75</td>
+<td>70</td>
+<td>85</td>
+<td>0.51x</td>
+<td class="positive">+63.93%</td>
+<td>Energy</td>
+</tr><tr>
+<td>382</td>
+<td class="ticker">KEYS</td>
+<td>$268.04</td>
+<td class="negative">-3.95</td>
+<td class="score">340</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.69x</td>
+<td class="positive">+31.66%</td>
+<td>Tech</td>
+</tr><tr>
+<td>383</td>
+<td class="ticker">NDSN</td>
+<td>$255.16</td>
+<td class="negative">-1.94</td>
+<td class="score">339</td>
+<td><div class="grade grade-D">D</div></td>
+<td>40</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>0.71x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>384</td>
+<td class="ticker">JBL</td>
+<td>$247.32</td>
+<td class="negative">-5.28</td>
+<td class="score">337</td>
+<td><div class="grade grade-D">D</div></td>
+<td>36</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.73x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>385</td>
+<td class="ticker">MSCI</td>
+<td>$531.25</td>
+<td class="positive">+1.50</td>
+<td class="score">331</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>88</td>
+<td>65</td>
+<td>75</td>
+<td>0.48x</td>
+<td class="negative">-4.20%</td>
+<td>Financial</td>
+</tr><tr>
+<td>386</td>
+<td class="ticker">TER</td>
+<td>$274.36</td>
+<td class="negative">-7.19</td>
+<td class="score">331</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.69x</td>
+<td class="positive">+41.20%</td>
+<td>Tech</td>
+</tr><tr>
+<td>387</td>
+<td class="ticker">WTW</td>
+<td>$289.86</td>
+<td class="positive">+2.72</td>
+<td class="score">330</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.67x</td>
+<td class="negative">-0.71%</td>
+<td>Financial</td>
+</tr><tr>
+<td>388</td>
+<td class="ticker">LIN</td>
+<td>$502.12</td>
+<td class="positive">+2.24</td>
+<td class="score">328</td>
+<td><div class="grade grade-D">D</div></td>
+<td>49</td>
+<td>80</td>
+<td>55</td>
+<td>78</td>
+<td>0.49x</td>
+<td class="positive">+17.64%</td>
+<td>Materials</td>
+</tr><tr>
+<td>389</td>
+<td class="ticker">WAT</td>
+<td>$293.76</td>
+<td class="positive">+1.59</td>
+<td class="score">328</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>0.66x</td>
+<td class="positive">+2.35%</td>
+<td>Tech</td>
+</tr><tr>
+<td>390</td>
+<td class="ticker">RVTY</td>
+<td>$237.15</td>
+<td class="negative">-3.38</td>
+<td class="score">326</td>
+<td><div class="grade grade-D">D</div></td>
+<td>31</td>
+<td>50</td>
+<td>42</td>
+<td>55</td>
+<td>0.74x</td>
+<td class="negative">-33.21%</td>
+<td>Comm</td>
+</tr><tr>
+<td>391</td>
+<td class="ticker">FFIV</td>
+<td>$279.82</td>
+<td class="negative">-0.77</td>
+<td class="score">325</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>50</td>
+<td>48</td>
+<td>55</td>
+<td>0.68x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>392</td>
+<td class="ticker">CVNA</td>
+<td>$287.80</td>
+<td class="negative">-4.72</td>
+<td class="score">325</td>
+<td><div class="grade grade-D">D</div></td>
+<td>36</td>
+<td>55</td>
+<td>50</td>
+<td>55</td>
+<td>0.67x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>393</td>
+<td class="ticker">ADP</td>
+<td>$297.64</td>
+<td class="positive">+1.18</td>
+<td class="score">323</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.66x</td>
+<td class="positive">+4.99%</td>
+<td>Tech</td>
+</tr><tr>
+<td>394</td>
+<td class="ticker">ANET</td>
+<td>$445.31</td>
+<td class="negative">-7.36</td>
+<td class="score">322</td>
+<td><div class="grade grade-D">D</div></td>
+<td>36</td>
+<td>75</td>
+<td>82</td>
+<td>55</td>
+<td>0.53x</td>
+<td class="negative">-33.26%</td>
+<td>Tech</td>
+</tr><tr>
+<td>395</td>
+<td class="ticker">TT</td>
+<td>$403.99</td>
+<td class="negative">-1.52</td>
+<td class="score">321</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41</td>
+<td>70</td>
+<td>50</td>
+<td>68</td>
+<td>0.55x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>396</td>
+<td class="ticker">ETN</td>
+<td>$426.06</td>
+<td class="negative">-5.47</td>
+<td class="score">319</td>
+<td><div class="grade grade-D">D</div></td>
+<td>31</td>
+<td>72</td>
+<td>68</td>
+<td>72</td>
+<td>0.54x</td>
+<td class="negative">-19.55%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>397</td>
+<td class="ticker">IT</td>
+<td>$440.72</td>
+<td class="negative">-0.59</td>
+<td class="score">318</td>
+<td><div class="grade grade-D">D</div></td>
+<td>39</td>
+<td>75</td>
+<td>52</td>
+<td>70</td>
+<td>0.53x</td>
+<td class="negative">-11.65%</td>
+<td>Tech</td>
+</tr><tr>
+<td>398</td>
+<td class="ticker">SNDK</td>
+<td>$569.25</td>
+<td class="negative">-7.56</td>
+<td class="score">315</td>
+<td><div class="grade grade-D">D</div></td>
+<td>80</td>
+<td>55</td>
+<td>95</td>
+<td>55</td>
+<td>0.46x</td>
+<td class="positive">+139.16%</td>
+<td>Tech</td>
+</tr><tr>
+<td>399</td>
+<td class="ticker">EG</td>
+<td>$322.86</td>
+<td class="positive">+1.55</td>
+<td class="score">313</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.63x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>400</td>
+<td class="ticker">POOL</td>
+<td>$316.09</td>
+<td class="positive">+0.73</td>
+<td class="score">312</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>50</td>
+<td>52</td>
+<td>55</td>
+<td>0.63x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>401</td>
+<td class="ticker">STX</td>
+<td>$359.74</td>
+<td class="negative">-5.35</td>
+<td class="score">310</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>55</td>
+<td>65</td>
+<td>55</td>
+<td>0.59x</td>
+<td class="positive">+30.33%</td>
+<td>Tech</td>
+</tr><tr>
+<td>402</td>
+<td class="ticker">LITE</td>
+<td>$650.14</td>
+<td class="negative">-7.48</td>
+<td class="score">307</td>
+<td><div class="grade grade-D">D</div></td>
+<td>63</td>
+<td>75</td>
+<td>88</td>
+<td>65</td>
+<td>0.43x</td>
+<td class="positive">+75.87%</td>
+<td>Tech</td>
+</tr><tr>
+<td>403</td>
+<td class="ticker">TYL</td>
+<td>$341.91</td>
+<td class="positive">+2.36</td>
+<td class="score">305</td>
+<td><div class="grade grade-D">D</div></td>
+<td>46</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.61x</td>
+<td class="positive">+0.00%</td>
+<td>Tech</td>
+</tr><tr>
+<td>404</td>
+<td class="ticker">DE</td>
+<td>$572.56</td>
+<td class="negative">-1.98</td>
+<td class="score">305</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>80</td>
+<td>68</td>
+<td>75</td>
+<td>0.46x</td>
+<td class="positive">+19.80%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>405</td>
+<td class="ticker">CPAY</td>
+<td>$409.57</td>
+<td class="positive">+0.70</td>
+<td class="score">303</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>65</td>
+<td>55</td>
+<td>55</td>
+<td>0.55x</td>
+<td class="negative">-8.52%</td>
+<td>Financial</td>
+</tr><tr>
+<td>406</td>
+<td class="ticker">ROK</td>
+<td>$348.62</td>
+<td class="negative">-0.82</td>
+<td class="score">301</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>65</td>
+<td>0.60x</td>
+<td class="positive">+4.82%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>407</td>
+<td class="ticker">CMI</td>
+<td>$458.97</td>
+<td class="negative">-1.83</td>
+<td class="score">300</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>70</td>
+<td>60</td>
+<td>55</td>
+<td>0.52x</td>
+<td class="positive">+10.63%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>408</td>
+<td class="ticker">ROP</td>
+<td>$349.82</td>
+<td class="positive">+1.57</td>
+<td class="score">299</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.60x</td>
+<td class="negative">-0.13%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>409</td>
+<td class="ticker">LHX</td>
+<td>$337.68</td>
+<td class="negative">-1.55</td>
+<td class="score">299</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.61x</td>
+<td class="positive">+15.15%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>410</td>
+<td class="ticker">INTU</td>
+<td>$543.71</td>
+<td class="negative">-0.87</td>
+<td class="score">297</td>
+<td><div class="grade grade-D">D</div></td>
+<td>39</td>
+<td>77</td>
+<td>62</td>
+<td>75</td>
+<td>0.47x</td>
+<td class="negative">-11.64%</td>
+<td>Tech</td>
+</tr><tr>
+<td>411</td>
+<td class="ticker">HCA</td>
+<td>$469.44</td>
+<td class="negative">-0.51</td>
+<td class="score">295</td>
+<td><div class="grade grade-D">D</div></td>
+<td>40</td>
+<td>68</td>
+<td>58</td>
+<td>65</td>
+<td>0.51x</td>
+<td class="negative">-6.99%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>412</td>
+<td class="ticker">AON</td>
+<td>$409.10</td>
+<td class="positive">+3.69</td>
+<td class="score">289</td>
+<td><div class="grade grade-D">D</div></td>
+<td>48</td>
+<td>50</td>
+<td>52</td>
+<td>70</td>
+<td>0.55x</td>
+<td class="positive">+0.18%</td>
+<td>Financial</td>
+</tr><tr>
+<td>413</td>
+<td class="ticker">PWR</td>
+<td>$533.42</td>
+<td class="negative">-3.01</td>
+<td class="score">285</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>68</td>
+<td>68</td>
+<td>62</td>
+<td>0.48x</td>
+<td class="positive">+26.36%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>414</td>
+<td class="ticker">CAT</td>
+<td>$667.49</td>
+<td class="negative">-4.01</td>
+<td class="score">284</td>
+<td><div class="grade grade-D">D</div></td>
+<td>41</td>
+<td>82</td>
+<td>72</td>
+<td>78</td>
+<td>0.42x</td>
+<td class="positive">+16.45%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>415</td>
+<td class="ticker">IDXX</td>
+<td>$557.32</td>
+<td class="negative">-0.18</td>
+<td class="score">281</td>
+<td><div class="grade grade-D">D</div></td>
+<td>38</td>
+<td>80</td>
+<td>60</td>
+<td>55</td>
+<td>0.46x</td>
+<td class="negative">-22.92%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>416</td>
+<td class="ticker">NOC</td>
+<td>$672.62</td>
+<td class="negative">-1.15</td>
+<td class="score">279</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>82</td>
+<td>62</td>
+<td>75</td>
+<td>0.42x</td>
+<td class="positive">+16.78%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>417</td>
+<td class="ticker">HII</td>
+<td>$367.33</td>
+<td class="negative">-3.79</td>
+<td class="score">279</td>
+<td><div class="grade grade-D">D</div></td>
+<td>38</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.58x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>418</td>
+<td class="ticker">AJG</td>
+<td>$416.24</td>
+<td class="positive">+2.47</td>
+<td class="score">279</td>
+<td><div class="grade grade-D">D</div></td>
+<td>47</td>
+<td>50</td>
+<td>58</td>
+<td>55</td>
+<td>0.55x</td>
+<td class="positive">+7.01%</td>
+<td>Financial</td>
+</tr><tr>
+<td>419</td>
+<td class="ticker">SPOT</td>
+<td>$595.61</td>
+<td class="negative">-0.19</td>
+<td class="score">276</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>70</td>
+<td>80</td>
+<td>60</td>
+<td>0.45x</td>
+<td class="positive">+0.00%</td>
+<td>Comm</td>
+</tr><tr>
+<td>420</td>
+<td class="ticker">ULTA</td>
+<td>$507.65</td>
+<td class="negative">-0.53</td>
+<td class="score">275</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>68</td>
+<td>55</td>
+<td>55</td>
+<td>0.49x</td>
+<td class="positive">+0.00%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>421</td>
+<td class="ticker">MLM</td>
+<td>$573.66</td>
+<td class="positive">+0.48</td>
+<td class="score">275</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>72</td>
+<td>55</td>
+<td>65</td>
+<td>0.46x</td>
+<td class="positive">+6.33%</td>
+<td>Materials</td>
+</tr><tr>
+<td>422</td>
+<td class="ticker">REGN</td>
+<td>$711.80</td>
+<td class="positive">+1.27</td>
+<td class="score">275</td>
+<td><div class="grade grade-D">D</div></td>
+<td>45</td>
+<td>80</td>
+<td>70</td>
+<td>78</td>
+<td>0.41x</td>
+<td class="positive">+2.97%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>423</td>
+<td class="ticker">MCK</td>
+<td>$587.95</td>
+<td class="positive">+0.57</td>
+<td class="score">270</td>
+<td><div class="grade grade-D">D</div></td>
+<td>43</td>
+<td>75</td>
+<td>58</td>
+<td>55</td>
+<td>0.45x</td>
+<td class="negative">-0.61%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>424</td>
+<td class="ticker">NOW</td>
+<td>$736.08</td>
+<td class="positive">+2.07</td>
+<td class="score">265</td>
+<td><div class="grade grade-D">D</div></td>
+<td>42</td>
+<td>78</td>
+<td>78</td>
+<td>72</td>
+<td>0.40x</td>
+<td class="negative">-15.16%</td>
+<td>Tech</td>
+</tr><tr>
+<td>425</td>
+<td class="ticker">LII</td>
+<td>$442.88</td>
+<td class="positive">+1.14</td>
+<td class="score">262</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>50</td>
+<td>55</td>
+<td>55</td>
+<td>0.53x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>426</td>
+<td class="ticker">GS</td>
+<td>$807.06</td>
+<td class="positive">+0.52</td>
+<td class="score">258</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>80</td>
+<td>68</td>
+<td>85</td>
+<td>0.38x</td>
+<td class="positive">+2.76%</td>
+<td>Financial</td>
+</tr><tr>
+<td>427</td>
+<td class="ticker">LLY</td>
+<td>$887.40</td>
+<td class="positive">+1.04</td>
+<td class="score">255</td>
+<td><div class="grade grade-D">D</div></td>
+<td>44</td>
+<td>88</td>
+<td>75</td>
+<td>75</td>
+<td>0.36x</td>
+<td class="positive">+0.00%</td>
+<td>Healthcare</td>
+</tr><tr>
+<td>428</td>
+<td class="ticker">HUBB</td>
+<td>$470.99</td>
+<td class="negative">-2.07</td>
+<td class="score">251</td>
+<td><div class="grade grade-D">D</div></td>
+<td>40</td>
+<td>50</td>
+<td>60</td>
+<td>55</td>
+<td>0.51x</td>
+<td class="positive">+0.00%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>429</td>
+<td class="ticker">AMP</td>
+<td>$437.98</td>
+<td class="positive">+0.27</td>
+<td class="score">250</td>
+<td><div class="grade grade-E">E</div></td>
+<td>38</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.53x</td>
+<td class="negative">-24.74%</td>
+<td>Financial</td>
+</tr><tr>
+<td>430</td>
+<td class="ticker">BLK</td>
+<td>$957.68</td>
+<td class="positive">+1.47</td>
+<td class="score">248</td>
+<td><div class="grade grade-E">E</div></td>
+<td>43</td>
+<td>90</td>
+<td>68</td>
+<td>85</td>
+<td>0.34x</td>
+<td class="negative">-8.14%</td>
+<td>Financial</td>
+</tr><tr>
+<td>431</td>
+<td class="ticker">COST</td>
+<td>$996.41</td>
+<td class="positive">+1.28</td>
+<td class="score">240</td>
+<td><div class="grade grade-E">E</div></td>
+<td>47</td>
+<td>85</td>
+<td>70</td>
+<td>82</td>
+<td>0.34x</td>
+<td class="positive">+15.44%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>432</td>
+<td class="ticker">EME</td>
+<td>$700.89</td>
+<td class="negative">-4.37</td>
+<td class="score">235</td>
+<td><div class="grade grade-E">E</div></td>
+<td>40</td>
+<td>65</td>
+<td>65</td>
+<td>65</td>
+<td>0.41x</td>
+<td class="positive">+14.55%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>433</td>
+<td class="ticker">GEV</td>
+<td>$819.08</td>
+<td class="negative">-3.99</td>
+<td class="score">234</td>
+<td><div class="grade grade-E">E</div></td>
+<td>42</td>
+<td>72</td>
+<td>70</td>
+<td>68</td>
+<td>0.38x</td>
+<td class="positive">+25.18%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>434</td>
+<td class="ticker">FICO</td>
+<td>$1041.47</td>
+<td class="positive">+3.01</td>
+<td class="score">234</td>
+<td><div class="grade grade-E">E</div></td>
+<td>45</td>
+<td>90</td>
+<td>72</td>
+<td>72</td>
+<td>0.33x</td>
+<td class="negative">-10.06%</td>
+<td>Financial</td>
+</tr><tr>
+<td>435</td>
+<td class="ticker">EQIX</td>
+<td>$961.31</td>
+<td class="negative">-0.18</td>
+<td class="score">229</td>
+<td><div class="grade grade-E">E</div></td>
+<td>48</td>
+<td>82</td>
+<td>65</td>
+<td>65</td>
+<td>0.34x</td>
+<td class="positive">+25.51%</td>
+<td>RealEstate</td>
+</tr><tr>
+<td>436</td>
+<td class="ticker">URI</td>
+<td>$713.81</td>
+<td class="negative">-2.79</td>
+<td class="score">229</td>
+<td><div class="grade grade-E">E</div></td>
+<td>35</td>
+<td>70</td>
+<td>58</td>
+<td>62</td>
+<td>0.41x</td>
+<td class="negative">-18.64%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>437</td>
+<td class="ticker">TDY</td>
+<td>$579.52</td>
+<td class="negative">-2.32</td>
+<td class="score">220</td>
+<td><div class="grade grade-E">E</div></td>
+<td>42</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.45x</td>
+<td class="positive">+13.64%</td>
+<td>Tech</td>
+</tr><tr>
+<td>438</td>
+<td class="ticker">PH</td>
+<td>$859.76</td>
+<td class="negative">-3.23</td>
+<td class="score">219</td>
+<td><div class="grade grade-E">E</div></td>
+<td>38</td>
+<td>72</td>
+<td>62</td>
+<td>70</td>
+<td>0.37x</td>
+<td class="negative">-3.11%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>439</td>
+<td class="ticker">TDG</td>
+<td>$1130.76</td>
+<td class="negative">-0.81</td>
+<td class="score">210</td>
+<td><div class="grade grade-E">E</div></td>
+<td>43</td>
+<td>85</td>
+<td>72</td>
+<td>60</td>
+<td>0.31x</td>
+<td class="positive">+5.41%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>440</td>
+<td class="ticker">KLAC</td>
+<td>$1378.55</td>
+<td class="negative">-4.48</td>
+<td class="score">190</td>
+<td><div class="grade grade-E">E</div></td>
+<td>32</td>
+<td>82</td>
+<td>68</td>
+<td>72</td>
+<td>0.30x</td>
+<td class="negative">-23.81%</td>
+<td>Tech</td>
+</tr><tr>
+<td>441</td>
+<td class="ticker">MPWR</td>
+<td>$1000.22</td>
+<td class="negative">-5.01</td>
+<td class="score">189</td>
+<td><div class="grade grade-E">E</div></td>
+<td>30</td>
+<td>72</td>
+<td>68</td>
+<td>55</td>
+<td>0.34x</td>
+<td class="negative">-30.27%</td>
+<td>Tech</td>
+</tr><tr>
+<td>442</td>
+<td class="ticker">FIX</td>
+<td>$1268.28</td>
+<td class="negative">-7.21</td>
+<td class="score">173</td>
+<td><div class="grade grade-E">E</div></td>
+<td>40</td>
+<td>70</td>
+<td>62</td>
+<td>55</td>
+<td>0.30x</td>
+<td class="positive">+36.16%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>443</td>
+<td class="ticker">GWW</td>
+<td>$1057.26</td>
+<td class="positive">+0.02</td>
+<td class="score">151</td>
+<td><div class="grade grade-E">E</div></td>
+<td>35</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.33x</td>
+<td class="negative">-36.58%</td>
+<td>Industrials</td>
+</tr><tr>
+<td>444</td>
+<td class="ticker">NVR</td>
+<td>$6479.53</td>
+<td class="positive">+0.45</td>
+<td class="score">143</td>
+<td><div class="grade grade-E">E</div></td>
+<td>39</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.30x</td>
+<td class="negative">-17.89%</td>
+<td>Consumer</td>
+</tr><tr>
+<td>445</td>
+<td class="ticker">MTD</td>
+<td>$1250.08</td>
+<td class="positive">+1.46</td>
+<td class="score">142</td>
+<td><div class="grade grade-E">E</div></td>
+<td>39</td>
+<td>50</td>
+<td>50</td>
+<td>55</td>
+<td>0.30x</td>
+<td class="negative">-26.49%</td>
+<td>Tech</td>
+</tr></tbody>
+</table>
+</div>
+
+<div class="footer">
+<p><strong>Disclaimer:</strong> TrendScore is a quantitative analysis tool for educational purposes only. Not investment advice. Past performance does not guarantee future results.</p>
+<p style="margin-top:10px;">Data as of March 30, 2026 • © 2026 TrendScore Analytics</p>
+</div>
+</div>
+</body>
+</html>
